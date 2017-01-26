@@ -1,7 +1,7 @@
 {
-  "name": "testcafe-react-plugin",
+  "name": "testcafe-react-selectors",
   "version": "0.0.1",
-  "description": "TestCafe plugin for the testing ReactJS Components",
+  "description": "ReactJS selectors for TestCafe",
   "repository": "https://github.com/DevExpress/testcafe-react-selectors",
   "main": "lib/index",
   "files": [
