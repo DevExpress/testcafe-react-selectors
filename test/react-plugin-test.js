@@ -24,17 +24,19 @@ test('Should get DOM node by react selector', async t => {
     var listItem1 = ReactSelector('ListItem').nth(0);
     var listItem2 = ReactSelector('ListItem').nth(1);
 
-    await t.expect(await app.id).eql('app');
-    await t.expect(await listItem1.id).eql('l1-item1');
-    await t.expect(await listItem2.id).eql('l1-item2');
+    await t
+        .expect(await app.id).eql('app')
+        .expect(await listItem1.id).eql('l1-item1')
+        .expect(await listItem2.id).eql('l1-item2');
 });
 
 test('Should get DOM node by composite selector', async t => {
     var listItem1 = ReactSelector('List ListItem');
     var listItem2 = ReactSelector('List ListItem').nth(1);
 
-    await t.expect(await listItem1.id).eql('l1-item1');
-    await t.expect(await listItem2.id).eql('l1-item2');
+    await t
+        .expect(await listItem1.id).eql('l1-item1')
+        .expect(await listItem2.id).eql('l1-item2');
 });
 
 test('Should not get DOM node for stateless component', async t => {
@@ -56,11 +58,12 @@ test('Should get component state', async t => {
 
     var tagReact = await ReactSelector('ListItem p').react;
 
-    await t.expect(listItem1React.state).eql({ itemId: 'l1-item1' });
-    await t.expect(listItem2React.state).eql({ itemId: 'l1-item2' });
-    await t.expect(listItem3React.state).eql({ itemId: 'l1-item3' });
+    await t
+        .expect(listItem1React.state).eql({ itemId: 'l1-item1' })
+        .expect(listItem2React.state).eql({ itemId: 'l1-item2' })
+        .expect(listItem3React.state).eql({ itemId: 'l1-item3' })
 
-    await t.expect(tagReact).notOk();
+        .expect(tagReact).notOk();
 });
 
 test('Should get component props', async t => {
@@ -68,9 +71,10 @@ test('Should get component props', async t => {
     var listItem2React = await ReactSelector('ListItem').nth(1).react;
     var listItem3React = await ReactSelector('ListItem').nth(2).react;
 
-    await t.expect(listItem1React.props).eql({ id: 'l1-item1' });
-    await t.expect(listItem2React.props).eql({ id: 'l1-item2' });
-    await t.expect(listItem3React.props).eql({ id: 'l1-item3' });
+    await t
+        .expect(listItem1React.props).eql({ id: 'l1-item1' })
+        .expect(listItem2React.props).eql({ id: 'l1-item2' })
+        .expect(listItem3React.props).eql({ id: 'l1-item3' });
 });
 
 test('Version of React js is not supported', async t => {
