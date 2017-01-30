@@ -10,7 +10,7 @@ export default Selector(selector => {
     const reactVersion = parseInt(window.React.version.split('.')[0], 10);
 
     if (reactVersion < SUPPORTED_REACT_VERSION)
-        throw new Error('testcafe-react-selectors supports React js starting with 15.x version');
+        throw new Error('testcafe-react-selectors supports React version 15.x and newer');
 
     function reactSelect (compositeSelector) {
         const foundComponents = [];

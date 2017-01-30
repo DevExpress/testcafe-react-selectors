@@ -84,11 +84,11 @@ test('Version of React js is not supported', async t => {
         await ReactSelector('App');
     }
     catch (e) {
-        await t.expect(e.errMsg).contains('testcafe-react-selectors supports React js starting with 15.x version');
+        await t.expect(e.errMsg).contains('testcafe-react-selectors supports React version 15.x and newer');
     }
 });
 
-test('There is not React js on the testing page', async t => {
+test('There is no React on the tested page', async t => {
     await ClientFunction(() => window.React = null)();
 
     const body = await ReactSelector('body');
