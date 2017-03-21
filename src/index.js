@@ -1,15 +1,11 @@
-/*global document window*/
+/*global document*/
 var Selector = require('testcafe').Selector;
 
 export default Selector(selector => {
-    const SUPPORTED_REACT_VERSION = 15;
+    var rootEl                = document.querySelector('[data-reactroot]');
+    var supportedReactVersion = rootEl && Object.keys(rootEl).some(prop => /^__reactInternalInstance/.test(prop));
 
-    if (!window.React)
-        return document.querySelectorAll(selector);
-
-    const reactVersion = parseInt(window.React.version.split('.')[0], 10);
-
-    if (reactVersion < SUPPORTED_REACT_VERSION)
+    if (!supportedReactVersion)
         throw new Error('testcafe-react-selectors supports React version 15.x and newer');
 
     function reactSelect (compositeSelector) {
@@ -17,7 +13,7 @@ export default Selector(selector => {
         let foundInstance     = null;
 
         function getComponentInstance (el) {
-            if (el.nodeType !== 1)
+            if (!el || el.nodeType !== 1)
                 return null;
 
             for (var prop of Object.keys(el)) {
@@ -38,8 +34,13 @@ export default Selector(selector => {
 
             if (reactComponentParent === DOMNode) {
                 //NOTE: IE hack
-                reactComponentName = foundInstance.constructor.name ||
-                                     foundInstance.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
+                if (foundInstance.constructor.name)
+                    reactComponentName = foundInstance.constructor.name;
+                else {
+                    const matches = foundInstance.constructor.toString().match(/^function\s*([^\s(]+)/);
+
+                    reactComponentName = matches ? matches[1] : DOMNode.tagName.toLowerCase();
+                }
             }
             else {
                 reactComponentName = DOMNode.tagName.toLowerCase();
@@ -103,8 +104,8 @@ export default Selector(selector => {
     }
 
     return reactSelect(selector);
-}).addCustomDOMProperties({
-    react: node => {
+}).addCustomMethods({
+    getReact: (node, fn) => {
         function copyReactObject (obj) {
             var copiedObj = {};
 
@@ -142,10 +143,16 @@ export default Selector(selector => {
         if (!componentInstance)
             return null;
 
+        if (typeof fn === 'function') {
+            return fn({
+                state: copyReactObject(componentInstance.state),
+                props: copyReactObject(componentInstance.props)
+            });
+        }
+
         return {
             state: copyReactObject(componentInstance.state),
             props: copyReactObject(componentInstance.props)
         };
     }
 });
-
