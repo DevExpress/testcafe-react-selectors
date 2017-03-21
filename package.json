@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "testcafe": "^0.12.1",
+    "testcafe": "0.14.0-alpha4",
     "babel-preset-es2015-loose": "^6.1.4"
   },
   "devDependencies": {

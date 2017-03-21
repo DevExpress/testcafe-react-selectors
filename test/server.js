@@ -8,6 +8,7 @@ module.exports = function () {
         express()
             .use(express.static(path.join(__dirname, './data')))
             .get('/', (req, res) => res.render('index.html'))
+            .get('/noReact', (req, res) => res.sendFile(path.join(__dirname, 'data/page-without-react.html')))
             .listen(TEST_RESOURCES_PORT, resolve);
     });
 };

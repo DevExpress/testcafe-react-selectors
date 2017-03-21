@@ -55,11 +55,9 @@ class App extends React.Component {
     }
 }
 
-window.addEventListener('load', function () {
-    function Stateless (props) {
-        return <div>{props.text}</div>;
-    }
+function Stateless (props) {
+    return <div>{props.text}</div>;
+}
 
-    ReactDOM.render(React.createElement(App), document.getElementById('app-container'));
-    ReactDOM.render(<Stateless text="stateless"/>, document.getElementById('stateless'));
-});
+ReactDOM.render(React.createElement(App), document.getElementById('app-container'));
+ReactDOM.render(<Stateless text="stateless"/>, document.getElementById('stateless'));
