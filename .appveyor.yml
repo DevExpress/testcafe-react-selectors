@@ -1,0 +1,15 @@
+environment:
+  NODEJS_VERSION: "stable"
+
+install:
+- ps: >-
+    Install-Product node $env:NODEJS_VERSION
+    choco install GoogleChrome
+    choco install Firefox
+- cmd: >-
+    npm install
+build: off
+
+test_script:
+- cmd: >-
+    npm test
