@@ -4,10 +4,14 @@ environment:
 install:
 - ps: >-
     Install-Product node $env:NODEJS_VERSION
+
     choco install GoogleChrome
+
     choco install Firefox
+
 - cmd: >-
     npm install
+
 build: off
 
 test_script:
