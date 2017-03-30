@@ -121,13 +121,11 @@ fixture `TODO list test`
     .page('http://localhost:1337');
 
 test('Check list item', async t => {
-    const el           = ReactSelector('TodoList');
-    const itemPriority = await  el.getReact(({ props }) => props.priority);
-    const isItemActive = await  el.getReact(({ state }) => state.isActive);
+    const el = ReactSelector('TodoList');
 
     await t
-        .expect(itemPriority).eql('High');
-        .expect(isItemActive).eql(false);
+        .expect(el.getReact(({ props }) => props.priority)).eql('High')
+        .expect(el.getReact(({ state }) => state.isActive)).eql(false);
 });
 ```
 
