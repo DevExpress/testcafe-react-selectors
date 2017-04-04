@@ -1,6 +1,6 @@
 {
   "name": "testcafe-react-selectors",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ReactJS selectors for TestCafe",
   "repository": "https://github.com/DevExpress/testcafe-react-selectors",
   "main": "lib/index",
