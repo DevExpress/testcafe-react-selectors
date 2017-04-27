@@ -38,6 +38,6 @@
     "plugin"
   ],
   "dependencies": {
-    "testcafe": "^0.14.0"
+    "testcafe": "^0.15.0"
   }
 }
