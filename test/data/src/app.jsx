@@ -31,6 +31,26 @@ class List extends React.Component {
     }
 }
 
+class TextLabel extends React.Component {
+    constructor () {
+        super();
+
+        this.state = {
+            text: 'Component inside of wrapper component'
+        }
+    }
+
+    render () {
+        return <div>{this.state.text}</div>;
+    }
+}
+
+class WrapperComponent extends React.Component {
+    render () {
+        return <TextLabel />;
+    }
+}
+
 class App extends React.Component {
     constructor () {
         super();
@@ -50,6 +70,7 @@ class App extends React.Component {
                         <List id="l2"/>
                     </div>
                 </div>
+                <WrapperComponent />
             </div>
         );
     }

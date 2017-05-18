@@ -80,7 +80,7 @@ test('Should get component props', async t => {
         .expect(listItem3Id).eql('l1-item3');
 });
 
-test('Version of React js is not supported', async t => {
+test('Should throw exception if version of React js is not supported', async t => {
     await ClientFunction(() => {
         const reactRoot         = document.querySelector('[data-reactroot]');
         const internalReactProp = Object.keys(reactRoot).filter(prop => /^__reactInternalInstance/.test(prop))[0];
@@ -96,7 +96,7 @@ test('Version of React js is not supported', async t => {
     }
 });
 
-test('There is no React on the tested page', async t => {
+test('Should throw exception if there is no React on the tested page', async t => {
     await t.navigateTo('./noReact');
 
     try {
@@ -105,4 +105,8 @@ test('There is no React on the tested page', async t => {
     catch (e) {
         await t.expect(e.errMsg).contains('testcafe-react-selectors supports React version 15.x and newer');
     }
+});
+
+test('Should get component from wrapper component - Regression GH-11', async t=> {
+    await t.expect(ReactSelector('TextLabel').textContent).eql('Component inside of wrapper component');
 });
