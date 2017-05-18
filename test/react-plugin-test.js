@@ -107,6 +107,13 @@ test('Should throw exception if there is no React on the tested page', async t =
     }
 });
 
-test('Should get component from wrapper component - Regression GH-11', async t=> {
+test('Should get component from wrapper component - Regression GH-11', async t => {
     await t.expect(ReactSelector('TextLabel').textContent).eql('Component inside of wrapper component');
+    await t.expect(ReactSelector('WrapperComponent').textContent).eql('Component inside of wrapper component');
+});
+
+test('Should not get dom nodes from nested components', async t => {
+    await t.expect(ReactSelector('ListItem p').count).eql(6);
+    await t.expect(ReactSelector('List p').count).eql(0);
+    await t.expect(ReactSelector('App ListItem').count).eql(6);
 });

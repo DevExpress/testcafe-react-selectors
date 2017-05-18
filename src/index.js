@@ -39,7 +39,27 @@ export default Selector(selector => {
                 if (!reactComponent)
                     return;
 
-                cb(reactComponent);
+                const componentWasFound = cb(reactComponent);
+
+                //NOTE: we're looking for only between the children of component
+                if (selectorIndex > 0 && selectorIndex < selectorElms.length && !componentWasFound) {
+                    const isTag  = selectorElms[selectorIndex].toLowerCase() === selectorElms[selectorIndex];
+                    const parent = reactComponent._hostParent;
+
+                    if (isTag && parent) {
+                        const renderedChildren     = parent._renderedChildren;
+                        const renderedChildrenKeys = Object.keys(renderedChildren);
+
+                        const currentElementId = renderedChildrenKeys.filter(key => {
+                            var renderedComponent = renderedChildren[key]._renderedComponent;
+
+                            return renderedComponent && renderedComponent._domID === reactComponent._domID;
+                        })[0];
+
+                        if (!renderedChildren[currentElementId])
+                            return;
+                    }
+                }
 
                 const currSelectorIndex = selectorIndex;
                 const renderedChildren  = reactComponent._renderedChildren ||
@@ -58,19 +78,19 @@ export default Selector(selector => {
                 const componentName = reactComponent.getName ? reactComponent.getName() : reactComponent._tag;
 
                 if (!componentName)
-                    return null;
+                    return false;
 
                 const domNode = reactComponent.getHostNode();
 
                 if (selectorElms[selectorIndex] !== componentName)
-                    return null;
+                    return false;
 
                 if (selectorIndex === selectorElms.length - 1)
                     foundComponents.push(domNode);
 
                 selectorIndex++;
 
-                return null;
+                return true;
             });
         }
 
