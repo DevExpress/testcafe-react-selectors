@@ -24,7 +24,8 @@
     "gulp-babel": "^6.1.1",
     "gulp-eslint": "^1.1.1",
     "publish-please": "^2.2.0",
-    "react": "15.3.0"
+    "react": "15.3.0",
+    "testcafe": "*"
   },
   "scripts": {
     "test": "gulp test",
@@ -37,7 +38,7 @@
     "selectors",
     "plugin"
   ],
-  "dependencies": {
-    "testcafe": "^0.15.0"
+  "peerDependencies": {
+    "testcafe": "*"
   }
 }
