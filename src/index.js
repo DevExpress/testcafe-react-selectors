@@ -74,8 +74,22 @@ export default Selector(selector => {
                 });
             }
 
+            function getName (component) {
+                let name = component.getName();
+
+                //NOTE: getName() returns null in IE
+                if (name === null) {
+                    const matches = component._instance.constructor.toString().match(/^function\s*([^\s(]+)/);
+
+                    if (matches)
+                        name = matches[1];
+                }
+
+                return name;
+            }
+
             return walk(getRootComponent(rootEl), reactComponent => {
-                const componentName = reactComponent.getName ? reactComponent.getName() : reactComponent._tag;
+                const componentName = reactComponent.getName ? getName(reactComponent) : reactComponent._tag;
 
                 if (!componentName)
                     return false;
