@@ -2,17 +2,17 @@
 var Selector = require('testcafe').Selector;
 
 export default Selector(selector => {
-    var rootEl                = document.querySelector('[data-reactroot]');
-    var supportedReactVersion = rootEl && Object.keys(rootEl).some(prop => /^__reactInternalInstance/.test(prop));
+    var rootEls               = document.querySelectorAll('[data-reactroot]');
+    var supportedReactVersion = rootEls.length &&
+                                Object.keys(rootEls[0]).some(prop => /^__reactInternalInstance/.test(prop));
 
     if (!supportedReactVersion)
         throw new Error('testcafe-react-selectors supports React version 15.x and newer');
 
     function reactSelect (compositeSelector) {
         const foundComponents = [];
-        let foundInstance     = null;
 
-        function getComponentInstance (el) {
+        function getRootComponent (el) {
             if (!el || el.nodeType !== 1)
                 return null;
 
@@ -20,37 +20,11 @@ export default Selector(selector => {
                 if (!/^__reactInternalInstance/.test(prop))
                     continue;
 
-                //NOTE: stateless component
-                if (!el[prop]._currentElement._owner)
-                    return null;
-
-                return el[prop]._currentElement._owner._instance;
+                return el[prop]._currentElement._owner;
             }
         }
 
-        function getComponentName (DOMNode) {
-            let reactComponentName     = null;
-            const reactComponentParent = foundInstance._reactInternalInstance._renderedComponent._hostNode;
-
-            if (reactComponentParent === DOMNode) {
-                //NOTE: IE hack
-                if (foundInstance.constructor.name)
-                    reactComponentName = foundInstance.constructor.name;
-                else {
-                    const matches = foundInstance.constructor.toString().match(/^function\s*([^\s(]+)/);
-
-                    reactComponentName = matches ? matches[1] : DOMNode.tagName.toLowerCase();
-                }
-            }
-            else {
-                reactComponentName = DOMNode.tagName.toLowerCase();
-                foundInstance      = null;
-            }
-
-            return reactComponentName;
-        }
-
-        function findDOMNode () {
+        function findDOMNode (rootEl) {
             if (typeof compositeSelector !== 'string')
                 throw new Error(`Selector option is expected to be a string, but it was ${typeof compositeSelector}.`);
 
@@ -60,45 +34,81 @@ export default Selector(selector => {
                 .filter(el => !!el)
                 .map(el => el.trim());
 
-            function walk (node, cb) {
-                var searchResult      = cb(node);
-                var currSelectorIndex = selectorIndex;
+            function walk (reactComponent, cb) {
+                //NOTE: stateless component
+                if (!reactComponent)
+                    return;
 
-                if (searchResult)
-                    return searchResult;
+                const componentWasFound = cb(reactComponent);
 
-                node = node.firstChild;
+                //NOTE: we're looking for only between the children of component
+                if (selectorIndex > 0 && selectorIndex < selectorElms.length && !componentWasFound) {
+                    const isTag  = selectorElms[selectorIndex].toLowerCase() === selectorElms[selectorIndex];
+                    const parent = reactComponent._hostParent;
 
-                while (node) {
-                    searchResult = walk(node, cb);
+                    if (isTag && parent) {
+                        const renderedChildren     = parent._renderedChildren;
+                        const renderedChildrenKeys = Object.keys(renderedChildren);
 
-                    if (searchResult)
-                        return searchResult;
+                        const currentElementId = renderedChildrenKeys.filter(key => {
+                            var renderedComponent = renderedChildren[key]._renderedComponent;
 
-                    node          = node.nextSibling;
-                    selectorIndex = currSelectorIndex;
+                            return renderedComponent && renderedComponent._domID === reactComponent._domID;
+                        })[0];
+
+                        if (!renderedChildren[currentElementId])
+                            return;
+                    }
                 }
+
+                const currSelectorIndex = selectorIndex;
+                const renderedChildren  = reactComponent._renderedChildren ||
+                                          reactComponent._renderedComponent &&
+                                          { _: reactComponent._renderedComponent } ||
+                                          {};
+
+                Object.keys(renderedChildren).forEach(key => {
+                    walk(renderedChildren[key], cb);
+
+                    selectorIndex = currSelectorIndex;
+                });
             }
 
-            return walk(document.body, node => {
-                if (!(foundInstance = getComponentInstance(node)))
-                    return null;
+            function getName (component) {
+                let name = component.getName();
 
-                const componentName = getComponentName(node);
+                //NOTE: getName() returns null in IE
+                if (name === null) {
+                    const matches = component._instance.constructor.toString().match(/^function\s*([^\s(]+)/);
+
+                    if (matches)
+                        name = matches[1];
+                }
+
+                return name;
+            }
+
+            return walk(getRootComponent(rootEl), reactComponent => {
+                const componentName = reactComponent.getName ? getName(reactComponent) : reactComponent._tag;
+
+                if (!componentName)
+                    return false;
+
+                const domNode = reactComponent.getHostNode();
 
                 if (selectorElms[selectorIndex] !== componentName)
-                    return null;
+                    return false;
 
                 if (selectorIndex === selectorElms.length - 1)
-                    foundComponents.push(node);
+                    foundComponents.push(domNode);
 
                 selectorIndex++;
 
-                return null;
+                return true;
             });
         }
 
-        findDOMNode();
+        [].forEach.call(rootEls, findDOMNode);
 
         return foundComponents;
     }
@@ -121,20 +131,39 @@ export default Selector(selector => {
             if (!el || el.nodeType !== 1)
                 return null;
 
+            const isRootNode = el.hasAttribute('data-reactroot');
+
             for (var prop of Object.keys(el)) {
                 if (!/^__reactInternalInstance/.test(prop))
                     continue;
 
-                //NOTE: stateless component
-                if (!el[prop]._currentElement._owner)
+                if (isRootNode) {
+                    const rootComponent = el[prop]._currentElement._owner;
+
+                    //NOTE: stateless
+                    if (!rootComponent)
+                        return null;
+
+                    return rootComponent._instance;
+                }
+
+                const parent               = el[prop]._hostParent;
+                const renderedChildren     = parent._renderedChildren;
+                const renderedChildrenKeys = Object.keys(renderedChildren);
+
+                /*eslint-disable no-loop-func*/
+                const currentElementId = renderedChildrenKeys.filter(key => {
+                    var renderedComponent = renderedChildren[key]._renderedComponent;
+
+                    return renderedComponent && renderedComponent._domID === el[prop]._domID;
+                })[0];
+                /*eslint-enable no-loop-func*/
+
+                //NOTE: Not component
+                if (!renderedChildren[currentElementId])
                     return null;
 
-                var foundInstance = el[prop]._currentElement._owner._instance;
-
-                if (foundInstance._reactInternalInstance._renderedComponent._hostNode !== el)
-                    return null;
-
-                return foundInstance;
+                return renderedChildren[currentElementId]._instance;
             }
         }
 
