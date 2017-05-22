@@ -46,8 +46,14 @@ class TextLabel extends React.Component {
 }
 
 class WrapperComponent extends React.Component {
+    constructor () {
+        super();
+
+        this.state = { width: 100 };
+    }
+
     render () {
-        return <TextLabel />;
+        return <TextLabel color="#fff"/>;
     }
 }
 
@@ -70,7 +76,7 @@ class App extends React.Component {
                         <List id="l2"/>
                     </div>
                 </div>
-                <WrapperComponent />
+                <WrapperComponent direction="horizontal"/>
             </div>
         );
     }

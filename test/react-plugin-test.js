@@ -117,3 +117,17 @@ test('Should not get dom nodes from nested components', async t => {
     await t.expect(ReactSelector('List p').count).eql(0);
     await t.expect(ReactSelector('App ListItem').count).eql(6);
 });
+
+test('Should get props and state from components with common DOM node - Regression GH-15', async t => {
+    await t.expect(ReactSelector('WrapperComponent')
+        .getReact(({ props, state }) => {
+            return { direction: props.direction, width: state.width };
+        }))
+        .eql({ direction: 'horizontal', width: 100 });
+
+    await t.expect(ReactSelector('TextLabel')
+        .getReact(({ props, state }) => {
+            return { color: props.color, text: state.text };
+        }))
+        .eql({ color: '#fff', text: 'Component inside of wrapper component' });
+});
