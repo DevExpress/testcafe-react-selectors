@@ -1,4 +1,4 @@
-/*global document*/
+/*global document window*/
 var Selector = require('testcafe').Selector;
 
 export default Selector(selector => {
@@ -9,20 +9,55 @@ export default Selector(selector => {
     if (!supportedReactVersion)
         throw new Error('testcafe-react-selectors supports React version 15.x and newer');
 
+    function getName (component) {
+        if (!component.getName)
+            return component._tag;
+
+        let name = component.getName();
+
+        //NOTE: getName() returns null in IE
+        if (name === null) {
+            const matches = component._instance.constructor.toString().match(/^function\s*([^\s(]+)/);
+
+            if (matches)
+                name = matches[1];
+        }
+
+        return name;
+    }
+
+    function getRootComponent (el) {
+        if (!el || el.nodeType !== 1)
+            return null;
+
+        for (var prop of Object.keys(el)) {
+            if (!/^__reactInternalInstance/.test(prop))
+                continue;
+
+            return el[prop]._currentElement._owner;
+        }
+    }
+
+    function defineSelectorProperty (value) {
+        if (window['%testCafeReactSelector%'])
+            delete window['%testCafeReactSelector%'];
+
+        Object.defineProperty(window, '%testCafeReactSelector%', {
+            enumerable:   false,
+            configurable: true,
+            writable:     false,
+            value:        value
+        });
+    }
+
+    if (!window['%testCafeReactSelectorUtils%']) {
+        window['%testCafeReactSelectorUtils%'] = {
+            getName: getName
+        };
+    }
+
     function reactSelect (compositeSelector) {
         const foundComponents = [];
-
-        function getRootComponent (el) {
-            if (!el || el.nodeType !== 1)
-                return null;
-
-            for (var prop of Object.keys(el)) {
-                if (!/^__reactInternalInstance/.test(prop))
-                    continue;
-
-                return el[prop]._currentElement._owner;
-            }
-        }
 
         function findDOMNode (rootEl) {
             if (typeof compositeSelector !== 'string')
@@ -33,6 +68,9 @@ export default Selector(selector => {
                 .split(' ')
                 .filter(el => !!el)
                 .map(el => el.trim());
+
+            if (selectorElms.length)
+                defineSelectorProperty(selectorElms[selectorElms.length - 1]);
 
             function walk (reactComponent, cb) {
                 //NOTE: stateless component
@@ -47,7 +85,7 @@ export default Selector(selector => {
                     const parent = reactComponent._hostParent;
 
                     if (isTag && parent) {
-                        const renderedChildren     = parent._renderedChildren;
+                        var renderedChildren       = parent._renderedChildren;
                         const renderedChildrenKeys = Object.keys(renderedChildren);
 
                         const currentElementId = renderedChildrenKeys.filter(key => {
@@ -62,10 +100,11 @@ export default Selector(selector => {
                 }
 
                 const currSelectorIndex = selectorIndex;
-                const renderedChildren  = reactComponent._renderedChildren ||
-                                          reactComponent._renderedComponent &&
-                                          { _: reactComponent._renderedComponent } ||
-                                          {};
+
+                renderedChildren = reactComponent._renderedChildren ||
+                                   reactComponent._renderedComponent &&
+                                   { _: reactComponent._renderedComponent } ||
+                                   {};
 
                 Object.keys(renderedChildren).forEach(key => {
                     walk(renderedChildren[key], cb);
@@ -74,22 +113,9 @@ export default Selector(selector => {
                 });
             }
 
-            function getName (component) {
-                let name = component.getName();
-
-                //NOTE: getName() returns null in IE
-                if (name === null) {
-                    const matches = component._instance.constructor.toString().match(/^function\s*([^\s(]+)/);
-
-                    if (matches)
-                        name = matches[1];
-                }
-
-                return name;
-            }
 
             return walk(getRootComponent(rootEl), reactComponent => {
-                const componentName = reactComponent.getName ? getName(reactComponent) : reactComponent._tag;
+                const componentName = getName(reactComponent);
 
                 if (!componentName)
                     return false;
@@ -116,6 +142,8 @@ export default Selector(selector => {
     return reactSelect(selector);
 }).addCustomMethods({
     getReact: (node, fn) => {
+        const utils = window['%testCafeReactSelectorUtils%'];
+
         function copyReactObject (obj) {
             var copiedObj = {};
 
@@ -125,6 +153,31 @@ export default Selector(selector => {
             }
 
             return copiedObj;
+        }
+
+        function getComponentInstance (component) {
+            const parent               = component._hostParent;
+            const renderedChildren     = parent._renderedChildren || {};
+            const renderedChildrenKeys = Object.keys(renderedChildren);
+            const componentName        = window['%testCafeReactSelector%'];
+
+            for (let index = 0; index < renderedChildrenKeys.length; ++index) {
+                const key             = renderedChildrenKeys[index];
+                let renderedComponent = renderedChildren[key];
+                let componentInstance = null;
+
+                while (renderedComponent) {
+                    if (componentName === utils.getName(renderedComponent))
+                        componentInstance = renderedComponent._instance;
+
+                    if (renderedComponent._domID === component._domID)
+                        return componentInstance;
+
+                    renderedComponent = renderedComponent._renderedComponent;
+                }
+            }
+
+            return null;
         }
 
         function getComponentForDOMNode (el) {
@@ -147,23 +200,7 @@ export default Selector(selector => {
                     return rootComponent._instance;
                 }
 
-                const parent               = el[prop]._hostParent;
-                const renderedChildren     = parent._renderedChildren;
-                const renderedChildrenKeys = Object.keys(renderedChildren);
-
-                /*eslint-disable no-loop-func*/
-                const currentElementId = renderedChildrenKeys.filter(key => {
-                    var renderedComponent = renderedChildren[key]._renderedComponent;
-
-                    return renderedComponent && renderedComponent._domID === el[prop]._domID;
-                })[0];
-                /*eslint-enable no-loop-func*/
-
-                //NOTE: Not component
-                if (!renderedChildren[currentElementId])
-                    return null;
-
-                return renderedChildren[currentElementId]._instance;
+                return getComponentInstance(el[prop]);
             }
         }
 
@@ -171,6 +208,8 @@ export default Selector(selector => {
 
         if (!componentInstance)
             return null;
+
+        delete window['%testCafeReactSelector%'];
 
         if (typeof fn === 'function') {
             return fn({
