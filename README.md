@@ -37,7 +37,7 @@ const todoInput = ReactSelector('TodoInput');
 To obtain a nested component or DOM element, you can use a combined selector or add DOM element's tag name.
 
 ```js
-import ReactSelector from 'testcafe-react-selector';
+import ReactSelector from 'testcafe-react-selectors';
 
 const TodoList         = ReactSelector('TodoApp TodoList');
 const itemsCountStatus = ReactSelector('TodoApp div');
