@@ -29,7 +29,7 @@ Suppose you have the following JSX.
 To get a root DOM element for a component, pass the component name to the `ReactSelector` constructor.
 
 ```js
-import ReactSelector from 'testcafe-react-selector';
+import ReactSelector from 'testcafe-react-selectors';
 
 const todoInput = ReactSelector('TodoInput');
 ```
@@ -50,7 +50,7 @@ Warning: if you specify a DOM element’s tag name, React selectors search for t
 Selectors returned by ReactSelector( selector ) are recognized as TestCafe selectors. You can combine them with regular selectors and filter with `.withText`, `.nth`, `.find` and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
 
 ```js
-import ReactSelector from 'testcafe-react-selector';
+import ReactSelector from 'testcafe-react-selectors';
 
 var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 ```
@@ -58,7 +58,7 @@ var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 Let’s use the API described above to add a task to a Todo list and check that the number of items changed.
 
 ```js
-import ReactSelector from 'testcafe-react-selector';
+import ReactSelector from 'testcafe-react-selectors';
 
 fixture `TODO list test`
 	.page('http://localhost:1337');
@@ -94,7 +94,7 @@ Where `props` are React component properties excluding properties of its `childr
 Example
 
 ```js
-import ReactSelector from 'testcafe-react-selector';
+import ReactSelector from 'testcafe-react-selectors';
 
 fixture `TODO list test`
 	.page('http://localhost:1337');
@@ -115,7 +115,7 @@ ReactSelector('Component').getReact(({ props, state }) => {...})
 Example
 
 ```js
-import ReactSelector from 'testcafe-react-selector';
+import ReactSelector from 'testcafe-react-selectors';
 
 fixture `TODO list test`
     .page('http://localhost:1337');
