@@ -100,10 +100,11 @@ fixture `TODO list test`
 	.page('http://localhost:1337');
 
 test('Check list item', async t => {
-    const el = ReactSelector('TodoList');
+    const el         = ReactSelector('TodoList');
+    const component  = await el.getReact();
 
-    await t.expect(el.getReact().props.priority).eql('High');
-    await t.expect(el.getReact().state.isActive).eql(false);
+    await t.expect(component.props.priority).eql('High');
+    await t.expect(component.state.isActive).eql(false);
 });
 ```
 
