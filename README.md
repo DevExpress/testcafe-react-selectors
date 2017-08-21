@@ -139,14 +139,14 @@ The `.getReact()` method can be called for the `ReactSelector` or the snapshot t
 * Search for a component starts from the root React component, so selectors like `ReactSelector('body MyComponent')` will return `null`.
 * ReactSelectors need class names to select components on the page. Code minification usually does not keep the original class names. So you should either use non-minified code or configure the minificator to keep class names.
   
-  For `babel-minify`, do the following:
+  For `babel-minify`, add the following options to the configuration:
     
   ```js
   { keepClassName: true, keepFnName: true }
   ```
 
-   In UglifyJS, use the following configuration:
+  In UglifyJS, use the following configuration:
      
    ```js
-   mangle: { keep_fnames: true },
+   { mangle: { keep_fnames: true } }
    ```
