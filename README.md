@@ -133,6 +133,20 @@ test('Check list item', async t => {
 The `.getReact()` method can be called for the `ReactSelector` or the snapshot this selector returns.
 
 #### Limitations
-`testcafe-react-selectors` support ReactJS starting with version 15.
-ReactSelector can only find components inherited from `React.Component`. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
-Search for a component starts from the root React component, so selectors like `ReactSelector('body MyComponent')` will return `null`.
+
+* `testcafe-react-selectors` support ReactJS starting with version 15.
+* ReactSelector can only find components inherited from `React.Component`. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
+* Search for a component starts from the root React component, so selectors like `ReactSelector('body MyComponent')` will return `null`.
+* ReactSelectors need class names to select components on the page. Code minification usually does not keep the original class names. So you should either use non-minified code or configure the minificator to keep class names.
+  
+  For `babel-minify`, add the following options to the configuration:
+    
+  ```js
+  { keepClassName: true, keepFnName: true }
+  ```
+
+  In UglifyJS, use the following configuration:
+     
+   ```js
+   { mangle: { keep_fnames: true } }
+   ```
