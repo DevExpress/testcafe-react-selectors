@@ -181,7 +181,7 @@ export default Selector(selector => {
         }
 
         function getComponentForDOMNode (el) {
-            if (!el || el.nodeType !== 1 || el.nodeType !== 8)
+            if (!el || !(el.nodeType === 1 || el.nodeType === 8))
                 return null;
 
             const isRootNode = el.hasAttribute && el.hasAttribute('data-reactroot');
