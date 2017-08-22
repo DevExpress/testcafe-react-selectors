@@ -181,10 +181,10 @@ export default Selector(selector => {
         }
 
         function getComponentForDOMNode (el) {
-            if (!el || el.nodeType !== 1)
+            if (!el || !(el.nodeType === 1 || el.nodeType === 8))
                 return null;
 
-            const isRootNode = el.hasAttribute('data-reactroot');
+            const isRootNode = el.hasAttribute && el.hasAttribute('data-reactroot');
 
             for (var prop of Object.keys(el)) {
                 if (!/^__reactInternalInstance/.test(prop))

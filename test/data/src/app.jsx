@@ -57,6 +57,21 @@ class WrapperComponent extends React.Component {
     }
 }
 
+class EmptyComponent extends React.Component {
+    constructor () {
+        super();
+
+        this.state = {
+            id:   1,
+            text: null
+        };
+    }
+
+    render () {
+        return this.state.text;
+    }
+}
+
 class App extends React.Component {
     constructor () {
         super();
@@ -77,6 +92,7 @@ class App extends React.Component {
                     </div>
                 </div>
                 <WrapperComponent direction="horizontal"/>
+                <EmptyComponent />
             </div>
         );
     }
