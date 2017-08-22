@@ -131,3 +131,9 @@ test('Should get props and state from components with common DOM node - Regressi
         }))
         .eql({ color: '#fff', text: 'Component inside of wrapper component' });
 });
+
+test('Should get the component with empty output', async t => {
+    const component = await ReactSelector('EmptyComponent');
+
+    await t.expect(component.getReact(({ state }) => state.id)).eql(1);
+});
