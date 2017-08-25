@@ -37,13 +37,9 @@ test('Should get DOM node by composite selector', async t => {
 });
 
 test('Should get DOM node for stateless component', async t => {
-    var stateless1 = await ReactSelector('Stateless1');
-    var stateless2 = await ReactSelector('Stateless2');
-    var stateless3 = await ReactSelector('Stateless3');
-
-    await t.expect(stateless1.textContent).ok('test');
-    await t.expect(stateless2).ok();
-    await t.expect(stateless3).ok();
+    await t.expect(ReactSelector('Stateless1').textContent).ok('test');
+    await t.expect(ReactSelector('Stateless2').exists).ok();
+    await t.expect(ReactSelector('Stateless3').exists).ok();
 });
 
 test('Should get DOM node for pure component', async t => {
