@@ -1,3 +1,5 @@
+import { Selector } from 'testcafe';
+
 declare global {
     interface Selector {
         getReact(filter?:Function):any;
