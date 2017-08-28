@@ -43,9 +43,7 @@ test('Should get DOM node for stateless component', async t => {
 });
 
 test('Should get DOM node for pure component', async t => {
-    var pureComponent = await ReactSelector('PureComponent');
-
-    await t.expect(pureComponent).ok();
+    await t.expect(ReactSelector('PureComponent').exists).ok();
 });
 
 test('Should not get DOM node for element outside react component tree ', async t => {
