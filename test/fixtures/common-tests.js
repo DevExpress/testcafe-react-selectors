@@ -1,9 +1,6 @@
 /*global fixture test document*/
-import ReactSelector from '../lib';
-import initTestServer from './server';
+import ReactSelector from '../../';
 import { ClientFunction } from 'testcafe';
-
-initTestServer();
 
 fixture('ReactJS TestCafe plugin').page('http://localhost:1355');
 

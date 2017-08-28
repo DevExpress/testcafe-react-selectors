@@ -5,7 +5,6 @@
     "babel-preset-stage-2"
   ],
   "plugins": [
-    "transform-runtime",
-    "add-module-exports"
+    "transform-runtime"
   ]
 }
