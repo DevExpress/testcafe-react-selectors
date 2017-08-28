@@ -1,8 +1,13 @@
-var babel          = require('gulp-babel');
-var createTestCafe = require('testcafe');
-var del            = require('del');
-var eslint         = require('gulp-eslint');
-var gulp           = require('gulp');
+var babel           = require('gulp-babel');
+var createTestCafe  = require('testcafe');
+var del             = require('del');
+var eslint          = require('gulp-eslint');
+var startTestServer = require('./test/server');
+var glob            = require('glob');
+var gulp            = require('gulp');
+
+const HangPromise = new Promise(() => {
+});
 
 gulp.task('clean', function (cb) {
     del([
@@ -39,13 +44,21 @@ gulp.task('build', ['clean', 'lint'], function () {
 });
 
 gulp.task('test', ['build', 'build-test-app'], function () {
-    return createTestCafe('localhost', 1337, 1338)
-        .then(testCafe => {
-            return testCafe.createRunner()
-                .src('test/react-plugin-test.js')
-                .browsers(['chrome', 'firefox', 'ie'])
-                .reporter('list')
-                .run();
-        })
-        .then(process.exit);
+    startTestServer();
+
+    glob('test/fixtures/**/*.{js,ts}', (err, files) => {
+        if (err) throw err;
+
+        createTestCafe('localhost', 1337, 1338)
+            .then(testCafe => {
+                return testCafe.createRunner()
+                    .src(files)
+                    .browsers(['chrome', 'firefox', 'ie'])
+                    .reporter('list')
+                    .run();
+            })
+            .then(process.exit);
+    });
+
+    return HangPromise;
 });
