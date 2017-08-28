@@ -9,6 +9,8 @@ export default Selector(selector => {
     if (!supportedReactVersion)
         throw new Error('testcafe-react-selectors supports React version 15.x and newer');
 
+    const visitedComponents = [];
+
     function getName (component) {
         if (!component.getName)
             return component._tag;
@@ -31,16 +33,14 @@ export default Selector(selector => {
             return null;
 
         for (var prop of Object.keys(el)) {
-            if (!/^__reactInternalInstance/.test(prop))
-                continue;
+            if (!/^__reactInternalInstance/.test(prop)) continue;
 
             return el[prop]._currentElement._owner;
         }
     }
 
     function defineSelectorProperty (value) {
-        if (window['%testCafeReactSelector%'])
-            delete window['%testCafeReactSelector%'];
+        if (window['%testCafeReactSelector%']) delete window['%testCafeReactSelector%'];
 
         Object.defineProperty(window, '%testCafeReactSelector%', {
             enumerable:   false,
@@ -50,10 +50,53 @@ export default Selector(selector => {
         });
     }
 
-    if (!window['%testCafeReactSelectorUtils%']) {
-        window['%testCafeReactSelectorUtils%'] = {
-            getName: getName
-        };
+    if (!window['%testCafeReactSelectorUtils%'])
+        window['%testCafeReactSelectorUtils%'] = { getName };
+
+    function findContainerForCommentNode (domNode, component) {
+        const container = domNode.nodeType === 8 && component._instance.container;
+
+        if (!container) return domNode;
+
+        return component._instance.container.querySelector('[data-reactroot]');
+    }
+
+    function checkRootNodeVisited (component) {
+        return visitedComponents.indexOf(component) > -1;
+    }
+
+    function getRenderedChildren (component) {
+        const hostNode     = component.getHostNode();
+        const hostNodeType = hostNode.nodeType;
+        const container    = component._instance && component._instance.container;
+        const isRootNode   = hostNode.hasAttribute && hostNode.hasAttribute('data-reactroot');
+
+        //NOTE: prevent the repeating visiting of reactRoot Component inside of portal
+        if (component._renderedComponent && isRootNode) {
+            if (checkRootNodeVisited(component._renderedComponent))
+                return [];
+
+            visitedComponents.push(component._renderedComponent);
+        }
+
+        //NOTE: Detect if it's a portal component
+        if (hostNodeType === 8 && container) {
+            const domNode = container.querySelector('[data-reactroot]');
+
+            return { _: getRootComponent(domNode) };
+        }
+
+        return component._renderedChildren ||
+               component._renderedComponent &&
+               { _: component._renderedComponent } ||
+               {};
+    }
+
+    function parseSelectorElements (compositeSelector) {
+        return compositeSelector
+            .split(' ')
+            .filter(el => !!el)
+            .map(el => el.trim());
     }
 
     function reactSelect (compositeSelector) {
@@ -64,18 +107,13 @@ export default Selector(selector => {
                 throw new Error(`Selector option is expected to be a string, but it was ${typeof compositeSelector}.`);
 
             var selectorIndex = 0;
-            var selectorElms  = compositeSelector
-                .split(' ')
-                .filter(el => !!el)
-                .map(el => el.trim());
+            var selectorElms  = parseSelectorElements(compositeSelector);
 
             if (selectorElms.length)
                 defineSelectorProperty(selectorElms[selectorElms.length - 1]);
 
             function walk (reactComponent, cb) {
-                //NOTE: stateless component
-                if (!reactComponent)
-                    return;
+                if (!reactComponent) return;
 
                 const componentWasFound = cb(reactComponent);
 
@@ -101,10 +139,7 @@ export default Selector(selector => {
 
                 const currSelectorIndex = selectorIndex;
 
-                renderedChildren = reactComponent._renderedChildren ||
-                                   reactComponent._renderedComponent &&
-                                   { _: reactComponent._renderedComponent } ||
-                                   {};
+                renderedChildren = getRenderedChildren(reactComponent);
 
                 Object.keys(renderedChildren).forEach(key => {
                     walk(renderedChildren[key], cb);
@@ -113,17 +148,19 @@ export default Selector(selector => {
                 });
             }
 
-
             return walk(getRootComponent(rootEl), reactComponent => {
                 const componentName = getName(reactComponent);
 
-                if (!componentName)
-                    return false;
+                if (!componentName) return false;
 
-                const domNode = reactComponent.getHostNode();
+                let domNode = reactComponent.getHostNode();
 
-                if (selectorElms[selectorIndex] !== componentName)
-                    return false;
+                //NOTE: we try to find correct domNode for portal component
+                //Portal component renders into the comment node, but the tree of sub components renders to separate domNode
+                if (domNode.nodeType === 8)
+                    domNode = findContainerForCommentNode(domNode, reactComponent);
+
+                if (selectorElms[selectorIndex] !== componentName) return false;
 
                 if (selectorIndex === selectorElms.length - 1)
                     foundComponents.push(domNode);

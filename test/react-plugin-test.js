@@ -113,9 +113,9 @@ test('Should get component from wrapper component - Regression GH-11', async t =
 });
 
 test('Should not get dom nodes from nested components', async t => {
-    await t.expect(ReactSelector('ListItem p').count).eql(6);
+    await t.expect(ReactSelector('ListItem p').count).eql(9);
     await t.expect(ReactSelector('List p').count).eql(0);
-    await t.expect(ReactSelector('App ListItem').count).eql(6);
+    await t.expect(ReactSelector('App ListItem').count).eql(9);
 });
 
 test('Should get props and state from components with common DOM node - Regression GH-15', async t => {
@@ -136,4 +136,21 @@ test('Should get the component with empty output', async t => {
     const component = await ReactSelector('EmptyComponent');
 
     await t.expect(component.getReact(({ state }) => state.id)).eql(1);
+});
+
+test('Should search inside of portal component', async t => {
+    const portal         = ReactSelector('Portal');
+    const list           = ReactSelector('Portal List');
+    const listItem       = ReactSelector('Portal ListItem');
+    const listId         = await list.getReact(({ props }) => props.id);
+    const pureComponent1 = ReactSelector('PortalWithPureComponent PureComponent');
+    const pureComponent2 = ReactSelector('PureComponent');
+
+    await t
+        .expect(portal.exists).ok()
+        .expect(list.exists).ok()
+        .expect(listItem.exists).ok()
+        .expect(listId).eql('l3')
+        .expect(pureComponent1.exists).ok()
+        .expect(pureComponent2.exists).ok();
 });

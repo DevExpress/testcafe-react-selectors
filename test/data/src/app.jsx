@@ -72,6 +72,68 @@ class EmptyComponent extends React.Component {
     }
 }
 
+class Portal extends React.Component {
+    constructor () {
+        super();
+
+        this.container = document.createElement('div');
+
+        document.body.appendChild(this.container);
+    }
+
+    _renderPortal () {
+        ReactDOM.unstable_renderSubtreeIntoContainer(
+            this,
+            <List id="l3"/>,
+            this.container
+        );
+    }
+
+    componentDidMount () {
+        this._renderPortal();
+    }
+
+    render () {
+        return null;
+    }
+}
+
+class PureComponent extends React.PureComponent {
+    constructor () {
+        super();
+    }
+
+    render () {
+        return <span>PureComponent</span>;
+    }
+}
+
+class PortalWithPureComponent extends React.Component {
+    constructor () {
+        super();
+
+        this.container = document.createElement('div');
+
+        document.body.appendChild(this.container);
+    }
+
+    _renderPortal () {
+        ReactDOM.unstable_renderSubtreeIntoContainer(
+            this,
+            <PureComponent/>,
+            this.container
+        );
+    }
+
+    componentDidMount () {
+        this._renderPortal();
+    }
+
+    render () {
+        return null;
+    }
+}
+
 class App extends React.Component {
     constructor () {
         super();
@@ -93,6 +155,8 @@ class App extends React.Component {
                 </div>
                 <WrapperComponent direction="horizontal"/>
                 <EmptyComponent />
+                <Portal />
+                <PortalWithPureComponent/>
             </div>
         );
     }
