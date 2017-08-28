@@ -1,6 +1,5 @@
-/*global fixture test document*/
+/*global fixture test*/
 import ReactSelector from '../../';
-import { ClientFunction } from 'testcafe';
 
 fixture `TypeScript`
     .page('http://localhost:1355');

@@ -20,7 +20,7 @@ gulp.task('lint', function () {
     return gulp
         .src([
             'src/**/*.js',
-            'test/**/*.js',
+            'test/**/*.{js,ts}',
             '!test/data/**/*.js',
             'Gulpfile.js'
         ])
