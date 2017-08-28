@@ -36,17 +36,19 @@ test('Should get DOM node by composite selector', async t => {
         .expect(await listItem2.id).eql('l1-item2');
 });
 
-test('Should not get DOM node for stateless component', async t => {
-    var stateless = await ReactSelector.with({ timeout: 100 })('StatelessComponent');
-
-    await t.expect(stateless).notOk();
+test('Should get DOM node for stateless component', async t => {
+    await t.expect(ReactSelector('Stateless1').textContent).ok('test');
+    await t.expect(ReactSelector('Stateless2').exists).ok();
+    await t.expect(ReactSelector('Stateless3').exists).ok();
 });
 
+test('Should get DOM node for pure component', async t => {
+    await t.expect(ReactSelector('PureComponent').exists).ok();
+});
 
 test('Should not get DOM node for element outside react component tree ', async t => {
     await t.expect(await ReactSelector.with({ timeout: 100 })('figure')).notOk();
 });
-
 
 test('Should get component state', async t => {
     var listItem1React  = await ReactSelector('ListItem').getReact();

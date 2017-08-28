@@ -134,6 +134,18 @@ class PortalWithPureComponent extends React.Component {
     }
 }
 
+var Stateless1 = function Stateless1 (props) {
+    return <div>{props.text}</div>;
+};
+
+var Stateless2 = function Stateless2 () {
+    return <div>test</div>;
+};
+
+var Stateless3 = function (props) {
+    return <div>{props.text}</div>;
+};
+
 class App extends React.Component {
     constructor () {
         super();
@@ -155,16 +167,18 @@ class App extends React.Component {
                 </div>
                 <WrapperComponent direction="horizontal"/>
                 <EmptyComponent />
+                <PureComponent />
+
                 <Portal />
                 <PortalWithPureComponent/>
+
+                <Stateless1 text="test"/>
+                <Stateless2/>
+                <Stateless3 text="test"/>
             </div>
         );
     }
 }
 
-function Stateless (props) {
-    return <div>{props.text}</div>;
-}
-
 ReactDOM.render(React.createElement(App), document.getElementById('app-container'));
-ReactDOM.render(<Stateless text="stateless"/>, document.getElementById('stateless'));
+

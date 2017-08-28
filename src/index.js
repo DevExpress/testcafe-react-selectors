@@ -12,14 +12,13 @@ export default Selector(selector => {
     const visitedComponents = [];
 
     function getName (component) {
-        if (!component.getName)
-            return component._tag;
+        const currentElement = component._currentElement;
 
-        let name = component.getName();
+        let name = component.getName ? component.getName() : component._tag;
 
-        //NOTE: getName() returns null in IE
-        if (name === null) {
-            const matches = component._instance.constructor.toString().match(/^function\s*([^\s(]+)/);
+        //NOTE: getName() returns null in IE, also it try to get function name for a stateless component
+        if (name === null && currentElement && typeof currentElement === 'object') {
+            const matches = currentElement.type.toString().match(/^function\s*([^\s(]+)/);
 
             if (matches)
                 name = matches[1];
