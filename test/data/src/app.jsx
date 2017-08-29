@@ -77,6 +77,7 @@ class Portal extends React.Component {
         super();
 
         this.container = document.createElement('div');
+        this.state     = { width: 100 };
 
         document.body.appendChild(this.container);
     }

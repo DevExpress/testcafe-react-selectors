@@ -52,14 +52,6 @@ export default Selector(selector => {
     if (!window['%testCafeReactSelectorUtils%'])
         window['%testCafeReactSelectorUtils%'] = { getName };
 
-    function findContainerForCommentNode (domNode, component) {
-        const container = domNode.nodeType === 8 && component._instance.container;
-
-        if (!container) return domNode;
-
-        return component._instance.container.querySelector('[data-reactroot]');
-    }
-
     function checkRootNodeVisited (component) {
         return visitedComponents.indexOf(component) > -1;
     }
@@ -152,12 +144,7 @@ export default Selector(selector => {
 
                 if (!componentName) return false;
 
-                let domNode = reactComponent.getHostNode();
-
-                //NOTE: we try to find correct domNode for portal component
-                //Portal component renders into the comment node, but the tree of sub components renders to separate domNode
-                if (domNode.nodeType === 8)
-                    domNode = findContainerForCommentNode(domNode, reactComponent);
+                const domNode = reactComponent.getHostNode();
 
                 if (selectorElms[selectorIndex] !== componentName) return false;
 

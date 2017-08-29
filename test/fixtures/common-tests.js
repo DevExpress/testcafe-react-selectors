@@ -139,6 +139,7 @@ test('Should get the component with empty output', async t => {
 
 test('Should search inside of portal component', async t => {
     const portal         = ReactSelector('Portal');
+    const portalWidth    = portal.getReact(({ state }) => state.width);
     const list           = ReactSelector('Portal List');
     const listItem       = ReactSelector('Portal ListItem');
     const listId         = await list.getReact(({ props }) => props.id);
@@ -147,6 +148,7 @@ test('Should search inside of portal component', async t => {
 
     await t
         .expect(portal.exists).ok()
+        .expect(portalWidth).eql(100)
         .expect(list.exists).ok()
         .expect(listItem.exists).ok()
         .expect(listId).eql('l3')
