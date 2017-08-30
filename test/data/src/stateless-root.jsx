@@ -21,5 +21,4 @@ const App = () => {
     );
 };
 
-ReactDOM.render(<App />, document.getElementById('app-container'));
-
+ReactDOM.render(<App text="AppTitle"/>, document.getElementById('app-container'));

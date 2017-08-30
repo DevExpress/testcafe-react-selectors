@@ -161,14 +161,18 @@ test('Should search inside of stateless root', async t => {
 
     await t.navigateTo('/stateless-root.html');
 
+    const App        = ReactSelector('App');
     const component1 = ReactSelector('App PureComponent');
     const component2 = ReactSelector('PureComponent');
+    const appTitle   = App.getReact(({ props }) => props.text);
     const text1      = component1.getReact(({ state }) => state.text);
     const text2      = component2.getReact(({ state }) => state.text);
 
     await t
+        .expect(App.exists).ok()
         .expect(component1.exists).ok()
         .expect(component2.exists).ok()
+        .expect(appTitle).eql('AppTitle')
         .expect(text1).eql(expectedText)
         .expect(text2).eql(expectedText);
 });
