@@ -156,7 +156,7 @@ test('Should search inside of portal component', async t => {
         .expect(pureComponent2.exists).ok();
 });
 
-test.only('Should search inside of stateless root', async t => {
+test('Should search inside of stateless root', async t => {
     const expectedText = 'PureComponent';
 
     await t.navigateTo('/stateless-root.html');
