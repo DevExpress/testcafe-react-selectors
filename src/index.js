@@ -51,7 +51,7 @@ export default Selector(selector => {
     }
 
     if (!window['%testCafeReactSelectorUtils%'])
-        window['%testCafeReactSelectorUtils%'] = { getName };
+        window['%testCafeReactSelectorUtils%'] = { getName, getRootComponent };
 
     function checkRootNodeVisited (component) {
         return visitedComponents.indexOf(component) > -1;
@@ -210,19 +210,15 @@ export default Selector(selector => {
 
             const isRootNode = el.hasAttribute && el.hasAttribute('data-reactroot');
 
+            if (isRootNode) {
+                const rootComponent = utils.getRootComponent(el);
+
+                return rootComponent._instance;
+            }
+
             for (var prop of Object.keys(el)) {
                 if (!/^__reactInternalInstance/.test(prop))
                     continue;
-
-                if (isRootNode) {
-                    const rootComponent = el[prop]._currentElement._owner;
-
-                    //NOTE: stateless
-                    if (!rootComponent)
-                        return null;
-
-                    return rootComponent._instance;
-                }
 
                 return getComponentInstance(el[prop]);
             }
