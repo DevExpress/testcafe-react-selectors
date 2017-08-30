@@ -155,3 +155,20 @@ test('Should search inside of portal component', async t => {
         .expect(pureComponent1.exists).ok()
         .expect(pureComponent2.exists).ok();
 });
+
+test('Should search inside of stateless root', async t => {
+    const expectedText = 'PureComponent';
+
+    await t.navigateTo('/stateless-root.html');
+
+    const component1 = ReactSelector('App PureComponent');
+    const component2 = ReactSelector('PureComponent');
+    const text1      = component1.getReact(({ state }) => state.text);
+    const text2      = component2.getReact(({ state }) => state.text);
+
+    await t
+        .expect(component1.exists).ok()
+        .expect(component2.exists).ok()
+        .expect(text1).eql(expectedText)
+        .expect(text2).eql(expectedText);
+});
