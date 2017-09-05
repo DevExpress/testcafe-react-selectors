@@ -34,8 +34,7 @@ export default Selector(selector => {
         for (var prop of Object.keys(el)) {
             if (!/^__reactInternalInstance/.test(prop)) continue;
 
-            return el[prop]._currentElement._owner ||
-                   el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
+            return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
         }
     }
 
