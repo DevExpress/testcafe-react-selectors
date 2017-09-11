@@ -80,16 +80,19 @@ As an alternative to [testcafe snapshot properties](http://devexpress.github.io/
 
 To obtain component properties and state, use the React selector's `.getReact()` method.
 
-This method returns a [client function](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client.html) that resolves to an object of the following structure.
+The `.getReact()` method returns a [client function](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client.html). This function resolves to an object that contains component's properties (excluding properties of its `children`) and state.
 
 ```js
-{
-    props: <component_props>,
-    state: <component_state>
-}
-```
+const reactComponent      = ReactSelector('componentTag');
+const reactComponentState = await reactComponent.getReact();
 
-Where `props` are React component properties excluding properties of its `children`, `state` – the state of the component.
+// >> reactComponentState
+//
+// {
+//     props:    <component_props>,
+//     state:    <component_state>
+// }
+```
 
 The returned client function can be passed to assertions activating the [Smart Assertion Query mechanism](https://devexpress.github.io/testcafe/documentation/test-api/assertions/#smart-assertion-query-mechanism).
 
