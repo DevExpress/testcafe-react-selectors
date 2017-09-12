@@ -83,7 +83,7 @@ To obtain component properties and state, use the React selector's `.getReact()`
 The `.getReact()` method returns a [client function](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client.html). This function resolves to an object that contains component's properties (excluding properties of its `children`) and state.
 
 ```js
-const reactComponent      = ReactSelector('componentTag');
+const reactComponent      = ReactSelector('MyComponent');
 const reactComponentState = await reactComponent.getReact();
 
 // >> reactComponentState
