@@ -76,20 +76,25 @@ test('Add new task', async t => {
 
 #### Obtaining component's props and state
 
-As an alternative to [testcafe snapshot properties](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/dom-node-state.html), you can obtain `state` or `props` of a ReactJS component. You can use them in an assertion directly thus simplifying assertion logic.
+As an alternative to [testcafe snapshot properties](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/dom-node-state.html), you can obtain `state` or `props` of a ReactJS component.
 
-To obtain component properties and state, use the React selector’s `.getReact()` method.
+To obtain component properties and state, use the React selector's `.getReact()` method.
 
-If you call this method with zero parameters, it returns an object of the following structure.
+The `.getReact()` method returns a [client function](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client.html). This function resolves to an object that contains component's properties (excluding properties of its `children`) and state.
+
 ```js
-{
-    props: <component_props>,
-    state: <component_state>
-}
+const reactComponent      = ReactSelector('MyComponent');
+const reactComponentState = await reactComponent.getReact();
 
+// >> reactComponentState
+//
+// {
+//     props:    <component_props>,
+//     state:    <component_state>
+// }
 ```
 
-Where `props` are React component properties excluding properties of its `children`, `state` – the state of the component.
+The returned client function can be passed to assertions activating the [Smart Assertion Query mechanism](https://devexpress.github.io/testcafe/documentation/test-api/assertions/#smart-assertion-query-mechanism).
 
 Example
 
