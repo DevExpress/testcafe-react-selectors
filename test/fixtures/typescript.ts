@@ -1,8 +1,14 @@
 /*global fixture test*/
 import ReactSelector from '../../';
+import { loadApp } from '../helpers/service-util';
+
+const REACT_VERSION = 15;
 
 fixture `TypeScript`
-    .page('http://localhost:1355');
+    .page('http://localhost:1355')
+    .beforeEach(async () => {
+        await loadApp(REACT_VERSION);
+    });
 
 test('Should get DOM node by react selector', async t => {
     var listItem1 = await ReactSelector('ListItem').nth(0);

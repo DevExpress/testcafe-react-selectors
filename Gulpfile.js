@@ -31,7 +31,7 @@ gulp.task('lint', function () {
 
 gulp.task('build-test-app', ['clean', 'lint'], function () {
     return gulp
-        .src('test/data/src/**/*.jsx')
+        .src('test/data/src/**/*.{jsx,js}')
         .pipe(babel())
         .pipe(gulp.dest('test/data/lib'));
 });
