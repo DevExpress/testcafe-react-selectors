@@ -5,7 +5,10 @@
       "targets": {
         "node": "4"
       },
-      "exclude": ["babel-plugin-transform-es2015-typeof-symbol"]
+      "exclude": ["transform-es2015-typeof-symbol"]
     }]
+  ],
+  "plugins": [
+    "transform-for-of-as-array"
   ]
 }
