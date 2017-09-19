@@ -31,7 +31,11 @@ export default Selector(selector => {
         if (!el || el.nodeType !== 1)
             return null;
 
-        for (var prop of Object.keys(el)) {
+        const props = Object.keys(el);
+
+        for (let index = 0; index < props.length; ++index) {
+            const prop = props[index];
+
             if (!/^__reactInternalInstance/.test(prop)) continue;
 
             return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
@@ -215,7 +219,11 @@ export default Selector(selector => {
                 return rootComponent._instance;
             }
 
-            for (var prop of Object.keys(el)) {
+            const props = Object.keys(el);
+
+            for (let index = 0; index < props.length; ++index) {
+                const prop = props[index];
+
                 if (!/^__reactInternalInstance/.test(prop))
                     continue;
 

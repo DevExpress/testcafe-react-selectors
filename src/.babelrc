@@ -1,10 +1,11 @@
 {
   "compact": false,
   "presets": [
-    "es2015-loose",
-    "babel-preset-stage-2"
-  ],
-  "plugins": [
-    "transform-runtime"
+    ["env", {
+      "targets": {
+        "node": "4"
+      },
+      "exclude": ["babel-plugin-transform-es2015-typeof-symbol"]
+    }]
   ]
 }
