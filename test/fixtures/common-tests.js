@@ -61,14 +61,17 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test(`Should get component state (React ${version})`, async t => {
-        var listItem1React  = await ReactSelector('ListItem').getReact();
-        var listItem2React  = await ReactSelector('ListItem').nth(1).getReact();
-        var listItem3       = await ReactSelector('ListItem').nth(2);
-        var listItem3ItemId = listItem3.getReact(({ state }) => state.itemId);
+        const appReact        = await ReactSelector('App').getReact();
+        const listItem1React  = await ReactSelector('ListItem').getReact();
+        const listItem2React  = await ReactSelector('ListItem').nth(1).getReact();
+        const listItem3       = await ReactSelector('ListItem').nth(2);
+        const listItem3ItemId = listItem3.getReact(({ state }) => state.itemId);
 
         var tagReact = await ReactSelector('ListItem p').getReact();
 
         await t
+            .expect(appReact.state).eql({ isRootComponent: true })
+
             .expect(listItem1React.state).eql({ itemId: 'l1-item1' })
             .expect(listItem2React.state).eql({ itemId: 'l1-item2' })
 
@@ -78,24 +81,37 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test(`Should get component props (React ${version})`, async t => {
+        var appReact       = await ReactSelector('App').getReact();
         var listItem1React = await ReactSelector('ListItem').getReact();
         var listItem2React = await ReactSelector('ListItem').nth(1).getReact();
         var listItem3      = await ReactSelector('ListItem').nth(2);
         var listItem3Id    = listItem3.getReact(({ props }) => props.id);
 
         await t
+            .expect(appReact.props).eql({ label: 'AppLabel' })
+
             .expect(listItem1React.props).eql({ id: 'l1-item1' })
             .expect(listItem2React.props).eql({ id: 'l1-item2' })
+
             .expect(listItem3Id).eql('l1-item3');
     });
 
     test(`Should throw exception if version of React js is not supported (React ${version})`, async t => {
         await ClientFunction(() => {
-            const reactRoot         = document.querySelector('[data-reactroot]');
-            const internalReactProp = Object.keys(reactRoot).filter(prop => /^__reactInternalInstance/.test(prop))[0];
+            let reactRoot         = null;
+            let internalReactProp = null;
+
+            if (version === 15) {
+                reactRoot         = document.querySelector('[data-reactroot]');
+                internalReactProp = Object.keys(reactRoot).filter(prop => /^__reactInternalInstance/.test(prop))[0];
+            }
+            else {
+                reactRoot         = document.querySelector('#app-container');
+                internalReactProp = '_reactRootContainer';
+            }
 
             delete reactRoot[internalReactProp];
-        })();
+        }, { dependencies: { version } })();
 
         try {
             await ReactSelector('App');
@@ -123,10 +139,12 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test(`Should not get dom nodes from nested components (React ${version})`, async t => {
+        const expectedListItemCount = version === 16 ? 12 : 9;
+
         await t
-            .expect(ReactSelector('ListItem p').count).eql(9)
+            .expect(ReactSelector('ListItem p').count).eql(expectedListItemCount)
             .expect(ReactSelector('List p').count).eql(0)
-            .expect(ReactSelector('App ListItem').count).eql(9);
+            .expect(ReactSelector('App ListItem').count).eql(expectedListItemCount);
     });
 
     test(`Should get props and state from components with common DOM node - Regression GH-15 (React ${version})`, async t => {
@@ -151,7 +169,7 @@ for (const version of SUPPORTED_VERSIONS) {
 
     test(`Should search inside of portal component (React ${version})`, async t => {
         const portal         = ReactSelector('Portal');
-        const portalWidth    = portal.getReact(({ state }) => state.width);
+        const portalWidth    = await portal.getReact(({ state }) => state.width);
         const list           = ReactSelector('Portal List');
         const listItem       = ReactSelector('Portal ListItem');
         const listId         = await list.getReact(({ props }) => props.id);
@@ -166,35 +184,56 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(listId).eql('l3')
             .expect(pureComponent1.exists).ok()
             .expect(pureComponent2.exists).ok();
+
+        if (version === 16) {
+            await t
+                .expect(ReactSelector('PortalReact16').exists).ok()
+                .expect(ReactSelector('PortalReact16 List').exists).ok()
+                .expect(ReactSelector('PortalReact16 ListItem').count).eql(3);
+        }
     });
 
     test(`Should search inside of stateless root GH-33 (React ${version})`, async t => {
         const expectedText = 'PureComponent';
 
-        async function testComponentTree () {
-            const App        = ReactSelector('App');
-            const component1 = ReactSelector('App PureComponent');
-            const component2 = ReactSelector('PureComponent');
-            const appTitle   = App.getReact(({ props }) => props.text);
-            const text1      = component1.getReact(({ state }) => state.text);
-            const text2      = component2.getReact(({ state }) => state.text);
-
-            await t
-                .expect(App.exists).ok()
-                .expect(component1.exists).ok()
-                .expect(component2.exists).ok()
-                .expect(appTitle).eql('AppTitle')
-                .expect(text1).eql(expectedText)
-                .expect(text2).eql(expectedText);
-        }
-
         await t.navigateTo('/stateless-root.html');
         await loadApp(version);
-        await testComponentTree(t);
+
+
+        let App        = ReactSelector('App');
+        let component1 = ReactSelector('App PureComponent');
+        let component2 = ReactSelector('PureComponent');
+        let appTitle   = App.getReact(({ props }) => props.text);
+        const text1    = component1.getReact(({ state }) => state.text);
+        const text2    = component2.getReact(({ state }) => state.text);
+
+        await t
+            .expect(App.exists).ok()
+            .expect(component1.exists).ok()
+            .expect(component2.exists).ok()
+            .expect(appTitle).eql('AppTitle')
+            .expect(text1).eql(expectedText)
+            .expect(text2).eql(expectedText);
 
         await t.navigateTo('/root-pure-component.html');
         await loadApp(version);
-        await testComponentTree(t);
+
+        App                   = ReactSelector('App');
+        component1            = ReactSelector('App PureComponent');
+        component2            = ReactSelector('PureComponent');
+        appTitle              = App.getReact(({ props }) => props.text);
+        const text            = App.getReact(({ state }) => state.text);
+        const component1React = component1.getReact();
+        const component2React = component2.getReact();
+
+        await t
+            .expect(App.exists).ok()
+            .expect(component1.exists).ok()
+            .expect(component2.exists).ok()
+            .expect(appTitle).eql('AppTitle')
+            .expect(text).eql(expectedText)
+            .expect(component1React).eql({ state: {}, props: {} })
+            .expect(component2React).eql({ state: {}, props: {} });
     });
 }
 /*eslint-enable no-loop-func*/

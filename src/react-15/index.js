@@ -1,14 +1,7 @@
-/*global document window*/
-var Selector = require('testcafe').Selector;
-
-export default Selector(selector => {
-    var rootEls               = document.querySelectorAll('[data-reactroot]');
-    var supportedReactVersion = rootEls.length &&
-                                Object.keys(rootEls[0]).some(prop => /^__reactInternalInstance/.test(prop));
-
-    if (!supportedReactVersion)
-        throw new Error('testcafe-react-selectors supports React version 15.x and newer');
-
+/*global window rootEls*/
+/*eslint-disable no-unused-vars*/
+function reactSelector15 (selector) {
+/*eslint-enable no-unused-vars*/
     const visitedComponents = [];
 
     function getName (component) {
@@ -20,16 +13,14 @@ export default Selector(selector => {
         if (name === null && currentElement && typeof currentElement === 'object') {
             const matches = currentElement.type.toString().match(/^function\s*([^\s(]+)/);
 
-            if (matches)
-                name = matches[1];
+            if (matches) name = matches[1];
         }
 
         return name;
     }
 
     function getRootComponent (el) {
-        if (!el || el.nodeType !== 1)
-            return null;
+        if (!el || el.nodeType !== 1) return null;
 
         for (var prop of Object.keys(el)) {
             if (!/^__reactInternalInstance/.test(prop)) continue;
@@ -163,83 +154,4 @@ export default Selector(selector => {
     }
 
     return reactSelect(selector);
-}).addCustomMethods({
-    getReact: (node, fn) => {
-        const utils = window['%testCafeReactSelectorUtils%'];
-
-        function copyReactObject (obj) {
-            var copiedObj = {};
-
-            for (var prop in obj) {
-                if (obj.hasOwnProperty(prop) && prop !== 'children')
-                    copiedObj[prop] = obj[prop];
-            }
-
-            return copiedObj;
-        }
-
-        function getComponentInstance (component) {
-            const parent               = component._hostParent;
-            const renderedChildren     = parent._renderedChildren || {};
-            const renderedChildrenKeys = Object.keys(renderedChildren);
-            const componentName        = window['%testCafeReactSelector%'];
-
-            for (let index = 0; index < renderedChildrenKeys.length; ++index) {
-                const key             = renderedChildrenKeys[index];
-                let renderedComponent = renderedChildren[key];
-                let componentInstance = null;
-
-                while (renderedComponent) {
-                    if (componentName === utils.getName(renderedComponent))
-                        componentInstance = renderedComponent._instance;
-
-                    if (renderedComponent._domID === component._domID)
-                        return componentInstance;
-
-                    renderedComponent = renderedComponent._renderedComponent;
-                }
-            }
-
-            return null;
-        }
-
-        function getComponentForDOMNode (el) {
-            if (!el || !(el.nodeType === 1 || el.nodeType === 8))
-                return null;
-
-            const isRootNode = el.hasAttribute && el.hasAttribute('data-reactroot');
-
-            if (isRootNode) {
-                const rootComponent = utils.getRootComponent(el);
-
-                return rootComponent._instance;
-            }
-
-            for (var prop of Object.keys(el)) {
-                if (!/^__reactInternalInstance/.test(prop))
-                    continue;
-
-                return getComponentInstance(el[prop]);
-            }
-        }
-
-        var componentInstance = getComponentForDOMNode(node);
-
-        if (!componentInstance)
-            return null;
-
-        delete window['%testCafeReactSelector%'];
-
-        if (typeof fn === 'function') {
-            return fn({
-                state: copyReactObject(componentInstance.state),
-                props: copyReactObject(componentInstance.props)
-            });
-        }
-
-        return {
-            state: copyReactObject(componentInstance.state),
-            props: copyReactObject(componentInstance.props)
-        };
-    }
-});
+}

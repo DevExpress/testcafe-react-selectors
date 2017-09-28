@@ -1,0 +1,41 @@
+/*global document window*/
+var Selector = require('testcafe').Selector;
+
+export default Selector(selector => {
+    const getRootElsReact15 = {{{getRootElsReact15}}}
+    const getRootElsReact16 = {{{getRootElsReact16}}}
+    const selectorReact15 = {{{selectorReact15}}}
+    const selectorReact16 = {{{selectorReact16}}}
+    let rootEls = null;
+
+    rootEls = getRootElsReact15();
+
+    if(rootEls.length) {
+        window['%testCafeReactVersion%'] = 15;
+
+        return selectorReact15(selector);
+    }
+
+    rootEls = getRootElsReact16();
+
+    if(rootEls.length) {
+        window['%testCafeReactVersion%'] = 16;
+
+        return selectorReact16(selector);
+    }
+
+    throw new Error('testcafe-react-selectors supports React version 15.x and newer');
+}).addCustomMethods({
+    getReact: (node, fn) => {
+        const reactVersion = window['%testCafeReactVersion%'];
+        const getReactReact15 = {{{getReactReact15}}}
+        const getReactReact16 = {{{getReactReact16}}}
+
+        delete window['%testCafeReactVersion%'];
+
+        if(reactVersion === 15)
+            return getReactReact15(node, fn);
+        if(reactVersion === 16)
+            return getReactReact16(node, fn);
+    }
+});
