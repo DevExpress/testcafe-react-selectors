@@ -8,6 +8,17 @@ export default Selector(selector => {
     const selectorReact16 = {{{selectorReact16}}}
     let rootEls = null;
 
+    function defineSelectorProperty (value) {
+        if (window['%testCafeReactSelector%']) delete window['%testCafeReactSelector%'];
+
+        Object.defineProperty(window, '%testCafeReactSelector%', {
+            enumerable:   false,
+            configurable: true,
+            writable:     false,
+            value:        value
+        });
+    }
+
     rootEls = getRootElsReact15();
 
     if(rootEls.length) {

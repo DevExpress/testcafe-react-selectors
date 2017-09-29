@@ -1,7 +1,7 @@
-/*global window document Node rootEls*/
+/*global window document Node rootEls defineSelectorProperty*/
 /*eslint-disable no-unused-vars*/
 function react16Selector (selector) {
-/*eslint-enable no-unused-vars*/
+    /*eslint-enable no-unused-vars*/
     function createAnnotationForEmptyComponent (component) {
         const comment = document.createComment('testcafe-react-selectors: the requested component didn\'t render any DOM elements');
 
@@ -43,31 +43,8 @@ function react16Selector (selector) {
         return node.stateNode;
     }
 
-    function getRootComponent (el) {
-        if (!el || el.nodeType !== 1)
-            return null;
-
-        for (var prop of Object.keys(el)) {
-            if (!/^__reactInternalInstance/.test(prop)) continue;
-
-            return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
-        }
-    }
-
-    function defineSelectorProperty (value) {
-        if (window['%testCafeReactSelector%']) delete window['%testCafeReactSelector%'];
-        if (window['%testCafeReactEmptyComponent%']) delete window['%testCafeReactEmptyComponent%'];
-
-        Object.defineProperty(window, '%testCafeReactSelector%', {
-            enumerable:   false,
-            configurable: true,
-            writable:     false,
-            value:        value
-        });
-    }
-
     if (!window['%testCafeReactSelectorUtils%'])
-        window['%testCafeReactSelectorUtils%'] = { getName, getRootComponent };
+        window['%testCafeReactSelectorUtils%'] = { getName };
 
     function getRenderedChildren (component) {
         //Portal component

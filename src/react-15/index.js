@@ -1,4 +1,4 @@
-/*global window rootEls*/
+/*global window rootEls defineSelectorProperty*/
 /*eslint-disable no-unused-vars*/
 function reactSelector15 (selector) {
 /*eslint-enable no-unused-vars*/
@@ -27,17 +27,6 @@ function reactSelector15 (selector) {
 
             return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
         }
-    }
-
-    function defineSelectorProperty (value) {
-        if (window['%testCafeReactSelector%']) delete window['%testCafeReactSelector%'];
-
-        Object.defineProperty(window, '%testCafeReactSelector%', {
-            enumerable:   false,
-            configurable: true,
-            writable:     false,
-            value:        value
-        });
     }
 
     if (!window['%testCafeReactSelectorUtils%'])
