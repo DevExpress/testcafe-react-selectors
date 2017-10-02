@@ -13,6 +13,14 @@ for (const version of SUPPORTED_VERSIONS) {
             await loadApp(version);
         });
 
+    test('Should find the wrapper component where the `direction` attribute is equal to `horizontal`', async t => {
+        await t.expect(ReactSelector('WrapperComponent[direction=horizontal]').exists).ok();
+    });
+
+    test('Should not find a wrapper component where the `direction` attribute is equal to `vertical`', async t => {
+        await t.expect(ReactSelector('WrapperComponent[direction=vertical]').exists).notOk();
+    });
+
     test(`Should throw exception for non-valid selectors`, async t => {
         for (var selector of [null, false, void 0, {}, 42]) {
             try {

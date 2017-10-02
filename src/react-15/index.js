@@ -67,7 +67,25 @@ function reactSelector15 (selector) {
         return compositeSelector
             .split(' ')
             .filter(el => !!el)
-            .map(el => el.trim());
+            .map(el => {
+                const attributePairs = el.match(/\[.+?\]/g, () => {}) || [];
+                const name = el.replace(/\[.+?\]/g, '').trim();
+                const attributes = attributePairs.map((attribute) => {
+                    const attributeKeyValuePair = attribute.substr(1, attribute.length - 2).split('=');
+                    const attributeName = attributeKeyValuePair[0];
+                    const attributeValue = attributeKeyValuePair[1];
+
+                    return {
+                        name:  attributeName,
+                        value: attributeValue
+                    };
+                });
+
+                return {
+                    name,
+                    attributes
+                };
+            });
     }
 
     function reactSelect (compositeSelector) {
@@ -81,7 +99,7 @@ function reactSelector15 (selector) {
             var selectorElms  = parseSelectorElements(compositeSelector);
 
             if (selectorElms.length)
-                defineSelectorProperty(selectorElms[selectorElms.length - 1]);
+                defineSelectorProperty(selectorElms[selectorElms.length - 1].name);
 
             function walk (reactComponent, cb) {
                 if (!reactComponent) return;
@@ -90,7 +108,7 @@ function reactSelector15 (selector) {
 
                 //NOTE: we're looking for only between the children of component
                 if (selectorIndex > 0 && selectorIndex < selectorElms.length && !componentWasFound) {
-                    const isTag  = selectorElms[selectorIndex].toLowerCase() === selectorElms[selectorIndex];
+                    const isTag  = selectorElms[selectorIndex].name.toLowerCase() === selectorElms[selectorIndex].name;
                     const parent = reactComponent._hostParent;
 
                     if (isTag && parent) {
@@ -126,7 +144,16 @@ function reactSelector15 (selector) {
 
                 const domNode = reactComponent.getHostNode();
 
-                if (selectorElms[selectorIndex] !== componentName) return false;
+                if (selectorElms[selectorIndex] && selectorElms[selectorIndex].name !== componentName) return false;
+                if (selectorElms[selectorIndex] && selectorElms[selectorIndex].attributes.length > 0) {
+                    const props = reactComponent._instance && reactComponent._instance.props || {};
+                    const unequalAttributes = selectorElms[selectorIndex].attributes.filter((attribute) => {
+                        return props[attribute.name] !== attribute.value;
+                    });
+
+                    if (unequalAttributes.length > 0)
+                        return false;
+                }
 
                 if (selectorIndex === selectorElms.length - 1)
                     foundComponents.push(domNode);

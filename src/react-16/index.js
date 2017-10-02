@@ -73,7 +73,25 @@ function react16Selector (selector) {
         return compositeSelector
             .split(' ')
             .filter(el => !!el)
-            .map(el => el.trim());
+            .map(el => {
+                const attributePairs = el.match(/\[.+?\]/g, () => {}) || [];
+                const name = el.replace(/\[.+?\]/g, '').trim();
+                const attributes = attributePairs.map((attribute) => {
+                    const attributeKeyValuePair = attribute.substr(1, attribute.length - 2).split('=');
+                    const attributeName = attributeKeyValuePair[0];
+                    const attributeValue = attributeKeyValuePair[1];
+
+                    return {
+                        name:  attributeName,
+                        value: attributeValue
+                    };
+                });
+
+                return {
+                    name,
+                    attributes
+                };
+            });
     }
 
     function reactSelect (compositeSelector) {
@@ -87,7 +105,7 @@ function react16Selector (selector) {
             var selectorElms  = parseSelectorElements(compositeSelector);
 
             if (selectorElms.length)
-                defineSelectorProperty(selectorElms[selectorElms.length - 1]);
+                defineSelectorProperty(selectorElms[selectorElms.length - 1].name);
 
             function walk (reactComponent, cb) {
                 if (!reactComponent) return;
@@ -98,10 +116,10 @@ function react16Selector (selector) {
                 const isNotFirstSelectorPart = selectorIndex > 0 && selectorIndex < selectorElms.length;
 
                 if (isNotFirstSelectorPart && !componentWasFound) {
-                    const isTag = selectorElms[selectorIndex].toLowerCase() === selectorElms[selectorIndex];
+                    const isTag = selectorElms[selectorIndex].name.toLowerCase() === selectorElms[selectorIndex].name;
 
                     //NOTE: we're looking for only between the children of component
-                    if (isTag && getName(reactComponent.return) !== selectorElms[selectorIndex - 1])
+                    if (isTag && getName(reactComponent.return) !== selectorElms[selectorIndex - 1].name)
                         return;
                 }
 
@@ -121,7 +139,16 @@ function react16Selector (selector) {
 
                 const domNode = getContainer(reactComponent);
 
-                if (selectorElms[selectorIndex] !== componentName) return false;
+                if (selectorElms[selectorIndex] && selectorElms[selectorIndex].name !== componentName) return false;
+                if (selectorElms[selectorIndex] && selectorElms[selectorIndex].attributes.length > 0) {
+                    const props = reactComponent.memoizedProps || {};
+                    const unequalAttributes = selectorElms[selectorIndex].attributes.filter((attribute) => {
+                        return props[attribute.name] !== attribute.value;
+                    });
+
+                    if (unequalAttributes.length > 0)
+                        return false;
+                }
 
                 if (selectorIndex === selectorElms.length - 1)
                     foundComponents.push(domNode || createAnnotationForEmptyComponent(reactComponent));
