@@ -99,6 +99,28 @@ class Portal extends React.Component {
     }
 }
 
+class PortalReact16 extends React.Component {
+    constructor () {
+        super();
+
+        this.container = document.createElement('div');
+        this.state     = { width: 100 };
+    }
+
+    componentDidMount () {
+        document.body.appendChild(this.container);
+    }
+
+    render () {
+        if (!ReactDOM.createPortal) return null;
+
+        return ReactDOM.createPortal(
+            <List id="l3"/>,
+            this.container
+        );
+    }
+}
+
 class PureComponent extends React.PureComponent {
     constructor () {
         super();
@@ -150,12 +172,15 @@ var Stateless3 = function (props) {
 class App extends React.Component {
     constructor () {
         super();
+
+        this.state = {
+            isRootComponent: true
+        };
     }
 
     render () {
         return (
             <div id="app">
-                <div id="stateless"/>
                 <div>
                     <div>
                         <List id="l1"/>
@@ -176,10 +201,12 @@ class App extends React.Component {
                 <Stateless1 text="test"/>
                 <Stateless2/>
                 <Stateless3 text="test"/>
+
+                <PortalReact16 />
             </div>
         );
     }
 }
 
-ReactDOM.render(React.createElement(App), document.getElementById('app-container'));
+ReactDOM.render(React.createElement(App, { label: 'AppLabel' }), document.getElementById('app-container'));
 
