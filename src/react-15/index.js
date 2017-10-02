@@ -64,10 +64,66 @@ function reactSelector15 (selector) {
     }
 
     function parseSelectorElements (compositeSelector) {
-        return compositeSelector
-            .split(' ')
+        const compositeSelectorTrimmed = compositeSelector.trim();
+        const elements = [];
+        let numSquareBrackets = 0;
+        let elementName = '';
+
+        for (let i = 0; i < compositeSelectorTrimmed.length; i++) {
+            const c = compositeSelectorTrimmed[i];
+
+            if (c === '[')
+                numSquareBrackets++;
+
+            if (c === ']')
+                numSquareBrackets--;
+
+            // If there's a space, we've reached the end of an element name which means
+            //  we should push the element name to the list of elements
+            if (c === ' ') {
+                if (numSquareBrackets === 0) {
+                    elements.push(elementName);
+                    elementName = '';
+                    numSquareBrackets = 0;
+                    continue;
+                }
+            }
+
+            elementName += c;
+        }
+
+        // Push the last element since there's no space to trigger the push above
+        elements.push(elementName);
+
+        return elements
             .filter(el => !!el)
-            .map(el => el.trim());
+            .map(el => {
+                const attributePairs = el.match(/\[.+?\]/g, () => {}) || [];
+                const name = el.replace(/\[.+?\]/g, '').trim();
+                const attributes = attributePairs.map((attribute) => {
+                    const attributeKeyValuePair = attribute.substr(1, attribute.length - 2);
+                    const attributeName = attributeKeyValuePair.substr(0, attributeKeyValuePair.indexOf('='));
+                    let attributeValue = attributeKeyValuePair.substr(attributeKeyValuePair.indexOf('=') + 1);
+
+                    // Strip out quotation marks
+                    if (
+                        (attributeValue[0] === '"' || attributeValue[0] === '\'') &&
+                        (attributeValue[attributeValue.length - 1] === '"' || attributeValue[attributeValue.length - 1] === '\'')
+                    )
+                        attributeValue = attributeValue.substr(1, attributeValue.length - 2);
+
+
+                    return {
+                        name:  attributeName,
+                        value: attributeValue
+                    };
+                });
+
+                return {
+                    name,
+                    attributes
+                };
+            });
     }
 
     function reactSelect (compositeSelector) {
@@ -81,7 +137,7 @@ function reactSelector15 (selector) {
             var selectorElms  = parseSelectorElements(compositeSelector);
 
             if (selectorElms.length)
-                defineSelectorProperty(selectorElms[selectorElms.length - 1]);
+                defineSelectorProperty(selectorElms[selectorElms.length - 1].name);
 
             function walk (reactComponent, cb) {
                 if (!reactComponent) return;
@@ -90,7 +146,7 @@ function reactSelector15 (selector) {
 
                 //NOTE: we're looking for only between the children of component
                 if (selectorIndex > 0 && selectorIndex < selectorElms.length && !componentWasFound) {
-                    const isTag  = selectorElms[selectorIndex].toLowerCase() === selectorElms[selectorIndex];
+                    const isTag  = selectorElms[selectorIndex].name.toLowerCase() === selectorElms[selectorIndex].name;
                     const parent = reactComponent._hostParent;
 
                     if (isTag && parent) {
@@ -126,7 +182,16 @@ function reactSelector15 (selector) {
 
                 const domNode = reactComponent.getHostNode();
 
-                if (selectorElms[selectorIndex] !== componentName) return false;
+                if (selectorElms[selectorIndex] && selectorElms[selectorIndex].name !== componentName) return false;
+                if (selectorElms[selectorIndex] && selectorElms[selectorIndex].attributes.length > 0) {
+                    const props = reactComponent._instance && reactComponent._instance.props || {};
+                    const unequalAttributes = selectorElms[selectorIndex].attributes.filter((attribute) => {
+                        return props[attribute.name] !== attribute.value;
+                    });
+
+                    if (unequalAttributes.length > 0)
+                        return false;
+                }
 
                 if (selectorIndex === selectorElms.length - 1)
                     foundComponents.push(domNode);
