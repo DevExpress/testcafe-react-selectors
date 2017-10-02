@@ -7,13 +7,13 @@ const SUPPORTED_VERSIONS = [15, 16];
 
 /*eslint-disable no-loop-func*/
 for (const version of SUPPORTED_VERSIONS) {
-    fixture `ReactJS TestCafe plugin`
+    fixture `ReactJS TestCafe plugin (React ${version})`
         .page `http://localhost:1355`
         .beforeEach(async () => {
             await loadApp(version);
         });
 
-    test(`Should throw exception for non-valid selectors (React ${version})`, async t => {
+    test(`Should throw exception for non-valid selectors`, async t => {
         for (var selector of [null, false, void 0, {}, 42]) {
             try {
                 await ReactSelector(selector);
@@ -24,7 +24,7 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should get DOM node by react selector (React ${version})`, async t => {
+    test(`Should get DOM node by react selector`, async t => {
         var app = await ReactSelector('App');
 
         var listItem1 = ReactSelector('ListItem').nth(0);
@@ -36,7 +36,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(await listItem2.id).eql('l1-item2');
     });
 
-    test(`Should get DOM node by composite selector (React ${version})`, async t => {
+    test(`Should get DOM node by composite selector`, async t => {
         var listItem1 = ReactSelector('List ListItem');
         var listItem2 = ReactSelector('List ListItem').nth(1);
 
@@ -45,22 +45,22 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(await listItem2.id).eql('l1-item2');
     });
 
-    test(`Should get DOM node for stateless component (React ${version})`, async t => {
+    test(`Should get DOM node for stateless component`, async t => {
         await t
             .expect(ReactSelector('Stateless1').textContent).ok('test')
             .expect(ReactSelector('Stateless2').exists).ok()
             .expect(ReactSelector('Stateless3').exists).ok();
     });
 
-    test(`Should get DOM node for pure component (React ${version})`, async t => {
+    test(`Should get DOM node for pure component`, async t => {
         await t.expect(ReactSelector('PureComponent').exists).ok();
     });
 
-    test(`Should not get DOM node for element outside react component tree  (React ${version})`, async t => {
+    test(`Should not get DOM node for element outside react component tree `, async t => {
         await t.expect(await ReactSelector.with({ timeout: 100 })('figure')).notOk();
     });
 
-    test(`Should get component state (React ${version})`, async t => {
+    test(`Should get component state`, async t => {
         const appReact        = await ReactSelector('App').getReact();
         const listItem1React  = await ReactSelector('ListItem').getReact();
         const listItem2React  = await ReactSelector('ListItem').nth(1).getReact();
@@ -80,7 +80,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(tagReact).notOk();
     });
 
-    test(`Should get component props (React ${version})`, async t => {
+    test(`Should get component props`, async t => {
         var appReact       = await ReactSelector('App').getReact();
         var listItem1React = await ReactSelector('ListItem').getReact();
         var listItem2React = await ReactSelector('ListItem').nth(1).getReact();
@@ -96,7 +96,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(listItem3Id).eql('l1-item3');
     });
 
-    test(`Should throw exception if version of React js is not supported (React ${version})`, async t => {
+    test(`Should throw exception if version of React js is not supported`, async t => {
         await ClientFunction(() => {
             let reactRoot         = null;
             let internalReactProp = null;
@@ -121,7 +121,7 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should throw exception if there is no React on the tested page (React ${version})`, async t => {
+    test(`Should throw exception if there is no React on the tested page`, async t => {
         await t.navigateTo('./noReact');
 
         try {
@@ -132,13 +132,13 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should get component from wrapper component - Regression GH-11 (React ${version})`, async t => {
+    test(`Should get component from wrapper component - Regression GH-11`, async t => {
         await t
             .expect(ReactSelector('TextLabel').textContent).eql('Component inside of wrapper component')
             .expect(ReactSelector('WrapperComponent').textContent).eql('Component inside of wrapper component');
     });
 
-    test(`Should not get dom nodes from nested components (React ${version})`, async t => {
+    test(`Should not get dom nodes from nested components`, async t => {
         const expectedListItemCount = version === 16 ? 12 : 9;
 
         await t
@@ -147,7 +147,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(ReactSelector('App ListItem').count).eql(expectedListItemCount);
     });
 
-    test(`Should get props and state from components with common DOM node - Regression GH-15 (React ${version})`, async t => {
+    test(`Should get props and state from components with common DOM node - Regression GH-15`, async t => {
         await t.expect(ReactSelector('WrapperComponent')
             .getReact(({ props, state }) => {
                 return { direction: props.direction, width: state.width };
@@ -161,13 +161,13 @@ for (const version of SUPPORTED_VERSIONS) {
             .eql({ color: '#fff', text: 'Component inside of wrapper component' });
     });
 
-    test(`Should get the component with empty output (React ${version})`, async t => {
+    test(`Should get the component with empty output`, async t => {
         const component = await ReactSelector('EmptyComponent');
 
         await t.expect(component.getReact(({ state }) => state.id)).eql(1);
     });
 
-    test(`Should search inside of portal component (React ${version})`, async t => {
+    test(`Should search inside of portal component`, async t => {
         const portal         = ReactSelector('Portal');
         const portalWidth    = await portal.getReact(({ state }) => state.width);
         const list           = ReactSelector('Portal List');
@@ -193,7 +193,7 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should search inside of stateless root GH-33 (React ${version})`, async t => {
+    test(`Should search inside of stateless root GH-33`, async t => {
         const expectedText = 'PureComponent';
 
         await t.navigateTo('/stateless-root.html');
