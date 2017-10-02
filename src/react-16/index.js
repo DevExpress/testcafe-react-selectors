@@ -70,16 +70,54 @@ function react16Selector (selector) {
     }
 
     function parseSelectorElements (compositeSelector) {
-        return compositeSelector
-            .split(' ')
+        const compositeSelectorTrimmed = compositeSelector.trim();
+        const elements = [];
+        let numSquareBrackets = 0;
+        let elementName = '';
+
+        for (let i = 0; i < compositeSelectorTrimmed.length; i++) {
+            const c = compositeSelectorTrimmed[i];
+
+            if (c === '[')
+                numSquareBrackets++;
+
+            if (c === ']')
+                numSquareBrackets--;
+
+            // If there's a space, we've reached the end of an element name which means
+            //  we should push the element name to the list of elements
+            if (c === ' ') {
+                if (numSquareBrackets === 0) {
+                    elements.push(elementName);
+                    elementName = '';
+                    numSquareBrackets = 0;
+                    continue;
+                }
+            }
+
+            elementName += c;
+        }
+
+        // Push the last element since there's no space to trigger the push above
+        elements.push(elementName);
+
+        return elements
             .filter(el => !!el)
             .map(el => {
                 const attributePairs = el.match(/\[.+?\]/g, () => {}) || [];
                 const name = el.replace(/\[.+?\]/g, '').trim();
                 const attributes = attributePairs.map((attribute) => {
-                    const attributeKeyValuePair = attribute.substr(1, attribute.length - 2).split('=');
-                    const attributeName = attributeKeyValuePair[0];
-                    const attributeValue = attributeKeyValuePair[1];
+                    const attributeKeyValuePair = attribute.substr(1, attribute.length - 2);
+                    const attributeName = attributeKeyValuePair.substr(0, attributeKeyValuePair.indexOf('='));
+                    let attributeValue = attributeKeyValuePair.substr(attributeKeyValuePair.indexOf('=') + 1);
+
+                    // Strip out quotation marks
+                    if (
+                        (attributeValue[0] === '"' || attributeValue[0] === '\'') &&
+                        (attributeValue[attributeValue.length - 1] === '"' || attributeValue[attributeValue.length - 1] === '\'')
+                    )
+                        attributeValue = attributeValue.substr(1, attributeValue.length - 2);
+
 
                     return {
                         name:  attributeName,
