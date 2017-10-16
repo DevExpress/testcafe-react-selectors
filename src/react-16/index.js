@@ -1,4 +1,5 @@
 /*global window document Node rootEls defineSelectorProperty*/
+
 /*eslint-disable no-unused-vars*/
 function react16Selector (selector) {
     /*eslint-enable no-unused-vars*/
@@ -48,8 +49,12 @@ function react16Selector (selector) {
 
     function getRenderedChildren (component) {
         //Portal component
-        if (!component.child && component.stateNode.container && component.stateNode.container._reactRootContainer)
-            component = component.stateNode.container._reactRootContainer.current;
+        if (!component.child) {
+            const portalRoot = component.stateNode && component.stateNode.container &&
+                               component.stateNode.container._reactRootContainer;
+
+            if (portalRoot) component = portalRoot.current;
+        }
 
         if (!component.child) return [];
 
