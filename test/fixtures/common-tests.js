@@ -49,7 +49,9 @@ for (const version of SUPPORTED_VERSIONS) {
         await t
             .expect(ReactSelector('Stateless1').textContent).ok('test')
             .expect(ReactSelector('Stateless2').exists).ok()
-            .expect(ReactSelector('Stateless3').exists).ok();
+            .expect(ReactSelector('Stateless3').exists).ok()
+            //Statless component with empty render GH-62
+            .expect(ReactSelector('Stateless4').exists).ok();
     });
 
     test(`Should get DOM node for pure component`, async t => {
