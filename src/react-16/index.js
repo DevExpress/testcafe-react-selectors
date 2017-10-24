@@ -1,4 +1,4 @@
-/*global window document Node rootEls defineSelectorProperty*/
+/*global window document Node rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 
 /*eslint-disable no-unused-vars*/
 function react16Selector (selector) {
@@ -21,7 +21,7 @@ function react16Selector (selector) {
 
         //NOTE: tag
         if (typeof component.type === 'string') return component.type;
-        if (component.type.name) return component.type.name;
+        if (component.type.displayName || component.type.name) return component.type.displayName || component.type.name;
 
         const matches = currentElement.type.toString().match(/^function\s*([^\s(]+)/);
 
@@ -48,6 +48,15 @@ function react16Selector (selector) {
         window['%testCafeReactSelectorUtils%'] = { getName };
 
     function getRenderedChildren (component) {
+        const isRootComponent = rootEls.indexOf(component) > -1;
+
+        //Nested root element
+        if (isRootComponent) {
+            if (checkRootNodeVisited(component)) return [];
+
+            visitedRootEls.push(component);
+        }
+
         //Portal component
         if (!component.child) {
             const portalRoot = component.stateNode && component.stateNode.container &&

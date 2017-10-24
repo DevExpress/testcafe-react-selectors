@@ -6,7 +6,12 @@ export default Selector(selector => {
     const getRootElsReact16 = {{{getRootElsReact16}}}
     const selectorReact15 = {{{selectorReact15}}}
     const selectorReact16 = {{{selectorReact16}}}
+    const visitedRootEls = [];
     let rootEls = null;
+
+    function checkRootNodeVisited (component) {
+        return visitedRootEls.indexOf(component) > -1;
+    }
 
     function defineSelectorProperty (value) {
         if (window['%testCafeReactSelector%']) delete window['%testCafeReactSelector%'];
