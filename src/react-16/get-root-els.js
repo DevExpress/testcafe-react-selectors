@@ -1,18 +1,19 @@
-/*global document NodeFilter*/
+/*global document*/
+
 /*eslint-disable no-unused-vars*/
-function getRootElsReact16 () {
-/*eslint-enable no-unused-vars*/
-    let instance     = null;
-    const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, () => NodeFilter.FILTER_ACCEPT, false);
-    let currentNode  = treeWalker.nextNode();
+function getRootElsReact16 (el) {
+    el = el || document.body;
 
-    while (currentNode) {
-        instance = currentNode._reactRootContainer;
+    if (el._reactRootContainer) return el._reactRootContainer.current.child;
 
-        if (instance) return [instance.current.child];
+    const children = el.children;
+    let rootEls    = [];
 
-        currentNode = treeWalker.nextNode();
+    for (let index = 0; index < children.length; ++index) {
+        const child = children[index];
+
+        rootEls = rootEls.concat(getRootElsReact16(child));
     }
 
-    return [];
+    return rootEls;
 }

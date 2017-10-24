@@ -1,9 +1,7 @@
-/*global window rootEls defineSelectorProperty*/
+/*global window rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 /*eslint-disable no-unused-vars*/
 function reactSelector15 (selector) {
 /*eslint-enable no-unused-vars*/
-    const visitedComponents = [];
-
     function getName (component) {
         const currentElement = component._currentElement;
 
@@ -32,10 +30,6 @@ function reactSelector15 (selector) {
     if (!window['%testCafeReactSelectorUtils%'])
         window['%testCafeReactSelectorUtils%'] = { getName, getRootComponent };
 
-    function checkRootNodeVisited (component) {
-        return visitedComponents.indexOf(component) > -1;
-    }
-
     function getRenderedChildren (component) {
         const hostNode     = component.getHostNode();
         const hostNodeType = hostNode.nodeType;
@@ -47,7 +41,7 @@ function reactSelector15 (selector) {
             if (checkRootNodeVisited(component._renderedComponent))
                 return [];
 
-            visitedComponents.push(component._renderedComponent);
+            visitedRootEls.push(component._renderedComponent);
         }
 
         //NOTE: Detect if it's a portal component
