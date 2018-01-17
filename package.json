@@ -27,8 +27,10 @@
     "gulp-eslint": "^1.1.1",
     "gulp-mustache": "^3.0.0",
     "gulp-rename": "^1.2.2",
+    "next": "^4.2.3",
     "publish-please": "^2.2.0",
-    "react": "15.3.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "testcafe": "*"
   },
   "scripts": {
