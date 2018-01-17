@@ -237,17 +237,5 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(component1React).eql({ state: {}, props: {} })
             .expect(component2React).eql({ state: {}, props: {} });
     });
-
-    if (version === 16) {
-        test('Server rendering React 16 - GH-69', async t => {
-            await t.navigateTo('http://localhost:1355/serverRender');
-            //NOTE: wait for client side initialization
-            await t.wait(200);
-
-            const labelText = ReactSelector('Label').getReact(({ state }) => state.text);
-
-            await t.expect(labelText).eql('Label Text...');
-        });
-    }
 }
 /*eslint-enable no-loop-func*/
