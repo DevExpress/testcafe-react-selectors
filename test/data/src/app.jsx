@@ -16,13 +16,21 @@ class ListItem extends React.Component {
 class List extends React.Component {
     constructor () {
         super();
+
+        this.state = { isActive: false };
+
+        this._onClick = this._onClick.bind(this);
+    }
+
+    _onClick () {
+        this.setState({ isActive: true });
     }
 
     render () {
         return (
             <div>
-                <ul id="list">
-                    <ListItem id={this.props.id + '-item1'}/>
+                <ul id="list" onClick={this._onClick}>
+                    <ListItem id={this.props.id + '-item1'} selected={this.state.isActive}/>
                     <ListItem id={this.props.id + '-item2'}/>
                     <ListItem id={this.props.id + '-item3'}/>
                 </ul>
