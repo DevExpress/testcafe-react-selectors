@@ -9,6 +9,7 @@ var mustache        = require('gulp-mustache');
 var pathJoin        = require('path').join;
 var rename          = require('gulp-rename');
 var startTestServer = require('./test/server');
+var nextBuild       = require('next/dist/server/build').default;
 
 const HangPromise = new Promise(() => {
 });
@@ -67,15 +68,18 @@ gulp.task('clean-build-tmp-resources', ['transpile'], function (cb) {
     del(['lib/tmp'], cb);
 });
 
+gulp.task('build-nextjs-app', ['build-test-app'], () => {
+    return nextBuild('./test/data/lib/server-render', require('./next.config.js'));
+});
+
 gulp.task('build', ['transpile', 'clean-build-tmp-resources']);
 
-gulp.task('test', ['build', 'build-test-app'], function () {
-    startTestServer();
-
+gulp.task('test', ['build', 'build-test-app', 'build-nextjs-app'], function () {
     glob('test/fixtures/**/*.{js,ts}', (err, files) => {
         if (err) throw err;
 
-        createTestCafe('localhost', 1337, 1338)
+        startTestServer()
+            .then(() => createTestCafe('localhost', 1337, 1338))
             .then(testCafe => {
                 return testCafe.createRunner()
                     .src(files)
