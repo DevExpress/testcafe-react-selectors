@@ -1,7 +1,8 @@
 /*global window*/
+
 /*eslint-disable no-unused-vars*/
 function getReact16 (node, fn) {
-/*eslint-enable no-unused-vars*/
+    /*eslint-enable no-unused-vars*/
     const utils = window['%testCafeReactSelectorUtils%'];
 
     function copyReactObject (obj) {
@@ -25,10 +26,10 @@ function getReact16 (node, fn) {
         while (componentName !== utils.getName(currentComponent) && currentComponent.return)
             currentComponent = currentComponent.return;
 
-        return {
-            props: currentComponent.memoizedProps,
-            state: currentComponent.memoizedState
-        };
+        const props = currentComponent.stateNode && currentComponent.stateNode.props || currentComponent.memoizedProps;
+        const state = currentComponent.stateNode && currentComponent.stateNode.state || currentComponent.memoizedState;
+
+        return { props, state };
     }
 
     function getComponentForDOMNode (el) {

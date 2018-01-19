@@ -92,7 +92,7 @@ for (const version of SUPPORTED_VERSIONS) {
         await t
             .expect(appReact.props).eql({ label: 'AppLabel' })
 
-            .expect(listItem1React.props).eql({ id: 'l1-item1' })
+            .expect(listItem1React.props).eql({ id: 'l1-item1', selected: false })
             .expect(listItem2React.props).eql({ id: 'l1-item2' })
 
             .expect(listItem3Id).eql('l1-item3');
@@ -236,6 +236,21 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(text).eql(expectedText)
             .expect(component1React).eql({ state: {}, props: {} })
             .expect(component2React).eql({ state: {}, props: {} });
+    });
+
+    test('Should get new values of props and state after they were changed GH-71', async t => {
+        const list               = ReactSelector('List');
+        const isListActive       = list.getReact(({ state }) => state.isActive);
+        const isListItemSelected = ReactSelector('ListItem').getReact(({ props }) => props.selected);
+
+        await t
+            .expect(isListActive).eql(false)
+            .expect(isListItemSelected).eql(false)
+
+            //NOTE change List state and ListItem props
+            .click(list)
+            .expect(isListActive).eql(true)
+            .expect(isListItemSelected).eql(true);
     });
 }
 /*eslint-enable no-loop-func*/
