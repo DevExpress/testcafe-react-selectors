@@ -19,7 +19,8 @@ function getReact16 (node, fn) {
     function getComponentInstance (component) {
         const componentName  = window['%testCafeReactSelector%'];
         const isTag          = typeof component.type === 'string';
-        let currentComponent = component;
+        //NOTE: see more https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiber.js#L142
+        let currentComponent = component.alternate || component;
 
         if (isTag) return null;
 

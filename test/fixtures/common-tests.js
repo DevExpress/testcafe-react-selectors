@@ -252,5 +252,16 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(isListActive).eql(true)
             .expect(isListItemSelected).eql(true);
     });
+
+    test('Should get new values of props after they were changed in stateless components GH-74', async t => {
+        const componentCont = ReactSelector('DynamicContainer');
+        const statelessComp = ReactSelector('DynamicContainer Stateless1');
+        const text          = statelessComp.getReact(({ props }) => props.text);
+
+        await t
+            .expect(text).eql('Disabled')
+            .click(componentCont)
+            .expect(text).eql('Enabled');
+    });
 }
 /*eslint-enable no-loop-func*/

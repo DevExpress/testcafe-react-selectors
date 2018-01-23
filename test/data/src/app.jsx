@@ -181,6 +181,26 @@ const Stateless4 = function Stateless4 () {
     return null;
 };
 
+class DynamicContainer extends React.Component {
+    constructor () {
+        super();
+
+        this.state = {
+            text: 'Disabled'
+        };
+
+        this._onClick = this._onClick.bind(this);
+    }
+
+    _onClick () {
+        this.setState({ text: 'Enabled' });
+    }
+
+    render () {
+        return <div onClick={this._onClick}><Stateless1 text={this.state.text}/></div>;
+    }
+}
+
 class App extends React.Component {
     constructor () {
         super();
@@ -216,6 +236,8 @@ class App extends React.Component {
                 <Stateless4/>
 
                 <PortalReact16/>
+
+                <DynamicContainer/>
             </div>
         );
     }
