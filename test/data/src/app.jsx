@@ -181,7 +181,7 @@ const Stateless4 = function Stateless4 () {
     return null;
 };
 
-class DynamicContainer extends React.Component {
+class SmartComponent extends React.Component {
     constructor () {
         super();
 
@@ -237,7 +237,7 @@ class App extends React.Component {
 
                 <PortalReact16/>
 
-                <DynamicContainer/>
+                <SmartComponent/>
             </div>
         );
     }

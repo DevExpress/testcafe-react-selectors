@@ -3,8 +3,6 @@
 /*eslint-disable no-unused-vars*/
 function getReact16 (node, fn) {
     /*eslint-enable no-unused-vars*/
-    const utils = window['%testCafeReactSelectorUtils%'];
-
     function copyReactObject (obj) {
         var copiedObj = {};
 
@@ -16,45 +14,36 @@ function getReact16 (node, fn) {
         return copiedObj;
     }
 
-    function getComponentInstance (component) {
-        const componentName  = window['%testCafeReactSelector%'];
-        const isTag          = typeof component.type === 'string';
-        //NOTE: see more https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiber.js#L142
-        let currentComponent = component.alternate || component;
-
-        if (isTag) return null;
-
-        while (componentName !== utils.getName(currentComponent) && currentComponent.return)
-            currentComponent = currentComponent.return;
-
-        const props = currentComponent.stateNode && currentComponent.stateNode.props || currentComponent.memoizedProps;
-        const state = currentComponent.stateNode && currentComponent.stateNode.state || currentComponent.memoizedState;
-
-        return { props, state };
-    }
-
     function getComponentForDOMNode (el) {
+        let component = null;
+
         if (!el || !(el.nodeType === 1 || el.nodeType === 8))
             return null;
 
         if (window['%testCafeReactEmptyComponent%'])
-            return getComponentInstance(window['%testCafeReactEmptyComponent%'].__$$reactInstance);
+            component = window['%testCafeReactEmptyComponent%'].__$$reactInstance;
 
-        for (var prop of Object.keys(el)) {
-            if (!/^__reactInternalInstance/.test(prop))
-                continue;
+        else if (window['%testCafeReactFoundComponents%'].length)
+            component = window['%testCafeReactFoundComponents%'].filter(desc => desc.node === el)[0].component;
 
-            return getComponentInstance(el[prop].return);
-        }
+        const isTag = typeof component.type === 'string';
+
+        if (isTag) return null;
+
+        const props = component.stateNode && component.stateNode.props || component.memoizedProps;
+        const state = component.stateNode && component.stateNode.state || component.memoizedState;
+
+        return { props, state };
     }
 
-    var componentInstance = getComponentForDOMNode(node);
+    const componentInstance = getComponentForDOMNode(node);
 
     if (!componentInstance)
         return null;
 
     delete window['%testCafeReactSelector%'];
     delete window['%testCafeReactEmptyComponent%'];
+    delete window['%testCafeReactFoundComponents%'];
 
     if (typeof fn === 'function') {
         return fn({
