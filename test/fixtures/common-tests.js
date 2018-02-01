@@ -254,14 +254,21 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test('Should get new values of props after they were changed in stateless components GH-74', async t => {
-        const componentCont = ReactSelector('DynamicContainer');
-        const statelessComp = ReactSelector('DynamicContainer Stateless1');
-        const text          = statelessComp.getReact(({ props }) => props.text);
+        const componentCont    = ReactSelector('SmartComponent');
+        const statelessComp    = ReactSelector('SmartComponent Stateless1');
+        const text             = statelessComp.getReact(({ props }) => props.text);
+        //NOTE test the getting props after the filtration
+        const textPropDisabled = statelessComp.withText('Disabled').getReact(({ props }) => props.text);
+        const textPropEnabled  = statelessComp.withText('Enabled').getReact(({ props }) => props.text);
 
         await t
             .expect(text).eql('Disabled')
+            .expect(textPropDisabled).eql('Disabled')
+
             .click(componentCont)
-            .expect(text).eql('Enabled');
+
+            .expect(text).eql('Enabled')
+            .expect(textPropEnabled).eql('Enabled');
     });
 }
 /*eslint-enable no-loop-func*/

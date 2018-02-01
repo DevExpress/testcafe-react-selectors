@@ -2,6 +2,8 @@
 
 /*eslint-disable no-unused-vars*/
 function react16Selector (selector) {
+    window['%testCafeReactFoundComponents%'] = [];
+
     /*eslint-enable no-unused-vars*/
     function createAnnotationForEmptyComponent (component) {
         const comment = document.createComment('testcafe-react-selectors: the requested component didn\'t render any DOM elements');
@@ -43,9 +45,6 @@ function react16Selector (selector) {
 
         return node.stateNode;
     }
-
-    if (!window['%testCafeReactSelectorUtils%'])
-        window['%testCafeReactSelectorUtils%'] = { getName };
 
     function getRenderedChildren (component) {
         const isRootComponent = rootEls.indexOf(component) > -1;
@@ -137,8 +136,11 @@ function react16Selector (selector) {
 
                 if (selectorElms[selectorIndex] !== componentName) return false;
 
-                if (selectorIndex === selectorElms.length - 1)
+                if (selectorIndex === selectorElms.length - 1) {
                     foundComponents.push(domNode || createAnnotationForEmptyComponent(reactComponent));
+
+                    window['%testCafeReactFoundComponents%'].push({ node: domNode, component: reactComponent });
+                }
 
                 selectorIndex++;
 
