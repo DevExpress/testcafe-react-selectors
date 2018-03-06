@@ -8,7 +8,7 @@ This plugin provides selector extensions that make it easier to test ReactJS com
 
 ## Usage
 
-#### Create selectors for ReactJS components
+### Creating selectors for ReactJS components
 
 `ReactSelector` allows you to select page elements by the name of the component class or the nested component element.
 
@@ -26,6 +26,8 @@ Suppose you have the following JSX.
 </TodoApp>
 ```
 
+#### Selecting elements by the component name
+
 To get a root DOM element for a component, pass the component name to the `ReactSelector` constructor.
 
 ```js
@@ -33,6 +35,8 @@ import ReactSelector from 'testcafe-react-selectors';
 
 const todoInput = ReactSelector('TodoInput');
 ```
+
+#### Selecting nested components
 
 To obtain a nested component or DOM element, you can use a combined selector or add DOM element's tag name.
 
@@ -44,10 +48,22 @@ const itemsCountStatus = ReactSelector('TodoApp div');
 const itemsCount       = ReactSelector('TodoApp div span');
 ```
 
-Warning: if you specify a DOM element’s tag name, React selectors search for the element among the component’s children without looking into nested components. For instance, for the JSX above the `ReactSelector('TodoApp div')` selector will be equal to `Selector('.todo-app > div')`.
+Warning: if you specify a DOM element's tag name, React selectors search for the element among the component's children without looking into nested components. For instance, for the JSX above the `ReactSelector('TodoApp div')` selector will be equal to `Selector('.todo-app > div')`.
 
+#### Selecting components by property values
 
-Selectors returned by ReactSelector( selector ) are recognized as TestCafe selectors. You can combine them with regular selectors and filter with `.withText`, `.nth`, `.find` and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
+You can also select elements that have a specific property value. To do this, use the `withProps` method. You can pass the property and its value as two strings or an object.
+
+```js
+import ReactSelector from 'testcafe-react-selectors';
+
+const item1 = ReactSelector('TodoApp').withProps('priority', 'High');
+const item2 = ReactSelector('TodoApp').withProps({ priority: 'Low' });
+```
+
+#### Combining with regular TestCafe selectors
+
+Selectors returned by the `ReactSelector` constructor are recognized as TestCafe selectors. You can combine them with regular selectors and filter with `.withText`, `.nth`, `.find` and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
@@ -55,7 +71,9 @@ import ReactSelector from 'testcafe-react-selectors';
 var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 ```
 
-Let’s use the API described above to add a task to a Todo list and check that the number of items changed.
+#### Example
+
+Let's use the API described above to add a task to a Todo list and check that the number of items changed.
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
@@ -74,7 +92,7 @@ test('Add new task', async t => {
 });
 ```
 
-#### Obtaining component's props and state
+### Obtaining component's props and state
 
 As an alternative to [testcafe snapshot properties](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/dom-node-state.html), you can obtain `state` or `props` of a ReactJS component.
 
@@ -114,11 +132,12 @@ test('Check list item', async t => {
 ```
 
 As an alternative, the `.getReact()` method can take a function that returns the required property or state. This function acts as a filter. Its argument is an object returned by `.getReact()`, i.e. `{ props: ..., state: ...}`.
+
 ```js
 ReactSelector('Component').getReact(({ props, state }) => {...})
 ```
 
-Example
+**Example**
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
@@ -137,7 +156,7 @@ test('Check list item', async t => {
 
 The `.getReact()` method can be called for the `ReactSelector` or the snapshot this selector returns.
 
-#### Limitations
+### Limitations
 
 * `testcafe-react-selectors` support ReactJS starting with version 15. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
 * Search for a component starts from the root React component, so selectors like `ReactSelector('body MyComponent')` will return `null`.
