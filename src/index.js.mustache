@@ -6,6 +6,7 @@ export default Selector(selector => {
     const getRootElsReact16 = {{{getRootElsReact16}}}
     const selectorReact15 = {{{selectorReact15}}}
     const selectorReact16 = {{{selectorReact16}}}
+
     const visitedRootEls = [];
     let rootEls = null;
 
@@ -44,14 +45,69 @@ export default Selector(selector => {
 }).addCustomMethods({
     getReact: (node, fn) => {
         const reactVersion = window['%testCafeReactVersion%'];
-        const getReactReact15 = {{{getReactReact15}}}
-        const getReactReact16 = {{{getReactReact16}}}
+        const react15Utils = {{{react15Utils}}}
+        const react16Utils = {{{react16Utils}}}
 
         delete window['%testCafeReactVersion%'];
 
         if(reactVersion === 15)
-            return getReactReact15(node, fn);
+            return react15Utils.getReact(node, fn);
         if(reactVersion === 16)
-            return getReactReact16(node, fn);
+            return react16Utils.getReact(node, fn);
     }
-});
+}).addCustomMethods({
+    withProps: (nodes, ...args) => {
+        function isEql (value1, value2) {
+            if (typeof value1 !== 'object' || value1 === null || typeof value2 !== 'object' || value2 === null)
+                return value1 === value2;
+
+            if (Object.keys(value1).length !== Object.keys(value2).length)
+                return false;
+
+            for (const prop in value1) {
+                if (!value2.hasOwnProperty(prop)) return false;
+                if (!isEql(value1[prop], value2[prop])) return false;
+            }
+
+            return true;
+        }
+
+        function componentHasProps ({ props }, filterProps) {
+            if (Object.keys(props).length === 0 && Object.keys(filterProps).length > 0)
+                return false;
+
+            for (const prop of Object.keys(filterProps)) {
+                if (!props.hasOwnProperty(prop) || !isEql(props[prop], filterProps[prop]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        const reactVersion = window['%testCafeReactVersion%'];
+        const react15Utils = {{{react15Utils}}}
+        const react16Utils = {{{react16Utils}}}
+
+        let filterProps = {};
+
+        const isPropsValid = args[0] !== null && typeof args[0] === 'object' && !Array.isArray(args[0]);
+
+        if(args.length === 1 && !isPropsValid)
+            throw new Error(`"props" option is expected to be a non-null object, but it was ${typeof args[0]}.`);
+
+        if(args.length > 1 && typeof args[0] !== 'string')
+            throw new Error(`property name is expected to be a string, but it was ${typeof args[0]}.`);
+
+        if (args.length > 1) filterProps[args[0]] = args[1];
+        else if (args[0]) filterProps = args[0];
+
+        let getComponentForDOMNode = reactVersion === 15 ? react15Utils.getComponentForDOMNode :
+                             react16Utils.getComponentForDOMNode;
+
+        return nodes.filter(node => {
+            const componentInstance = getComponentForDOMNode(node);
+
+            return componentInstance && componentHasProps(componentInstance, filterProps);
+        });
+    }
+}, { returnDOMNodes: true });

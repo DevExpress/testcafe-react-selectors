@@ -1,8 +1,5 @@
 /*global window*/
-
-/*eslint-disable no-unused-vars*/
-function getReact16 (node, fn) {
-    /*eslint-enable no-unused-vars*/
+(function () {
     function copyReactObject (obj) {
         var copiedObj = {};
 
@@ -36,24 +33,29 @@ function getReact16 (node, fn) {
         return { props, state };
     }
 
-    const componentInstance = getComponentForDOMNode(node);
+    /*eslint-enable no-unused-vars*/
+    function getReact (node, fn) {
+        /*eslint-disable no-unused-vars*/
+        const componentInstance = getComponentForDOMNode(node);
 
-    if (!componentInstance)
-        return null;
+        if (!componentInstance) return null;
 
-    delete window['%testCafeReactSelector%'];
-    delete window['%testCafeReactEmptyComponent%'];
-    delete window['%testCafeReactFoundComponents%'];
+        delete window['%testCafeReactSelector%'];
+        delete window['%testCafeReactEmptyComponent%'];
+        delete window['%testCafeReactFoundComponents%'];
 
-    if (typeof fn === 'function') {
-        return fn({
+        if (typeof fn === 'function') {
+            return fn({
+                state: copyReactObject(componentInstance.state),
+                props: copyReactObject(componentInstance.props)
+            });
+        }
+
+        return {
             state: copyReactObject(componentInstance.state),
             props: copyReactObject(componentInstance.props)
-        });
+        };
     }
 
-    return {
-        state: copyReactObject(componentInstance.state),
-        props: copyReactObject(componentInstance.props)
-    };
-}
+    return { getReact, getComponentForDOMNode };
+})();
