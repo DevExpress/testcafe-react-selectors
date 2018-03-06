@@ -52,7 +52,7 @@ Warning: if you specify a DOM element's tag name, React selectors search for the
 
 #### Selecting components by property values
 
-React selectors allow you to select elements that have a specific property value. To do this, use the `withProps` method. You can pass the property and its value as two strings or an object.
+React selectors allow you to select elements that have a specific property value. To do this, use the `withProps` method. You can pass the property and its value as two parameters or an object.
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
