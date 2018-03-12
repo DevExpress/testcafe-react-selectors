@@ -7,8 +7,8 @@ export default Selector(selector => {
     const selectorReact15 = {{{selectorReact15}}}
     const selectorReact16 = {{{selectorReact16}}}
 
-    const visitedRootEls = [];
-    let rootEls = null;
+    let visitedRootEls = [];
+    let rootEls        = null;
 
     function checkRootNodeVisited (component) {
         return visitedRootEls.indexOf(component) > -1;
@@ -27,19 +27,28 @@ export default Selector(selector => {
 
     rootEls = getRootElsReact15();
 
+    let foundDOMNodes = void 0;
+
     if(rootEls.length) {
         window['%testCafeReactVersion%'] = 15;
+        window['$testCafeReactSelector'] = selectorReact15;
 
-        return selectorReact15(selector);
+        foundDOMNodes = selectorReact15(selector);
     }
 
     rootEls = getRootElsReact16();
 
     if(rootEls.length) {
         window['%testCafeReactVersion%'] = 16;
+        window['$testCafeReactSelector'] = selectorReact16;
 
-        return selectorReact16(selector);
+        foundDOMNodes = selectorReact16(selector);
     }
+
+    visitedRootEls = [];
+
+    if(foundDOMNodes)
+        return foundDOMNodes;
 
     throw new Error('testcafe-react-selectors supports React version 15.x and newer');
 }).addCustomMethods({
@@ -56,6 +65,7 @@ export default Selector(selector => {
             return react16Utils.getReact(node, fn);
     }
 }).addCustomMethods({
+<<<<<<< HEAD
     withProps: (nodes, ...args) => {
         function isEql (value1, value2) {
             if (typeof value1 !== 'object' || value1 === null || typeof value2 !== 'object' || value2 === null)
@@ -109,5 +119,21 @@ export default Selector(selector => {
 
             return componentInstance && componentHasProps(componentInstance, filterProps);
         });
+    },
+
+    findReact: (nodes, selector) => {
+        const reactVersion = window['%testCafeReactVersion%'];
+        const react15Utils = {{{react15Utils}}}
+        const react16Utils = {{{react16Utils}}}
+        let componentInstances = null;
+
+        if(reactVersion === 15)
+            componentInstances = react15Utils.getFoundComponentInstances();
+        else if(reactVersion === 16)
+            componentInstances = react16Utils.getFoundComponentInstances();
+
+        const reactSelector = window['$testCafeReactSelector'];
+
+        return reactSelector(selector, componentInstances);
     }
 }, { returnDOMNodes: true });

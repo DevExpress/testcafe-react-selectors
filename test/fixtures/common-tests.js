@@ -332,5 +332,33 @@ for (const version of SUPPORTED_VERSIONS) {
             }
         }
     });
+
+    test('Should find subcomponents (findReact methods)', async t => {
+        const smartComponent = ReactSelector('App').findReact('SmartComponent');
+        const list           = ReactSelector('List');
+        const listItems      = list.findReact('ListItem');
+
+        const paragraphs1     = listItems.findReact('li p');
+        const paragraphs2     = listItems.findReact('p');
+        const expectedElCount = version === 16 ? 12 : 9;
+
+        await t
+            .expect(smartComponent.exists).ok()
+
+            .expect(listItems.count).eql(expectedElCount)
+            .expect(paragraphs1.count).eql(expectedElCount)
+            .expect(paragraphs2.count).eql(expectedElCount);
+    });
+
+    test('Should find subcomponents (findReact methods) - errors', async t => {
+        for (const selector of [null, false, void 0, {}, 42]) {
+            try {
+                await ReactSelector('app').findReact(selector);
+            }
+            catch (e) {
+                await t.expect(e.errMsg).contains(`Selector option is expected to be a string, but it was ${typeof selector}.`);
+            }
+        }
+    });
 }
 /*eslint-enable no-loop-func*/

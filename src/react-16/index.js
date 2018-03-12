@@ -1,7 +1,7 @@
 /*global window document Node rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 
 /*eslint-disable no-unused-vars*/
-function react16Selector (selector) {
+function react16Selector (selector, parents = rootEls) {
     window['%testCafeReactFoundComponents%'] = [];
 
     /*eslint-enable no-unused-vars*/
@@ -47,10 +47,10 @@ function react16Selector (selector) {
     }
 
     function getRenderedChildren (component) {
-        const isRootComponent = rootEls.indexOf(component) > -1;
+        const isParentComponent = parents.indexOf(component) > -1;
 
         //Nested root element
-        if (isRootComponent) {
+        if (isParentComponent) {
             if (checkRootNodeVisited(component)) return [];
 
             visitedRootEls.push(component);
@@ -148,7 +148,7 @@ function react16Selector (selector) {
             });
         }
 
-        [].forEach.call(rootEls, findDOMNode);
+        [].forEach.call(parents, findDOMNode);
 
         return foundComponents;
     }

@@ -1,7 +1,10 @@
 /*global window rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
+
 /*eslint-disable no-unused-vars*/
-function reactSelector15 (selector) {
-/*eslint-enable no-unused-vars*/
+function react15elector (selector, parents = rootEls) {
+    window['%testCafeReactFoundComponents%'] = [];
+
+    /*eslint-enable no-unused-vars*/
     function getName (component) {
         const currentElement = component._currentElement;
 
@@ -34,10 +37,11 @@ function reactSelector15 (selector) {
         const hostNode     = component.getHostNode();
         const hostNodeType = hostNode.nodeType;
         const container    = component._instance && component._instance.container;
-        const isRootNode   = hostNode.hasAttribute && hostNode.hasAttribute('data-reactroot');
+
+        const isParentComponent = parents.indexOf(component) > -1;
 
         //NOTE: prevent the repeating visiting of reactRoot Component inside of portal
-        if (component._renderedComponent && isRootNode) {
+        if (component._renderedComponent && isParentComponent) {
             if (checkRootNodeVisited(component._renderedComponent))
                 return [];
 
@@ -113,7 +117,7 @@ function reactSelector15 (selector) {
                 });
             }
 
-            return walk(getRootComponent(rootEl), reactComponent => {
+            return walk(rootEl, reactComponent => {
                 const componentName = getName(reactComponent);
 
                 if (!componentName) return false;
@@ -122,8 +126,11 @@ function reactSelector15 (selector) {
 
                 if (selectorElms[selectorIndex] !== componentName) return false;
 
-                if (selectorIndex === selectorElms.length - 1)
+                if (selectorIndex === selectorElms.length - 1) {
                     foundComponents.push(domNode);
+
+                    window['%testCafeReactFoundComponents%'].push({ node: domNode, component: reactComponent });
+                }
 
                 selectorIndex++;
 
@@ -131,7 +138,7 @@ function reactSelector15 (selector) {
             });
         }
 
-        [].forEach.call(rootEls, findDOMNode);
+        [].forEach.call(parents, findDOMNode);
 
         return foundComponents;
     }
