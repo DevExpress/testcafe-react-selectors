@@ -5,7 +5,8 @@
   "repository": "https://github.com/DevExpress/testcafe-react-selectors",
   "main": "lib/index",
   "files": [
-    "lib"
+    "lib",
+    "ts-defs"
   ],
   "author": {
     "name": "Developer Express Inc.",
