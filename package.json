@@ -47,5 +47,5 @@
   "peerDependencies": {
     "testcafe": "*"
   },
-  "types": "ts-defs/index.d.ts"
+  "types": "./ts-defs/index.d.ts"
 }
