@@ -6,7 +6,11 @@ declare global {
     }
 }
 
-declare function ReactSelector(selector:string):Selector
+export function ReactSelector(selector:string):Selector
 
-export default ReactSelector;
+interface waitForReactOptions {
+    waitTimeout?:number;
+    selectReactRoot?: () => any;
+}
 
+export function waitForReact(options: waitForReactOptions): any;

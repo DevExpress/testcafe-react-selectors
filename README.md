@@ -29,7 +29,7 @@ Suppose you have the following JSX.
 To get a root DOM element for a component, pass the component name to the `ReactSelector` constructor.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const todoInput = ReactSelector('TodoInput');
 ```
@@ -50,7 +50,7 @@ Warning: if you specify a DOM element’s tag name, React selectors search for t
 Selectors returned by ReactSelector( selector ) are recognized as TestCafe selectors. You can combine them with regular selectors and filter with `.withText`, `.nth`, `.find` and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 ```
@@ -58,7 +58,7 @@ var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 Let’s use the API described above to add a task to a Todo list and check that the number of items changed.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 fixture `TODO list test`
 	.page('http://localhost:1337');
@@ -71,6 +71,27 @@ test('Add new task', async t => {
         .typeText(todoTextInput, 'My Item')
         .pressKey('enter')
         .expect(todoItem.count).eql(3);
+});
+```
+
+#### Usage with server-side rendering (SSR)
+
+When doing SSR, e.g. with [next.js](https://github.com/zeit/next.js/) bootstrapping and re-hydration 
+of react sometimes takes longer and `ReactSelector` would run even before react is ready. Use 
+`waitForReact` helper to wait until react is fully bootstrapped. 
+
+```js
+import { ReactSelector, waitForReact } from 'testcafe-react-selectors';
+
+fixture `Server rendering`
+    .page `http://localhost:1355/serverRender`
+    .beforeEach(async () => {
+        await waitForReact({ selectReactRoot: () => document.querySelector('#__next') });
+    });
+
+test('Should get component inside server rendered root node', async t => {
+    const labelText = ReactSelector('Label').getReact(({ state }) => state.text);
+    await t.expect(labelText).eql('Label Text...');
 });
 ```
 
@@ -99,7 +120,7 @@ The returned client function can be passed to assertions activating the [Smart A
 Example
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 fixture `TODO list test`
 	.page('http://localhost:1337');
@@ -121,7 +142,7 @@ ReactSelector('Component').getReact(({ props, state }) => {...})
 Example
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 fixture `TODO list test`
     .page('http://localhost:1337');

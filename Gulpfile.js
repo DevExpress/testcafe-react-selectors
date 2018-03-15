@@ -51,7 +51,9 @@ gulp.task('build-selectors-script', ['clean', 'lint'], function () {
             selectorReact16: fs.readFileSync('./src/react-16/index.js').toString(),
 
             getReactReact15: fs.readFileSync('./src/react-15/get-react.js').toString(),
-            getReactReact16: fs.readFileSync('./src/react-16/get-react.js').toString()
+            getReactReact16: fs.readFileSync('./src/react-16/get-react.js').toString(),
+
+            waitForReact: fs.readFileSync('./src/wait-for-react.js').toString()
         }))
         .pipe(rename('index.js'))
         .pipe(gulp.dest('lib/tmp'));
