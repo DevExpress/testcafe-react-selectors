@@ -1,7 +1,12 @@
 /*global document window*/
-var Selector = require('testcafe').Selector;
+var testcafe = require('testcafe');
+var Selector = testcafe.Selector;
+var ClientFunction = testcafe.ClientFunction;
 
-export default Selector(selector => {
+
+const waitForReact = ClientFunction({{{waitForReact}}});
+
+const ReactSelector = Selector(selector => {
     const getRootElsReact15 = {{{getRootElsReact15}}}
     const getRootElsReact16 = {{{getRootElsReact16}}}
     const selectorReact15 = {{{selectorReact15}}}
@@ -55,3 +60,5 @@ export default Selector(selector => {
             return getReactReact16(node, fn);
     }
 });
+
+export { waitForReact, ReactSelector };
