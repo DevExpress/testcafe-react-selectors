@@ -335,6 +335,7 @@ for (const version of SUPPORTED_VERSIONS) {
 
     test('Should find subcomponents (findReact methods)', async t => {
         const smartComponent = ReactSelector('App').findReact('SmartComponent');
+        const textLabel      = ReactSelector('App').findReact('WrapperComponent TextLabel');
         const list           = ReactSelector('List');
         const listItems      = list.findReact('ListItem');
 
@@ -342,8 +343,10 @@ for (const version of SUPPORTED_VERSIONS) {
         const paragraphs2     = listItems.findReact('p');
         const expectedElCount = version === 16 ? 12 : 9;
 
+
         await t
             .expect(smartComponent.exists).ok()
+            .expect(textLabel.exists).ok()
 
             .expect(listItems.count).eql(expectedElCount)
             .expect(paragraphs1.count).eql(expectedElCount)

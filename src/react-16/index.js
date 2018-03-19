@@ -47,10 +47,10 @@ function react16Selector (selector, parents = rootEls) {
     }
 
     function getRenderedChildren (component) {
-        const isParentComponent = parents.indexOf(component) > -1;
+        const isRootComponent = rootEls.indexOf(component) > -1;
 
         //Nested root element
-        if (isParentComponent) {
+        if (isRootComponent) {
             if (checkRootNodeVisited(component)) return [];
 
             visitedRootEls.push(component);

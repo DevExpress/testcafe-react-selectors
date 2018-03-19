@@ -34,14 +34,13 @@ function react15elector (selector, parents = rootEls) {
         window['%testCafeReactSelectorUtils%'] = { getName, getRootComponent };
 
     function getRenderedChildren (component) {
-        const hostNode     = component.getHostNode();
-        const hostNodeType = hostNode.nodeType;
-        const container    = component._instance && component._instance.container;
-
-        const isParentComponent = parents.indexOf(component) > -1;
+        const hostNode        = component.getHostNode();
+        const hostNodeType    = hostNode.nodeType;
+        const container       = component._instance && component._instance.container;
+        const isRootComponent = hostNode.hasAttribute && hostNode.hasAttribute('data-reactroot');
 
         //NOTE: prevent the repeating visiting of reactRoot Component inside of portal
-        if (component._renderedComponent && isParentComponent) {
+        if (component._renderedComponent && isRootComponent) {
             if (checkRootNodeVisited(component._renderedComponent))
                 return [];
 
