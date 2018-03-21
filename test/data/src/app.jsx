@@ -201,6 +201,24 @@ class SmartComponent extends React.Component {
     }
 }
 
+const SetItem = (...props) => <div {...props}></div>;
+
+class UnfilteredSet extends React.Component {
+    constructor () {
+        super();
+    }
+
+    render () {
+        return (<div>
+            <SetItem prop1={true}/>
+            <SetItem prop1={true} prop2={{ enabled: false }}/>
+            <SetItem prop1={true} prop2={{ enabled: true }}/>
+            <SetItem prop1={'test'} prop2={0}/>
+            <SetItem/>
+        </div>);
+    }
+}
+
 class App extends React.Component {
     constructor () {
         super();
@@ -238,6 +256,7 @@ class App extends React.Component {
                 <PortalReact16/>
 
                 <SmartComponent/>
+                <UnfilteredSet/>
             </div>
         );
     }

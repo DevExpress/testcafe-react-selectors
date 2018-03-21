@@ -1,7 +1,5 @@
 /*global window*/
-/*eslint-disable no-unused-vars*/
-function getReact15 (node, fn) {
-/*eslint-enable no-unused-vars*/
+(function () {
     const utils = window['%testCafeReactSelectorUtils%'];
 
     function copyReactObject (obj) {
@@ -65,21 +63,28 @@ function getReact15 (node, fn) {
         }
     }
 
-    var componentInstance = getComponentForDOMNode(node);
+    /*eslint-disable no-unused-vars*/
+    function getReact (node, fn) {
+        /*eslint-enable no-unused-vars*/
+        var componentInstance = getComponentForDOMNode(node);
 
-    if (!componentInstance) return null;
+        if (!componentInstance) return null;
 
-    delete window['%testCafeReactSelector%'];
+        delete window['%testCafeReactSelector%'];
 
-    if (typeof fn === 'function') {
-        return fn({
+        if (typeof fn === 'function') {
+            return fn({
+                state: copyReactObject(componentInstance.state),
+                props: copyReactObject(componentInstance.props)
+            });
+        }
+
+        return {
             state: copyReactObject(componentInstance.state),
             props: copyReactObject(componentInstance.props)
-        });
+        };
     }
 
-    return {
-        state: copyReactObject(componentInstance.state),
-        props: copyReactObject(componentInstance.props)
-    };
-}
+    return { getReact, getComponentForDOMNode };
+})();
+

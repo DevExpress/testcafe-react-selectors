@@ -270,5 +270,67 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(text).eql('Enabled')
             .expect(textPropEnabled).eql('Enabled');
     });
+
+    test('Should filter components by props (withProps method)', async t => {
+        const el     = ReactSelector('SetItem');
+        let elSet    = el.withProps({ prop1: true });
+        let elSubSet = elSet.withProps({ prop2: { enabled: true } });
+
+        await t
+            .expect(el.count).eql(5)
+            .expect(elSet.count).eql(3)
+            .expect(elSubSet.count).eql(1);
+
+        elSet    = el.withProps('prop1', true);
+        elSubSet = elSet.withProps('prop2', { enabled: true });
+
+        await t
+            .expect(elSet.count).eql(3)
+            .expect(elSubSet.count).eql(1);
+
+        const circularDeps = { field: null };
+
+        circularDeps.field = circularDeps;
+
+        const nonExistingSubset1 = el.withProps({ foo: 'bar' });
+        const nonExistingSubset2 = el.withProps({
+            foo: function () {
+            },
+
+            prop1: true
+        });
+        const nonExistingSubset3 = el.withProps({ prop1: true, prop2: { enabled: true, width: void 0 } });
+        const nonExistingSubset4 = el.withProps({ prop1: true, prop2: [{ enabled: true }] });
+        const nonExistingSubset5 = el.withProps(circularDeps);
+
+        await t
+            .expect(nonExistingSubset1.count).eql(0)
+            .expect(nonExistingSubset2.count).eql(0)
+            .expect(nonExistingSubset3.count).eql(0)
+            .expect(nonExistingSubset4.count).eql(0)
+            .expect(nonExistingSubset5.count).eql(0);
+    });
+
+    test('Should filter components by props (withProps method) - errors', async t => {
+        const el = ReactSelector('List');
+
+        for (const props of [null, false, void 0, 42, 'prop']) {
+            try {
+                await el.withProps(props)();
+            }
+            catch (e) {
+                await t.expect(e.errMsg).contains(`Error: "props" option is expected to be a non-null object, but it was ${typeof props}.`);
+            }
+        }
+
+        for (const props of [null, false, void 0, 42, {}, []]) {
+            try {
+                await el.withProps(props, 'value')();
+            }
+            catch (e) {
+                await t.expect(e.errMsg).contains(`Error: property name is expected to be a string, but it was ${typeof props}.`);
+            }
+        }
+    });
 }
 /*eslint-enable no-loop-func*/
