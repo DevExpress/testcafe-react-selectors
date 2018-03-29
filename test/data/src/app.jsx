@@ -201,7 +201,8 @@ class SmartComponent extends React.Component {
     }
 }
 
-const SetItem = (...props) => <div {...props}></div>;
+const SetItemLabel = ({ text }) => <span> {text} </span>;
+const SetItem      = ({ text }) => text ? <SetItemLabel text={text}/> : null;
 
 class UnfilteredSet extends React.Component {
     constructor () {
@@ -210,11 +211,11 @@ class UnfilteredSet extends React.Component {
 
     render () {
         return (<div>
-            <SetItem prop1={true}/>
+            <SetItem prop1={true} text="SetItem1"/>
             <SetItem prop1={true} prop2={{ enabled: false }}/>
-            <SetItem prop1={true} prop2={{ enabled: true }}/>
+            <SetItem prop1={true} prop2={{ enabled: true }} text="SetItem2"/>
             <SetItem prop1={'test'} prop2={0}/>
-            <SetItem/>
+            <SetItem text="SetItem3"/>
         </div>);
     }
 }

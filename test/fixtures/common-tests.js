@@ -363,5 +363,21 @@ for (const version of SUPPORTED_VERSIONS) {
             }
         }
     });
+
+    test('Should find subcomponents (combining findReact and withProps)', async t => {
+        const spanText     = 'SetItem2';
+        const el           = ReactSelector('SetItem');
+        const elSet        = el.withProps({ prop1: true });
+        const subEl        = elSet.findReact('span');
+        const subElByProps = el.findReact('SetItemLabel').withProps('text', spanText);
+        const actualText   = subElByProps.getReact(({ props }) => props.text);
+
+        await t
+            .expect(elSet.count).eql(3)
+            .expect(subEl.count).eql(2)
+            .expect(subEl.tagName).eql('span')
+            .expect(subElByProps.count).eql(1)
+            .expect(actualText).eql(spanText);
+    });
 }
 /*eslint-enable no-loop-func*/

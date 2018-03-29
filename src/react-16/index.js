@@ -10,7 +10,9 @@ function react16Selector (selector, parents = rootEls) {
 
         comment.__$$reactInstance = component;
 
-        window['%testCafeReactEmptyComponent%'] = comment;
+        if (!window['%testCafeReactEmptyComponent%']) window['%testCafeReactEmptyComponent%'] = [];
+
+        window['%testCafeReactEmptyComponent%'].push(comment);
 
         return comment;
     }

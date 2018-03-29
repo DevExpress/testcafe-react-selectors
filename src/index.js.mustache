@@ -65,7 +65,6 @@ export default Selector(selector => {
             return react16Utils.getReact(node, fn);
     }
 }).addCustomMethods({
-<<<<<<< HEAD
     withProps: (nodes, ...args) => {
         function isEql (value1, value2) {
             if (typeof value1 !== 'object' || value1 === null || typeof value2 !== 'object' || value2 === null)
@@ -114,11 +113,22 @@ export default Selector(selector => {
         let getComponentForDOMNode = reactVersion === 15 ? react15Utils.getComponentForDOMNode :
                              react16Utils.getComponentForDOMNode;
 
-        return nodes.filter(node => {
+        const filteredNodes  = [];
+        const foundInstances = nodes.filter(node => {
             const componentInstance = getComponentForDOMNode(node);
 
-            return componentInstance && componentHasProps(componentInstance, filterProps);
+            if(componentInstance && componentHasProps(componentInstance, filterProps)) {
+                filteredNodes.push(node);
+
+                return true;
+            }
         });
+
+        window['%testCafeReactFoundComponents%'] = window['%testCafeReactFoundComponents%'].filter(component => {
+            return filteredNodes.indexOf(component.node) > -1;
+        });
+
+        return foundInstances;
     },
 
     findReact: (nodes, selector) => {
@@ -132,7 +142,7 @@ export default Selector(selector => {
         else if(reactVersion === 16)
             componentInstances = react16Utils.getFoundComponentInstances();
 
-        const reactSelector = window['$testCafeReactSelector'];
+        const reactSelector  = window['$testCafeReactSelector'];
 
         return reactSelector(selector, componentInstances);
     }

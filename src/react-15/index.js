@@ -2,6 +2,9 @@
 
 /*eslint-disable no-unused-vars*/
 function react15elector (selector, parents = rootEls) {
+    const ELEMENT_NODE = 1;
+    const COMMENT_NODE = 8;
+
     window['%testCafeReactFoundComponents%'] = [];
 
     /*eslint-enable no-unused-vars*/
@@ -21,7 +24,7 @@ function react15elector (selector, parents = rootEls) {
     }
 
     function getRootComponent (el) {
-        if (!el || el.nodeType !== 1) return null;
+        if (!el || el.nodeType !== ELEMENT_NODE) return null;
 
         for (var prop of Object.keys(el)) {
             if (!/^__reactInternalInstance/.test(prop)) continue;
@@ -48,7 +51,7 @@ function react15elector (selector, parents = rootEls) {
         }
 
         //NOTE: Detect if it's a portal component
-        if (hostNodeType === 8 && container) {
+        if (hostNodeType === COMMENT_NODE && container) {
             const domNode = container.querySelector('[data-reactroot]');
 
             return { _: getRootComponent(domNode) };

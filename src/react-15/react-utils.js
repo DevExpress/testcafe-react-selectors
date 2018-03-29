@@ -1,6 +1,8 @@
 /*global window*/
 (function () {
-    const utils = window['%testCafeReactSelectorUtils%'];
+    const ELEMENT_NODE = 1;
+    const COMMENT_NODE = 8;
+    const utils        = window['%testCafeReactSelectorUtils%'];
 
     function copyReactObject (obj) {
         var copiedObj = {};
@@ -39,7 +41,7 @@
     }
 
     function getComponentForDOMNode (el) {
-        if (!el || !(el.nodeType === 1 || el.nodeType === 8))
+        if (!el || !(el.nodeType === ELEMENT_NODE || el.nodeType === COMMENT_NODE))
             return null;
 
         const isRootNode    = el.hasAttribute && el.hasAttribute('data-reactroot');
@@ -85,6 +87,10 @@
         };
     }
 
-    return { getReact, getComponentForDOMNode };
+    function getFoundComponentInstances () {
+        return window['%testCafeReactFoundComponents%'].map(desc => desc.component);
+    }
+
+    return { getReact, getComponentForDOMNode, getFoundComponentInstances };
 })();
 

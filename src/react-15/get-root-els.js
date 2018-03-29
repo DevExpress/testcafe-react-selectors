@@ -4,8 +4,10 @@
 function getRootElsReact15 () {
     /*eslint-enable no-unused-vars*/
 
+    const ELEMENT_NODE = 1;
+
     function getRootComponent (el) {
-        if (!el || el.nodeType !== 1) return null;
+        if (!el || el.nodeType !== ELEMENT_NODE) return null;
 
         for (var prop of Object.keys(el)) {
             if (!/^__reactInternalInstance/.test(prop)) continue;
