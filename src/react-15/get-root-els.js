@@ -4,7 +4,19 @@
 function getRootElsReact15 () {
     /*eslint-enable no-unused-vars*/
 
-    const rootEls      = document.querySelectorAll('[data-reactroot]');
+    const ELEMENT_NODE = 1;
+
+    function getRootComponent (el) {
+        if (!el || el.nodeType !== ELEMENT_NODE) return null;
+
+        for (var prop of Object.keys(el)) {
+            if (!/^__reactInternalInstance/.test(prop)) continue;
+
+            return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
+        }
+    }
+
+    const rootEls      = [].slice.call(document.querySelectorAll('[data-reactroot]'));
     const checkRootEls = rootEls.length &&
                          Object.keys(rootEls[0]).some(prop => {
                              const rootEl = rootEls[0];
@@ -14,5 +26,5 @@ function getRootElsReact15 () {
                              return /^__reactInternalInstance/.test(prop) && !rootEl[prop].hasOwnProperty('alternate');
                          });
 
-    return checkRootEls && rootEls || [];
+    return (checkRootEls && rootEls || []).map(getRootComponent);
 }

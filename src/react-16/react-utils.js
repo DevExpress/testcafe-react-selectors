@@ -1,5 +1,8 @@
 /*global window*/
 (function () {
+    const ELEMENT_NODE = 1;
+    const COMMENT_NODE = 8;
+
     function copyReactObject (obj) {
         var copiedObj = {};
 
@@ -12,13 +15,14 @@
     }
 
     function getComponentForDOMNode (el) {
-        let component = null;
+        if (!el || !(el.nodeType === ELEMENT_NODE || el.nodeType === COMMENT_NODE)) return null;
 
-        if (!el || !(el.nodeType === 1 || el.nodeType === 8))
-            return null;
+        let component             = null;
+        const emptyComponentFound = window['%testCafeReactEmptyComponent%'] &&
+                                    window['%testCafeReactEmptyComponent%'].length;
 
-        if (window['%testCafeReactEmptyComponent%'])
-            component = window['%testCafeReactEmptyComponent%'].__$$reactInstance;
+        if (emptyComponentFound && el.nodeType === COMMENT_NODE)
+            component = window['%testCafeReactEmptyComponent%'].shift().__$$reactInstance;
 
         else if (window['%testCafeReactFoundComponents%'].length)
             component = window['%testCafeReactFoundComponents%'].filter(desc => desc.node === el)[0].component;
@@ -57,5 +61,9 @@
         };
     }
 
-    return { getReact, getComponentForDOMNode };
+    function getFoundComponentInstances () {
+        return window['%testCafeReactFoundComponents%'].map(desc => desc.component);
+    }
+
+    return { getReact, getComponentForDOMNode, getFoundComponentInstances };
 })();

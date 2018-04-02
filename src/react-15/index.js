@@ -1,7 +1,13 @@
 /*global window rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
+
 /*eslint-disable no-unused-vars*/
-function reactSelector15 (selector) {
-/*eslint-enable no-unused-vars*/
+function react15elector (selector, parents = rootEls) {
+    const ELEMENT_NODE = 1;
+    const COMMENT_NODE = 8;
+
+    window['%testCafeReactFoundComponents%'] = [];
+
+    /*eslint-enable no-unused-vars*/
     function getName (component) {
         const currentElement = component._currentElement;
 
@@ -18,7 +24,7 @@ function reactSelector15 (selector) {
     }
 
     function getRootComponent (el) {
-        if (!el || el.nodeType !== 1) return null;
+        if (!el || el.nodeType !== ELEMENT_NODE) return null;
 
         for (var prop of Object.keys(el)) {
             if (!/^__reactInternalInstance/.test(prop)) continue;
@@ -31,13 +37,13 @@ function reactSelector15 (selector) {
         window['%testCafeReactSelectorUtils%'] = { getName, getRootComponent };
 
     function getRenderedChildren (component) {
-        const hostNode     = component.getHostNode();
-        const hostNodeType = hostNode.nodeType;
-        const container    = component._instance && component._instance.container;
-        const isRootNode   = hostNode.hasAttribute && hostNode.hasAttribute('data-reactroot');
+        const hostNode        = component.getHostNode();
+        const hostNodeType    = hostNode.nodeType;
+        const container       = component._instance && component._instance.container;
+        const isRootComponent = hostNode.hasAttribute && hostNode.hasAttribute('data-reactroot');
 
         //NOTE: prevent the repeating visiting of reactRoot Component inside of portal
-        if (component._renderedComponent && isRootNode) {
+        if (component._renderedComponent && isRootComponent) {
             if (checkRootNodeVisited(component._renderedComponent))
                 return [];
 
@@ -45,7 +51,7 @@ function reactSelector15 (selector) {
         }
 
         //NOTE: Detect if it's a portal component
-        if (hostNodeType === 8 && container) {
+        if (hostNodeType === COMMENT_NODE && container) {
             const domNode = container.querySelector('[data-reactroot]');
 
             return { _: getRootComponent(domNode) };
@@ -113,7 +119,7 @@ function reactSelector15 (selector) {
                 });
             }
 
-            return walk(getRootComponent(rootEl), reactComponent => {
+            return walk(rootEl, reactComponent => {
                 const componentName = getName(reactComponent);
 
                 if (!componentName) return false;
@@ -122,8 +128,11 @@ function reactSelector15 (selector) {
 
                 if (selectorElms[selectorIndex] !== componentName) return false;
 
-                if (selectorIndex === selectorElms.length - 1)
+                if (selectorIndex === selectorElms.length - 1) {
                     foundComponents.push(domNode);
+
+                    window['%testCafeReactFoundComponents%'].push({ node: domNode, component: reactComponent });
+                }
 
                 selectorIndex++;
 
@@ -131,7 +140,7 @@ function reactSelector15 (selector) {
             });
         }
 
-        [].forEach.call(rootEls, findDOMNode);
+        [].forEach.call(parents, findDOMNode);
 
         return foundComponents;
     }

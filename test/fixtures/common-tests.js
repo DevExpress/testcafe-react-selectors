@@ -332,5 +332,52 @@ for (const version of SUPPORTED_VERSIONS) {
             }
         }
     });
+
+    test('Should find subcomponents (findReact methods)', async t => {
+        const smartComponent = ReactSelector('App').findReact('SmartComponent');
+        const textLabel      = ReactSelector('App').findReact('WrapperComponent TextLabel');
+        const list           = ReactSelector('List');
+        const listItems      = list.findReact('ListItem');
+
+        const paragraphs1     = listItems.findReact('li p');
+        const paragraphs2     = listItems.findReact('p');
+        const expectedElCount = version === 16 ? 12 : 9;
+
+
+        await t
+            .expect(smartComponent.exists).ok()
+            .expect(textLabel.exists).ok()
+
+            .expect(listItems.count).eql(expectedElCount)
+            .expect(paragraphs1.count).eql(expectedElCount)
+            .expect(paragraphs2.count).eql(expectedElCount);
+    });
+
+    test('Should find subcomponents (findReact methods) - errors', async t => {
+        for (const selector of [null, false, void 0, {}, 42]) {
+            try {
+                await ReactSelector('app').findReact(selector);
+            }
+            catch (e) {
+                await t.expect(e.errMsg).contains(`Selector option is expected to be a string, but it was ${typeof selector}.`);
+            }
+        }
+    });
+
+    test('Should find subcomponents (combining findReact and withProps)', async t => {
+        const spanText     = 'SetItem2';
+        const el           = ReactSelector('SetItem');
+        const elSet        = el.withProps({ prop1: true });
+        const subEl        = elSet.findReact('span');
+        const subElByProps = el.findReact('SetItemLabel').withProps('text', spanText);
+        const actualText   = subElByProps.getReact(({ props }) => props.text);
+
+        await t
+            .expect(elSet.count).eql(3)
+            .expect(subEl.count).eql(2)
+            .expect(subEl.tagName).eql('span')
+            .expect(subElByProps.count).eql(1)
+            .expect(actualText).eql(spanText);
+    });
 }
 /*eslint-enable no-loop-func*/

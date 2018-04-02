@@ -5,5 +5,7 @@ module.exports = {
         });
 
         return cfg;
-    }
+    },
+
+    staticMarkup: true
 };

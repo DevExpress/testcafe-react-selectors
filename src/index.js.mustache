@@ -7,8 +7,8 @@ export default Selector(selector => {
     const selectorReact15 = {{{selectorReact15}}}
     const selectorReact16 = {{{selectorReact16}}}
 
-    const visitedRootEls = [];
-    let rootEls = null;
+    let visitedRootEls = [];
+    let rootEls        = null;
 
     function checkRootNodeVisited (component) {
         return visitedRootEls.indexOf(component) > -1;
@@ -27,19 +27,28 @@ export default Selector(selector => {
 
     rootEls = getRootElsReact15();
 
+    let foundDOMNodes = void 0;
+
     if(rootEls.length) {
         window['%testCafeReactVersion%'] = 15;
+        window['$testCafeReactSelector'] = selectorReact15;
 
-        return selectorReact15(selector);
+        foundDOMNodes = selectorReact15(selector);
     }
 
     rootEls = getRootElsReact16();
 
     if(rootEls.length) {
         window['%testCafeReactVersion%'] = 16;
+        window['$testCafeReactSelector'] = selectorReact16;
 
-        return selectorReact16(selector);
+        foundDOMNodes = selectorReact16(selector);
     }
+
+    visitedRootEls = [];
+
+    if(foundDOMNodes)
+        return foundDOMNodes;
 
     throw new Error('testcafe-react-selectors supports React version 15.x and newer');
 }).addCustomMethods({
@@ -104,10 +113,37 @@ export default Selector(selector => {
         let getComponentForDOMNode = reactVersion === 15 ? react15Utils.getComponentForDOMNode :
                              react16Utils.getComponentForDOMNode;
 
-        return nodes.filter(node => {
+        const filteredNodes  = [];
+        const foundInstances = nodes.filter(node => {
             const componentInstance = getComponentForDOMNode(node);
 
-            return componentInstance && componentHasProps(componentInstance, filterProps);
+            if(componentInstance && componentHasProps(componentInstance, filterProps)) {
+                filteredNodes.push(node);
+
+                return true;
+            }
         });
+
+        window['%testCafeReactFoundComponents%'] = window['%testCafeReactFoundComponents%'].filter(component => {
+            return filteredNodes.indexOf(component.node) > -1;
+        });
+
+        return foundInstances;
+    },
+
+    findReact: (nodes, selector) => {
+        const reactVersion = window['%testCafeReactVersion%'];
+        const react15Utils = {{{react15Utils}}}
+        const react16Utils = {{{react16Utils}}}
+        let componentInstances = null;
+
+        if(reactVersion === 15)
+            componentInstances = react15Utils.getFoundComponentInstances();
+        else if(reactVersion === 16)
+            componentInstances = react16Utils.getFoundComponentInstances();
+
+        const reactSelector  = window['$testCafeReactSelector'];
+
+        return reactSelector(selector, componentInstances);
     }
 }, { returnDOMNodes: true });

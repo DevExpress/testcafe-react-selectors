@@ -1,7 +1,7 @@
 /*global window document Node rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 
 /*eslint-disable no-unused-vars*/
-function react16Selector (selector) {
+function react16Selector (selector, parents = rootEls) {
     window['%testCafeReactFoundComponents%'] = [];
 
     /*eslint-enable no-unused-vars*/
@@ -10,7 +10,9 @@ function react16Selector (selector) {
 
         comment.__$$reactInstance = component;
 
-        window['%testCafeReactEmptyComponent%'] = comment;
+        if (!window['%testCafeReactEmptyComponent%']) window['%testCafeReactEmptyComponent%'] = [];
+
+        window['%testCafeReactEmptyComponent%'].push(comment);
 
         return comment;
     }
@@ -61,7 +63,9 @@ function react16Selector (selector) {
             const portalRoot = component.stateNode && component.stateNode.container &&
                                component.stateNode.container._reactRootContainer;
 
-            if (portalRoot) component = portalRoot.current;
+            const rootContainer = portalRoot && (portalRoot._internalRoot || portalRoot);
+
+            if (rootContainer) component = rootContainer.current;
         }
 
         if (!component.child) return [];
@@ -148,7 +152,7 @@ function react16Selector (selector) {
             });
         }
 
-        [].forEach.call(rootEls, findDOMNode);
+        [].forEach.call(parents, findDOMNode);
 
         return foundComponents;
     }
