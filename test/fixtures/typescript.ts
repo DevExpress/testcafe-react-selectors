@@ -1,5 +1,5 @@
 /*global fixture test*/
-import ReactSelector from '../../';
+import { ReactSelector } from '../../';
 import { loadApp } from '../helpers/service-util';
 
 const REACT_VERSION = 15;

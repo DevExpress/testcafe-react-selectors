@@ -1,5 +1,5 @@
 /*global fixture test document*/
-import ReactSelector from '../../';
+import { ReactSelector } from '../../';
 import { loadApp } from '../helpers/service-util';
 import { ClientFunction } from 'testcafe';
 

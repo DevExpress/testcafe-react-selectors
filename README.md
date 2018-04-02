@@ -31,7 +31,7 @@ Suppose you have the following JSX.
 To get a root DOM element for a component, pass the component name to the `ReactSelector` constructor.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const todoInput = ReactSelector('TodoInput');
 ```
@@ -41,7 +41,7 @@ const todoInput = ReactSelector('TodoInput');
 To obtain a nested component or DOM element, you can use a combined selector or add DOM element's tag name.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const TodoList         = ReactSelector('TodoApp TodoList');
 const itemsCountStatus = ReactSelector('TodoApp div');
@@ -55,7 +55,7 @@ Warning: if you specify a DOM element's tag name, React selectors search for the
 React selectors allow you to select elements that have a specific property value. To do this, use the `withProps` method. You can pass the property and its value as two parameters or an object.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const item1 = ReactSelector('TodoApp').withProps('priority', 'High');
 const item2 = ReactSelector('TodoApp').withProps({ priority: 'Low' });
@@ -64,7 +64,7 @@ const item2 = ReactSelector('TodoApp').withProps({ priority: 'Low' });
 You can also search for elements by multiple properties.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const element = ReactSelector('componentName').withProps({
     propName: 'value',
@@ -120,7 +120,7 @@ const subComponent = ReactSelector('TodoApp').find('div').findReact('TodoItem');
 Selectors returned by the `ReactSelector` constructor are recognized as TestCafe selectors. You can combine them with regular selectors and filter with [.withText](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#withtext), [.nth](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#nth), [.find](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#find) and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 ```
@@ -130,7 +130,7 @@ var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 Let's use the API described above to add a task to a Todo list and check that the number of items changed.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 fixture `TODO list test`
 	.page('http://localhost:1337');
@@ -171,7 +171,7 @@ The returned client function can be passed to assertions activating the [Smart A
 Example
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 fixture `TODO list test`
 	.page('http://localhost:1337');
@@ -194,7 +194,7 @@ ReactSelector('Component').getReact(({ props, state }) => {...})
 **Example**
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 fixture `TODO list test`
     .page('http://localhost:1337');
