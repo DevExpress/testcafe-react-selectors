@@ -4,7 +4,11 @@
 function getRootElsReact16 (el) {
     el = el || document.body;
 
-    if (el._reactRootContainer) return el._reactRootContainer.current.child;
+    if (el._reactRootContainer) {
+        const rootContainer = el._reactRootContainer._internalRoot || el._reactRootContainer;
+
+        return rootContainer.current.child;
+    }
 
     const children = el.children;
     let rootEls    = [];

@@ -63,7 +63,9 @@ function react16Selector (selector, parents = rootEls) {
             const portalRoot = component.stateNode && component.stateNode.container &&
                                component.stateNode.container._reactRootContainer;
 
-            if (portalRoot) component = portalRoot.current;
+            const rootContainer = portalRoot && (portalRoot._internalRoot || portalRoot);
+
+            if (rootContainer) component = rootContainer.current;
         }
 
         if (!component.child) return [];
