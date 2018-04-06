@@ -125,7 +125,7 @@ import { ReactSelector } from 'testcafe-react-selectors';
 var itemsCount = ReactSelector('TodoApp').find('.items-count span');
 ```
 
-#### Example
+**Example**
 
 Let's use the API described above to add a task to a Todo list and check that the number of items changed.
 
@@ -168,7 +168,7 @@ const reactComponentState = await reactComponent.getReact();
 
 The returned client function can be passed to assertions activating the [Smart Assertion Query mechanism](https://devexpress.github.io/testcafe/documentation/test-api/assertions/#smart-assertion-query-mechanism).
 
-Example
+**Example**
 
 ```js
 import { ReactSelector } from 'testcafe-react-selectors';
