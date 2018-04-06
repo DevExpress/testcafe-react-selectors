@@ -20,8 +20,8 @@ Suppose you have the following JSX.
     <TodoList>
         <TodoItem priority="High">Item 1</TodoItem>
         <TodoItem priority="Low">Item 2</TodoItem>
-    </TodoList>   
-    
+    </TodoList>
+
     <div className="items-count">Items count: <span>{this.state.itemCount}</span></div>
 </TodoApp>
 ```
@@ -72,9 +72,52 @@ const element = ReactSelector('componentName').withProps({
 });
 ```
 
+#### Searching for nested components
+
+You can search for a desired subcomponent or DOM element among the component's children using the `.findReact(element)` method. The method takes the subcomponent name or tag name as a parameter.
+
+Suppose you have the following JSX.
+
+```xml
+<TodoApp className="todo-app">
+    <div>
+        <TodoList>
+            <TodoItem priority="High">Item 1</TodoItem>
+            <TodoItem priority="Low">Item 2</TodoItem>
+        </TodoList>
+    </div>
+</TodoApp>
+```
+
+The following sample demonstrates how to obtain the `TodoItem` subcomponent.
+
+```js
+import ReactSelector from 'testcafe-react-selectors';
+
+const component    = ReactSelector('TodoApp');
+const div          = component.findReact('div');
+const subComponent = div.findReact('TodoItem');
+```
+
+You can call the `.findReact` method in a chain, for example:
+
+```js
+import ReactSelector from 'testcafe-react-selectors';
+
+const subComponent = ReactSelector('TodoApp').findReact('div').findReact('TodoItem');
+```
+
+You can also combine `.findReact` with regular selectors and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)) methods like [.find](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#find) or [.withText](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#withtext), for example:
+
+```js
+import ReactSelector from 'testcafe-react-selectors';
+
+const subComponent = ReactSelector('TodoApp').find('div').findReact('TodoItem');
+```
+
 #### Combining with regular TestCafe selectors
 
-Selectors returned by the `ReactSelector` constructor are recognized as TestCafe selectors. You can combine them with regular selectors and filter with `.withText`, `.nth`, `.find` and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
+Selectors returned by the `ReactSelector` constructor are recognized as TestCafe selectors. You can combine them with regular selectors and filter with [.withText](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#withtext), [.nth](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#nth), [.find](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#find) and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
@@ -172,15 +215,15 @@ The `.getReact()` method can be called for the `ReactSelector` or the snapshot t
 * `testcafe-react-selectors` support ReactJS starting with version 15. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
 * Search for a component starts from the root React component, so selectors like `ReactSelector('body MyComponent')` will return `null`.
 * ReactSelectors need class names to select components on the page. Code minification usually does not keep the original class names. So you should either use non-minified code or configure the minificator to keep class names.
-  
+
   For `babel-minify`, add the following options to the configuration:
-    
+
   ```js
   { keepClassName: true, keepFnName: true }
   ```
 
   In UglifyJS, use the following configuration:
-     
+
    ```js
    {
        compress: {
