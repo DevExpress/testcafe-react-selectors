@@ -2,11 +2,14 @@ import { Selector } from 'testcafe';
 
 declare global {
     interface Selector {
-        getReact(filter?:Function):any;
+        getReact(filter?: Function): any;
+
+        withProps(propName: string, propValue?: any): any;
+
+        withProps(props: object): any;
+
+        findReact(selector: string): any;
     }
 }
 
-declare function ReactSelector(selector:string):Selector
-
-export default ReactSelector;
-
+export function ReactSelector(selector: string): Selector
