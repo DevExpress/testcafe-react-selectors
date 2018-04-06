@@ -93,7 +93,7 @@ import ReactSelector from 'testcafe-react-selectors';
 const itemsCount = ReactSelector('TodoApp').findReact('TodoList').findReact('span');
 ```
 
-You can also combine the `findReact` method with regular selectors and [other](](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)) methods like `.find` or `.withText`, for example:
+You can also combine `.findReact` with regular selectors and [other](](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)) methods like `.find` or `.withText`, for example:
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
