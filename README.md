@@ -93,7 +93,7 @@ import ReactSelector from 'testcafe-react-selectors';
 const itemsCount = ReactSelector('TodoApp').findReact('TodoList').findReact('span');
 ```
 
-You can also combine `.findReact` with regular selectors and [other](](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)) methods like `.find` or `.withText`, for example:
+You can also combine `.findReact` with regular selectors and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)) methods like [.find](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#find) or [.withText](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#withtext), for example:
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
@@ -103,7 +103,7 @@ var itemsCount = ReactSelector('TodoApp').find('.items-count').findReact('span')
 
 #### Combining with regular TestCafe selectors
 
-Selectors returned by the `ReactSelector` constructor are recognized as TestCafe selectors. You can combine them with regular selectors and filter with `.withText`, `.nth`, `.find` and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
+Selectors returned by the `ReactSelector` constructor are recognized as TestCafe selectors. You can combine them with regular selectors and filter with [.withText](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#withtext), [.nth](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#nth), [.find](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#find) and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors) functions. To search for elements within a component, you can use the following combined approach.
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
