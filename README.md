@@ -92,7 +92,7 @@ Suppose you have the following JSX.
 The following sample demonstrates how to obtain the `TodoItem` subcomponent.
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const component    = ReactSelector('TodoApp');
 const div          = component.findReact('div');
@@ -102,7 +102,7 @@ const subComponent = div.findReact('TodoItem');
 You can call the `.findReact` method in a chain, for example:
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const subComponent = ReactSelector('TodoApp').findReact('div').findReact('TodoItem');
 ```
@@ -110,7 +110,7 @@ const subComponent = ReactSelector('TodoApp').findReact('div').findReact('TodoIt
 You can also combine `.findReact` with regular selectors and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)) methods like [.find](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#find) or [.withText](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#withtext), for example:
 
 ```js
-import ReactSelector from 'testcafe-react-selectors';
+import { ReactSelector } from 'testcafe-react-selectors';
 
 const subComponent = ReactSelector('TodoApp').find('div').findReact('TodoItem');
 ```
