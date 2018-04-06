@@ -74,15 +74,29 @@ const element = ReactSelector('componentName').withProps({
 
 #### Searching for nested components
 
-You can search for a desired element among the component's children using the `findReact(element)` method. The method takes the element name or tag name as a parameter.
+You can search for a desired subcomponent or DOM element among the component's children using the `findReact(element)` method. The method takes the subcomponent name or tag name as a parameter.
+
+Suppose you have the following JSX.
+
+```xml
+<Component>
+    <div className="MyClass">
+        <SubComponent1>
+        </SubComponent1>
+        <SubComponent2>
+        </SubComponent2>
+    </div>
+</Component>
+```
+
+The following sample demonstrates how to obtain `SubComponent1`.
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
 
-const TodoApp          = ReactSelector('TodoApp');
-const TodoList         = ReactSelector('TodoList');
-const itemsCountStatus = TodoList.findReact('div');
-const itemsCount       = TodoList.findReact('div span');
+const component    = ReactSelector('Component');
+const div          = TodoList.findReact('div');
+const subComponent = TodoList.findReact('SubComponent1');
 ```
 
 You can call the `findReact` method in a chain, for example:
@@ -90,7 +104,7 @@ You can call the `findReact` method in a chain, for example:
 ```js
 import ReactSelector from 'testcafe-react-selectors';
 
-const itemsCount = ReactSelector('TodoApp').findReact('TodoList').findReact('span');
+const subComponent = ReactSelector('Component').findReact('div').findReact('SubComponent1');
 ```
 
 You can also combine `.findReact` with regular selectors and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)) methods like [.find](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#find) or [.withText](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#withtext), for example:
@@ -98,7 +112,7 @@ You can also combine `.findReact` with regular selectors and [other](http://deve
 ```js
 import ReactSelector from 'testcafe-react-selectors';
 
-var itemsCount = ReactSelector('TodoApp').find('.items-count').findReact('span');
+const subComponent = ReactSelector('Component').find('div').findReact('SubComponent1');
 ```
 
 #### Combining with regular TestCafe selectors
