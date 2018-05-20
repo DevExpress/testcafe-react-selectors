@@ -29,6 +29,7 @@ class List extends React.Component {
     render () {
         return (
             <div>
+                List: {this.props.id}
                 <ul id="list" onClick={this._onClick}>
                     <ListItem id={this.props.id + '-item1'} selected={this.state.isActive}/>
                     <ListItem id={this.props.id + '-item2'}/>
@@ -193,7 +194,9 @@ class SmartComponent extends React.Component {
     }
 
     _onClick () {
-        this.setState({ text: 'Enabled' });
+        const newText = this.state.text === 'Enabled' ? 'Disabled' : 'Enabled';
+
+        this.setState({ text: newText });
     }
 
     render () {

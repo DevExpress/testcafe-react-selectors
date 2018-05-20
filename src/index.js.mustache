@@ -41,6 +41,7 @@ export const ReactSelector = Selector(selector => {
     if(rootEls.length) {
         window['%testCafeReactVersion%'] = 16;
         window['$testCafeReactSelector'] = selectorReact16;
+        window['$testCafeReact16Roots']  = rootEls;
 
         foundDOMNodes = selectorReact16(selector);
     }
@@ -66,6 +67,10 @@ export const ReactSelector = Selector(selector => {
     }
 }).addCustomMethods({
     withProps: (nodes, ...args) => {
+        window['%testCafeReactFoundComponents%'] = window['%testCafeReactFoundComponents%'].filter(component => {
+            return nodes.indexOf(component.node) > -1;
+        });
+
         function isEql (value1, value2) {
             if (typeof value1 !== 'object' || value1 === null || typeof value2 !== 'object' || value2 === null)
                 return value1 === value2;
@@ -114,6 +119,7 @@ export const ReactSelector = Selector(selector => {
                              react16Utils.getComponentForDOMNode;
 
         const filteredNodes  = [];
+
         const foundInstances = nodes.filter(node => {
             const componentInstance = getComponentForDOMNode(node);
 
@@ -124,25 +130,21 @@ export const ReactSelector = Selector(selector => {
             }
         });
 
-        window['%testCafeReactFoundComponents%'] = window['%testCafeReactFoundComponents%'].filter(component => {
-            return filteredNodes.indexOf(component.node) > -1;
-        });
-
         return foundInstances;
     },
 
     findReact: (nodes, selector) => {
-        const reactVersion = window['%testCafeReactVersion%'];
-        const react15Utils = {{{react15Utils}}}
-        const react16Utils = {{{react16Utils}}}
-        let componentInstances = null;
+        const reactVersion     = window['%testCafeReactVersion%'];
+        const react15Utils     = {{{react15Utils}}}
+        const react16Utils     = {{{react16Utils}}}
 
-        if(reactVersion === 15)
-            componentInstances = react15Utils.getFoundComponentInstances();
-        else if(reactVersion === 16)
-            componentInstances = react16Utils.getFoundComponentInstances();
+        let componentInstances           = null;
+        let scanDOMNodeForReactComponent = reactVersion === 15 ? react15Utils.scanDOMNodeForReactComponent :
+                           react16Utils.scanDOMNodeForReactComponent;
 
-        const reactSelector  = window['$testCafeReactSelector'];
+        componentInstances = nodes.map(scanDOMNodeForReactComponent);
+
+        const reactSelector = window['$testCafeReactSelector'];
 
         return reactSelector(selector, componentInstances);
     }

@@ -13,8 +13,8 @@ for (const version of SUPPORTED_VERSIONS) {
             await loadApp(version);
         });
 
-    test(`Should throw exception for non-valid selectors`, async t => {
-        for (var selector of [null, false, void 0, {}, 42]) {
+    test('Should throw exception for non-valid selectors', async t => {
+        for (const selector of [null, false, void 0, {}, 42]) {
             try {
                 await ReactSelector(selector);
             }
@@ -24,28 +24,29 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should get DOM node by react selector`, async t => {
-        var app = await ReactSelector('App');
-
-        var listItem1 = ReactSelector('ListItem').nth(0);
-        var listItem2 = ReactSelector('ListItem').nth(1);
+    test('Should get DOM node by react selector', async t => {
+        const app = ReactSelector('App');
+        const list = ReactSelector('List');
+        const listItem1 = ReactSelector('ListItem').nth(0);
+        const listItem2 = ReactSelector('ListItem').nth(1);
 
         await t
-            .expect(await app.id).eql('app')
+            .expect(list.count).eql(version === 16 ? 4 : 3)
+            .expect(app.id).eql('app')
+            .expect(listItem1.id).eql('l1-item1')
+            .expect(listItem2.id).eql('l1-item2');
+    });
+
+    test('Should get DOM node by composite selector', async t => {
+        const listItem1 = ReactSelector('List ListItem');
+        const listItem2 = ReactSelector('List ListItem').nth(1);
+
+        await t
             .expect(await listItem1.id).eql('l1-item1')
             .expect(await listItem2.id).eql('l1-item2');
     });
 
-    test(`Should get DOM node by composite selector`, async t => {
-        var listItem1 = ReactSelector('List ListItem');
-        var listItem2 = ReactSelector('List ListItem').nth(1);
-
-        await t
-            .expect(await listItem1.id).eql('l1-item1')
-            .expect(await listItem2.id).eql('l1-item2');
-    });
-
-    test(`Should get DOM node for stateless component`, async t => {
+    test('Should get DOM node for stateless component', async t => {
         await t
             .expect(ReactSelector('Stateless1').textContent).ok('test')
             .expect(ReactSelector('Stateless2').exists).ok()
@@ -54,22 +55,22 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(ReactSelector('Stateless4').exists).ok();
     });
 
-    test(`Should get DOM node for pure component`, async t => {
+    test('Should get DOM node for pure component', async t => {
         await t.expect(ReactSelector('PureComponent').exists).ok();
     });
 
-    test(`Should not get DOM node for element outside react component tree `, async t => {
+    test('Should not get DOM node for element outside react component tree', async t => {
         await t.expect(await ReactSelector.with({ timeout: 100 })('figure')).notOk();
     });
 
-    test(`Should get component state`, async t => {
+    test('Should get component state', async t => {
         const appReact        = await ReactSelector('App').getReact();
         const listItem1React  = await ReactSelector('ListItem').getReact();
         const listItem2React  = await ReactSelector('ListItem').nth(1).getReact();
         const listItem3       = await ReactSelector('ListItem').nth(2);
         const listItem3ItemId = listItem3.getReact(({ state }) => state.itemId);
 
-        var tagReact = await ReactSelector('ListItem p').getReact();
+        const tagReact = await ReactSelector('ListItem p').getReact();
 
         await t
             .expect(appReact.state).eql({ isRootComponent: true })
@@ -83,11 +84,11 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test(`Should get component props`, async t => {
-        var appReact       = await ReactSelector('App').getReact();
-        var listItem1React = await ReactSelector('ListItem').getReact();
-        var listItem2React = await ReactSelector('ListItem').nth(1).getReact();
-        var listItem3      = await ReactSelector('ListItem').nth(2);
-        var listItem3Id    = listItem3.getReact(({ props }) => props.id);
+        const appReact       = await ReactSelector('App').getReact();
+        const listItem1React = await ReactSelector('ListItem').getReact();
+        const listItem2React = await ReactSelector('ListItem').nth(1).getReact();
+        const listItem3      = await ReactSelector('ListItem').nth(2);
+        const listItem3Id    = listItem3.getReact(({ props }) => props.id);
 
         await t
             .expect(appReact.props).eql({ label: 'AppLabel' })
@@ -98,7 +99,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(listItem3Id).eql('l1-item3');
     });
 
-    test(`Should throw exception if version of React js is not supported`, async t => {
+    test('Should throw exception if version of React js is not supported', async t => {
         await ClientFunction(() => {
             let reactRoot         = null;
             let internalReactProp = null;
@@ -123,7 +124,7 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should throw exception if there is no React on the tested page`, async t => {
+    test('Should throw exception if there is no React on the tested page', async t => {
         await t.navigateTo('./noReact');
 
         try {
@@ -134,13 +135,13 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should get component from wrapper component - Regression GH-11`, async t => {
+    test('Should get component from wrapper component - Regression GH-11', async t => {
         await t
             .expect(ReactSelector('TextLabel').textContent).eql('Component inside of wrapper component')
             .expect(ReactSelector('WrapperComponent').textContent).eql('Component inside of wrapper component');
     });
 
-    test(`Should not get dom nodes from nested components`, async t => {
+    test('Should not get dom nodes from nested components', async t => {
         const expectedListItemCount = version === 16 ? 12 : 9;
 
         await t
@@ -149,7 +150,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(ReactSelector('App ListItem').count).eql(expectedListItemCount);
     });
 
-    test(`Should get props and state from components with common DOM node - Regression GH-15`, async t => {
+    test('Should get props and state from components with common DOM node - Regression GH-15', async t => {
         await t.expect(ReactSelector('WrapperComponent')
             .getReact(({ props, state }) => {
                 return { direction: props.direction, width: state.width };
@@ -163,13 +164,13 @@ for (const version of SUPPORTED_VERSIONS) {
             .eql({ color: '#fff', text: 'Component inside of wrapper component' });
     });
 
-    test(`Should get the component with empty output`, async t => {
+    test('Should get the component with empty output', async t => {
         const component = await ReactSelector('EmptyComponent');
 
         await t.expect(component.getReact(({ state }) => state.id)).eql(1);
     });
 
-    test(`Should search inside of portal component`, async t => {
+    test('Should search inside of portal component', async t => {
         const portal         = ReactSelector('Portal');
         const portalWidth    = await portal.getReact(({ state }) => state.width);
         const list           = ReactSelector('Portal List');
@@ -195,7 +196,7 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test(`Should search inside of stateless root GH-33`, async t => {
+    test('Should search inside of stateless root GH-33', async t => {
         const expectedText = 'PureComponent';
 
         await t.navigateTo('/stateless-root.html');
@@ -343,7 +344,6 @@ for (const version of SUPPORTED_VERSIONS) {
         const paragraphs2     = listItems.findReact('p');
         const expectedElCount = version === 16 ? 12 : 9;
 
-
         await t
             .expect(smartComponent.exists).ok()
             .expect(textLabel.exists).ok()
@@ -376,8 +376,32 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(elSet.count).eql(3)
             .expect(subEl.count).eql(2)
             .expect(subEl.tagName).eql('span')
+            .expect(el.findReact('SetItemLabel').count).eql(3)
             .expect(subElByProps.count).eql(1)
             .expect(actualText).eql(spanText);
+    });
+
+    test('Should find react components inside of filtered Selector set GH-97', async t => {
+        await t
+            .expect(ReactSelector('List').withText('List: l2').findReact('ListItem').id).eql('l2-item1')
+            .expect(ReactSelector('App').find('div').exists).ok()
+            .expect(ReactSelector('App').find('div').findReact('ListItem').exists).ok()
+            .expect(ReactSelector('App').find('div').findReact('ListItem').count).eql(6)
+            .expect(ReactSelector('App').find('*').findReact('ListItem').count).eql(6)
+            .expect(ReactSelector('App').find('div').findReact('ListItem').id).eql('l1-item1');
+
+        const componentCont    = ReactSelector('SmartComponent');
+        const statelessComp    = componentCont.findReact('Stateless1');
+        const text             = statelessComp.getReact(({ props }) => props.text);
+
+        await t
+            .expect(text).eql('Disabled')
+
+            .click(componentCont)
+            .expect(text).eql('Enabled')
+
+            .click(componentCont)
+            .expect(text).eql('Disabled');
     });
 }
 /*eslint-enable no-loop-func*/
