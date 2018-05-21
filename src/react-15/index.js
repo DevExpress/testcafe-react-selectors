@@ -112,6 +112,7 @@ function react15elector (selector, parents = rootEls) {
 
                 renderedChildren = getRenderedChildren(reactComponent);
 
+
                 Object.keys(renderedChildren).forEach(key => {
                     walk(renderedChildren[key], cb);
 
@@ -129,7 +130,8 @@ function react15elector (selector, parents = rootEls) {
                 if (selectorElms[selectorIndex] !== componentName) return false;
 
                 if (selectorIndex === selectorElms.length - 1) {
-                    foundComponents.push(domNode);
+                    if (foundComponents.indexOf(domNode) === -1)
+                        foundComponents.push(domNode);
 
                     window['%testCafeReactFoundComponents%'].push({ node: domNode, component: reactComponent });
                 }
