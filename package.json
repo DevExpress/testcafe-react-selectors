@@ -46,7 +46,7 @@
     "plugin"
   ],
   "peerDependencies": {
-    "testcafe": "^0.19.1"
+    "testcafe": ">0.19.1"
   },
   "types": "./ts-defs/index.d.ts"
 }

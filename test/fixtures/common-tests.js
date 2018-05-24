@@ -120,7 +120,7 @@ for (const version of SUPPORTED_VERSIONS) {
             await ReactSelector('App');
         }
         catch (e) {
-            await t.expect(e.errMsg).contains('testcafe-react-selectors supports React version 15.x and newer');
+            await t.expect(e.errMsg).contains('This module supports React version 15.x and newer');
         }
     });
 
@@ -131,7 +131,7 @@ for (const version of SUPPORTED_VERSIONS) {
             await ReactSelector('body');
         }
         catch (e) {
-            await t.expect(e.errMsg).contains('testcafe-react-selectors supports React version 15.x and newer');
+            await t.expect(e.errMsg).contains('This module supports React version 15.x and newer');
         }
     });
 

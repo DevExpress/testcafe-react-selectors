@@ -1,10 +1,13 @@
 /*global ClientFunction document NodeFilter*/
 
 /*eslint-disable no-unused-vars*/
-function waitForReact (timeout) {
+async function waitForReact (timeout) {
     /*eslint-enable no-unused-vars*/
     const DEFAULT_TIMEOUT = 1e4;
     const checkTimeout    = typeof timeout === 'number' ? timeout : DEFAULT_TIMEOUT;
+
+    await ClientFunction(() => {
+    })();
 
     return ClientFunction(() => {
         const CHECK_INTERVAL = 200;

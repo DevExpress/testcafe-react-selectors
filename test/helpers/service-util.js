@@ -1,22 +1,14 @@
 /*global window*/
-import { ClientFunction } from 'testcafe';
+import { ClientFunction, t } from 'testcafe';
 import { waitForReact } from '../../';
 
 export async function loadApp (version) {
-    await ClientFunction(() => {
-        return new Promise(resolve => {
-            if (window.loadApp) {
-                window.loadApp(version);
-                resolve();
-            }
+    await t.expect(ClientFunction(() => !!window.loadApp)).ok({ timeout: 3e4 });
 
-            else {
-                setTimeout(() => {
-                    window.loadApp(version);
-                }, 200);
-            }
-        });
+    await ClientFunction(() => {
+        window.loadApp(version);
     }, { dependencies: { version } })();
 
+    await t.expect(ClientFunction(() => !!window.React)).ok({ timeout: 3e4 });
     await waitForReact(3e4);
 }
