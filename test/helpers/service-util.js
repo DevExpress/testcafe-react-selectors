@@ -1,7 +1,8 @@
 /*global window*/
-import { t, ClientFunction } from 'testcafe';
+import { ClientFunction } from 'testcafe';
+import { waitForReact } from '../../';
 
 export async function loadApp (version) {
     await ClientFunction(() => window.loadApp(version), { dependencies: { version } })();
-    await t.wait(300);
+    await waitForReact();
 }

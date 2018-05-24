@@ -13,3 +13,5 @@ declare global {
 }
 
 export function ReactSelector(selector: string): Selector
+
+export function waitForReact(timeout?: number): void

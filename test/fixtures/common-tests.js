@@ -1,5 +1,5 @@
 /*global fixture test document*/
-import { ReactSelector } from '../../';
+import { ReactSelector, waitForReact } from '../../';
 import { loadApp } from '../helpers/service-util';
 import { ClientFunction } from 'testcafe';
 
@@ -25,8 +25,8 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test('Should get DOM node by react selector', async t => {
-        const app = ReactSelector('App');
-        const list = ReactSelector('List');
+        const app       = ReactSelector('App');
+        const list      = ReactSelector('List');
         const listItem1 = ReactSelector('ListItem').nth(0);
         const listItem2 = ReactSelector('ListItem').nth(1);
 
@@ -196,49 +196,6 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test('Should search inside of stateless root GH-33', async t => {
-        const expectedText = 'PureComponent';
-
-        await t.navigateTo('/stateless-root.html');
-        await loadApp(version);
-
-
-        let App        = ReactSelector('App');
-        let component1 = ReactSelector('App PureComponent');
-        let component2 = ReactSelector('PureComponent');
-        let appTitle   = App.getReact(({ props }) => props.text);
-        const text1    = component1.getReact(({ state }) => state.text);
-        const text2    = component2.getReact(({ state }) => state.text);
-
-        await t
-            .expect(App.exists).ok()
-            .expect(component1.exists).ok()
-            .expect(component2.exists).ok()
-            .expect(appTitle).eql('AppTitle')
-            .expect(text1).eql(expectedText)
-            .expect(text2).eql(expectedText);
-
-        await t.navigateTo('/root-pure-component.html');
-        await loadApp(version);
-
-        App                   = ReactSelector('App');
-        component1            = ReactSelector('App PureComponent');
-        component2            = ReactSelector('PureComponent');
-        appTitle              = App.getReact(({ props }) => props.text);
-        const text            = App.getReact(({ state }) => state.text);
-        const component1React = component1.getReact();
-        const component2React = component2.getReact();
-
-        await t
-            .expect(App.exists).ok()
-            .expect(component1.exists).ok()
-            .expect(component2.exists).ok()
-            .expect(appTitle).eql('AppTitle')
-            .expect(text).eql(expectedText)
-            .expect(component1React).eql({ state: {}, props: {} })
-            .expect(component2React).eql({ state: {}, props: {} });
-    });
-
     test('Should get new values of props and state after they were changed GH-71', async t => {
         const list               = ReactSelector('List');
         const isListActive       = list.getReact(({ state }) => state.isActive);
@@ -390,9 +347,9 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(ReactSelector('App').find('*').findReact('ListItem').count).eql(6)
             .expect(ReactSelector('App').find('div').findReact('ListItem').id).eql('l1-item1');
 
-        const componentCont    = ReactSelector('SmartComponent');
-        const statelessComp    = componentCont.findReact('Stateless1');
-        const text             = statelessComp.getReact(({ props }) => props.text);
+        const componentCont = ReactSelector('SmartComponent');
+        const statelessComp = componentCont.findReact('Stateless1');
+        const text          = statelessComp.getReact(({ props }) => props.text);
 
         await t
             .expect(text).eql('Disabled')
@@ -402,6 +359,53 @@ for (const version of SUPPORTED_VERSIONS) {
 
             .click(componentCont)
             .expect(text).eql('Disabled');
+    });
+
+    fixture `ReactJS TestCafe plugin (the app loads during test) (React ${version})`
+        .page `http://localhost:1355`;
+
+    test('Should search inside of stateless root GH-33', async t => {
+        const expectedText = 'PureComponent';
+
+        await t.navigateTo('/stateless-root.html');
+        await loadApp(version);
+        await waitForReact();
+
+        let App        = ReactSelector('App');
+        let component1 = ReactSelector('App PureComponent');
+        let component2 = ReactSelector('PureComponent');
+        let appTitle   = App.getReact(({ props }) => props.text);
+        const text1    = component1.getReact(({ state }) => state.text);
+        const text2    = component2.getReact(({ state }) => state.text);
+
+        await t
+            .expect(App.exists).ok()
+            .expect(component1.exists).ok()
+            .expect(component2.exists).ok()
+            .expect(appTitle).eql('AppTitle')
+            .expect(text1).eql(expectedText)
+            .expect(text2).eql(expectedText);
+
+        await t.navigateTo('/root-pure-component.html');
+        await loadApp(version);
+        await waitForReact();
+
+        App                   = ReactSelector('App');
+        component1            = ReactSelector('App PureComponent');
+        component2            = ReactSelector('PureComponent');
+        appTitle              = App.getReact(({ props }) => props.text);
+        const text            = App.getReact(({ state }) => state.text);
+        const component1React = component1.getReact();
+        const component2React = component2.getReact();
+
+        await t
+            .expect(App.exists).ok()
+            .expect(component1.exists).ok()
+            .expect(component2.exists).ok()
+            .expect(appTitle).eql('AppTitle')
+            .expect(text).eql(expectedText)
+            .expect(component1React).eql({ state: {}, props: {} })
+            .expect(component2React).eql({ state: {}, props: {} });
     });
 }
 /*eslint-enable no-loop-func*/
