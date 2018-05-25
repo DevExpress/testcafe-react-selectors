@@ -1,19 +1,16 @@
 /*global ClientFunction document NodeFilter*/
 
 /*eslint-disable no-unused-vars*/
-async function waitForReact (timeout) {
+function waitForReact (timeout) {
     /*eslint-enable no-unused-vars*/
     const DEFAULT_TIMEOUT = 1e4;
     const checkTimeout    = typeof timeout === 'number' ? timeout : DEFAULT_TIMEOUT;
-
-    await ClientFunction(() => {
-    })();
 
     return ClientFunction(() => {
         const CHECK_INTERVAL = 200;
         let stopChecking     = false;
 
-        function findStaticReact16Root () {
+        function findReact16Root () {
             const treeWalker = document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, null, false);
 
             while (treeWalker.nextNode())
@@ -22,11 +19,18 @@ async function waitForReact (timeout) {
             return false;
         }
 
+        function findReact15OrStaticRenderedRoot () {
+            const rootEl = document.querySelector('[data-reactroot]');
+
+            //NOTE: we have data-reactroot in static render even before hydration
+            return rootEl && Object.keys(rootEl).some(prop => /^__reactInternalInstance/.test(prop));
+        }
+
         function findReactApp () {
-            const isReact15OrStaticRender = !!document.querySelector('[data-reactroot]');
+            const isReact15OrStaticRender = findReact15OrStaticRenderedRoot();
             const isReact16WithHandlers   = !!Object.keys(document).filter(prop => /^_reactListenersID/.test(prop)).length;
 
-            return isReact15OrStaticRender || isReact16WithHandlers || findStaticReact16Root();
+            return isReact15OrStaticRender || isReact16WithHandlers || findReact16Root();
         }
 
         return new Promise((resolve, reject) => {
