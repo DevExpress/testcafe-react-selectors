@@ -8,6 +8,22 @@ This plugin provides selector extensions that make it easier to test ReactJS com
 
 ## Usage
 
+### Wait for application to be ready to run tests
+
+To wait until the React's component tree is loaded, add the `waitForReact` method to fixture's `beforeEach` hook.
+
+```js
+import { waitForReact } from 'testcafe-react-selectors';
+
+fixture `App tests`
+    .page('http://react-app-url')
+    .beforeEach(async () => {
+        await waitForReact();
+    });
+```
+
+Default timeout for `waitForReact` is `10000` ms. You can specify a custom timeout value - `waitForReact(5000)`.
+
 ### Creating selectors for ReactJS components
 
 `ReactSelector` allows you to select page elements by the name of the component class or the nested component element.
