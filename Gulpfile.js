@@ -42,16 +42,22 @@ gulp.task('build-test-app', ['clean', 'lint'], function () {
 });
 
 gulp.task('build-selectors-script', ['clean', 'lint'], function () {
+    function loadModule (modulePath) {
+        return fs.readFileSync(modulePath).toString();
+    }
+
     return gulp.src('./src/index.js.mustache')
         .pipe(mustache({
-            getRootElsReact15: fs.readFileSync('./src/react-15/get-root-els.js').toString(),
-            getRootElsReact16: fs.readFileSync('./src/react-16/get-root-els.js').toString(),
+            getRootElsReact15: loadModule('./src/react-15/get-root-els.js'),
+            getRootElsReact16: loadModule('./src/react-16/get-root-els.js'),
 
-            selectorReact15: fs.readFileSync('./src/react-15/index.js').toString(),
-            selectorReact16: fs.readFileSync('./src/react-16/index.js').toString(),
+            selectorReact15: loadModule('./src/react-15/index.js'),
+            selectorReact16: loadModule('./src/react-16/index.js'),
 
-            react15Utils: fs.readFileSync('./src/react-15/react-utils.js').toString(),
-            react16Utils: fs.readFileSync('./src/react-16/react-utils.js').toString()
+            react15Utils: loadModule('./src/react-15/react-utils.js'),
+            react16Utils: loadModule('./src/react-16/react-utils.js'),
+
+            waitForReact: loadModule('./src/wait-for-react.js')
         }))
         .pipe(rename('index.js'))
         .pipe(gulp.dest('lib/tmp'));

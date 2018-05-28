@@ -1,5 +1,5 @@
 /*global document window*/
-var Selector = require('testcafe').Selector;
+import { Selector, ClientFunction } from 'testcafe';
 
 export const ReactSelector = Selector(selector => {
     const getRootElsReact15 = {{{getRootElsReact15}}}
@@ -51,7 +51,7 @@ export const ReactSelector = Selector(selector => {
     if(foundDOMNodes)
         return foundDOMNodes;
 
-    throw new Error('testcafe-react-selectors supports React version 15.x and newer');
+    throw new Error("React component tree is not loaded yet or the current React version is not supported. This module supports React version 15.x and newer. To wait until the React's component tree is loaded, add the `waitForReact` method to fixture's `beforeEach` hook.");
 }).addCustomMethods({
     getReact: (node, fn) => {
         const reactVersion = window['%testCafeReactVersion%'];
@@ -149,3 +149,5 @@ export const ReactSelector = Selector(selector => {
         return reactSelector(selector, componentInstances);
     }
 }, { returnDOMNodes: true });
+
+export const waitForReact = {{{waitForReact}}};
