@@ -9,7 +9,7 @@ class ListItem extends React.Component {
     }
 
     render () {
-        return <li id={this.props.id}><p>{this.props.id} text</p></li>;
+        return <li id={this.props.id}><p key={`${this.props.id}-p`}>{this.props.id} text</p></li>;
     }
 }
 
@@ -31,8 +31,8 @@ class List extends React.Component {
             <div>
                 List: {this.props.id}
                 <ul id="list" onClick={this._onClick}>
-                    <ListItem id={this.props.id + '-item1'} selected={this.state.isActive}/>
-                    <ListItem id={this.props.id + '-item2'}/>
+                    <ListItem id={this.props.id + '-item1'} selected={this.state.isActive} key="ListItem1"/>
+                    <ListItem id={this.props.id + '-item2'} key="ListItem2"/>
                     <ListItem id={this.props.id + '-item3'}/>
                 </ul>
             </div>
