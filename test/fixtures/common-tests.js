@@ -249,18 +249,18 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(textPropEnabled).eql('Enabled');
     });
 
-    test('Should filter components by props (withProps method)', async t => {
-        const el     = ReactSelector('SetItem');
-        let elSet    = el.withProps({ prop1: true });
-        let elSubSet = elSet.withProps({ prop2: { enabled: true } });
+    test('Should filter components by props (withProps method) - exact matching', async t => {
+        const el     = ReactSelector('UnfilteredSet SetItem');
+        let elSet    = el.withProps({ prop1: true }, { exactObjectMatch: true });
+        let elSubSet = elSet.withProps({ prop2: { enabled: true } }, { exactObjectMatch: true });
 
         await t
             .expect(el.count).eql(5)
             .expect(elSet.count).eql(3)
             .expect(elSubSet.count).eql(1);
 
-        elSet    = el.withProps('prop1', true);
-        elSubSet = elSet.withProps('prop2', { enabled: true });
+        elSet    = el.withProps('prop1', true, { exactObjectMatch: true });
+        elSubSet = elSet.withProps('prop2', { enabled: true }, { exactObjectMatch: true });
 
         await t
             .expect(elSet.count).eql(3)
@@ -270,16 +270,24 @@ for (const version of SUPPORTED_VERSIONS) {
 
         circularDeps.field = circularDeps;
 
-        const nonExistingSubset1 = el.withProps({ foo: 'bar' });
+        const nonExistingSubset1 = el.withProps({ foo: 'bar' }, { exactObjectMatch: true });
         const nonExistingSubset2 = el.withProps({
             foo: function () {
             },
 
             prop1: true
-        });
-        const nonExistingSubset3 = el.withProps({ prop1: true, prop2: { enabled: true, width: void 0 } });
-        const nonExistingSubset4 = el.withProps({ prop1: true, prop2: [{ enabled: true }] });
-        const nonExistingSubset5 = el.withProps(circularDeps);
+        }, { exactObjectMatch: true });
+        const nonExistingSubset3 = el.withProps({
+            prop1: true,
+            prop2: { enabled: true, width: void 0 }
+        }, { exactObjectMatch: true });
+
+        const nonExistingSubset4 = el.withProps({
+            prop1: true,
+            prop2: [{ enabled: true }]
+        }, { exactObjectMatch: true });
+
+        const nonExistingSubset5 = el.withProps(circularDeps, { exactObjectMatch: true });
 
         await t
             .expect(nonExistingSubset1.count).eql(0)
@@ -289,24 +297,100 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(nonExistingSubset5.count).eql(0);
     });
 
+    test('Should filter components by props (withProps method) - partial matching', async t => {
+        const el = ReactSelector('UnfilteredSet_PartialMatching SetItem');
+
+        const subSet1 = el.withProps({
+            prop1: {
+                obj: { field1: 1 }
+            }
+        });
+
+        const subSet2 = el.withProps({
+            prop1: {
+                obj: { field2: 0 }
+            }
+        });
+
+        const subSet3 = el.withProps({
+            prop1: {
+                obj: {
+                    field1:           2,
+                    notExistingField: true
+                }
+            }
+        });
+
+        await t
+            .expect(subSet1.count).eql(3)
+            .expect(subSet2.count).eql(1)
+            .expect(subSet3.count).eql(0);
+
+        const subSetLevel2Partial = el.withProps({
+            prop1: {
+                obj: {
+                    field3: {
+                        subField1: 1
+                    }
+                }
+            }
+        });
+
+        const subSetLevel2Exact = el.withProps({
+            prop1: {
+                obj: {
+                    field3: {
+                        subField1: 1,
+                        subField2: 0
+                    }
+                }
+            }
+        });
+
+        await t
+            .expect(subSetLevel2Partial.count).eql(3)
+            .expect(subSetLevel2Exact.count).eql(1);
+    });
+
     test('Should filter components by props (withProps method) - errors', async t => {
         const el = ReactSelector('List');
 
-        for (const props of [null, false, void 0, 42, 'prop']) {
+        const nonObjectValues = [null, false, void 0, 42, 'prop', []];
+        const nonStringValues = [null, false, void 0, 42, []];
+
+        for (const props of nonObjectValues) {
             try {
-                await el.withProps(props)();
+                await el.withProps(props).with({ timeout: 10 })();
             }
             catch (e) {
                 await t.expect(e.errMsg).contains(`Error: "props" option is expected to be a non-null object, but it was ${typeof props}.`);
             }
         }
 
-        for (const props of [null, false, void 0, 42, {}, []]) {
+        for (const props of nonStringValues) {
             try {
-                await el.withProps(props, 'value')();
+                await el.withProps(props, 'value').with({ timeout: 10 })();
             }
             catch (e) {
-                await t.expect(e.errMsg).contains(`Error: property name is expected to be a string, but it was ${typeof props}.`);
+                await t.expect(e.errMsg).contains(`Error: property name string or a "props" non-null object expected, but it was ${typeof props}.`);
+            }
+        }
+
+        for (const options of nonObjectValues) {
+            try {
+                await el.withProps('prop', 'value', options).with({ timeout: 10 })();
+            }
+            catch (e) {
+                await t.expect(e.errMsg).contains(`Error: options is expected to be a object, but it was ${typeof options}.`);
+            }
+        }
+
+        for (const options of nonObjectValues) {
+            try {
+                await el.withProps({ prop: 'value' }, options).with({ timeout: 10 })();
+            }
+            catch (e) {
+                await t.expect(e.errMsg).contains(`Error: options is expected to be a object, but it was ${typeof options}.`);
             }
         }
     });
