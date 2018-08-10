@@ -28,7 +28,7 @@
 
             while (renderedComponent) {
                 if (componentName === utils.getName(renderedComponent))
-                    componentInstance = renderedComponent._instance;
+                    componentInstance = renderedComponent._instance || renderedComponent._currentElement;
 
                 if (renderedComponent._domID === component._domID)
                     return componentInstance;
@@ -65,10 +65,16 @@
         }
     }
 
+    function getComponentKey (component) {
+        const currentElement = component._reactInternalInstance ? component._reactInternalInstance._currentElement : component;
+
+        return currentElement.key;
+    }
+
     /*eslint-disable no-unused-vars*/
     function getReact (node, fn) {
         /*eslint-enable no-unused-vars*/
-        var componentInstance = getComponentForDOMNode(node);
+        const componentInstance = getComponentForDOMNode(node);
 
         if (!componentInstance) return null;
 
@@ -77,13 +83,15 @@
         if (typeof fn === 'function') {
             return fn({
                 state: copyReactObject(componentInstance.state),
-                props: copyReactObject(componentInstance.props)
+                props: copyReactObject(componentInstance.props),
+                key:   getComponentKey(componentInstance)
             });
         }
 
         return {
             state: copyReactObject(componentInstance.state),
-            props: copyReactObject(componentInstance.props)
+            props: copyReactObject(componentInstance.props),
+            key:   getComponentKey(componentInstance)
         };
     }
 

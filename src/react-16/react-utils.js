@@ -27,14 +27,11 @@
         else if (window['%testCafeReactFoundComponents%'].length)
             component = window['%testCafeReactFoundComponents%'].filter(desc => desc.node === el)[0].component;
 
-        const isTag = typeof component.type === 'string';
-
-        if (isTag) return null;
-
         const props = component.stateNode && component.stateNode.props || component.memoizedProps;
         const state = component.stateNode && component.stateNode.state || component.memoizedState;
+        const key   = component.key;
 
-        return { props, state };
+        return { props, state, key };
     }
 
     /*eslint-enable no-unused-vars*/
@@ -51,13 +48,15 @@
         if (typeof fn === 'function') {
             return fn({
                 state: copyReactObject(componentInstance.state),
-                props: copyReactObject(componentInstance.props)
+                props: copyReactObject(componentInstance.props),
+                key:   componentInstance.key
             });
         }
 
         return {
             state: copyReactObject(componentInstance.state),
-            props: copyReactObject(componentInstance.props)
+            props: copyReactObject(componentInstance.props),
+            key:   componentInstance.key
         };
     }
 

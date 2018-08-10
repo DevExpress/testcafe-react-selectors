@@ -80,7 +80,7 @@ for (const version of SUPPORTED_VERSIONS) {
 
             .expect(listItem3ItemId).eql('l1-item3')
 
-            .expect(tagReact).notOk();
+            .expect(tagReact).eql({ state: {}, props: {}, key: 'l1-item1-p' });
     });
 
     test(`Should get component props`, async t => {
@@ -97,6 +97,26 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(listItem2React.props).eql({ id: 'l1-item2' })
 
             .expect(listItem3Id).eql('l1-item3');
+    });
+
+    test('Should get component key', async t => {
+        const listItem1React = await ReactSelector('ListItem').getReact();
+        const listItem2React = await ReactSelector('ListItem').nth(1).getReact();
+        const listItem3React = await ReactSelector('ListItem').nth(2).getReact();
+
+        await t
+            .expect(listItem1React.key).eql('ListItem1')
+            .expect(listItem2React.key).eql('ListItem2')
+            .expect(listItem3React.key).eql(null);
+
+        const listItem1LiTagReact = await ReactSelector('ListItem p').getReact();
+        const listItem2LiTagReact = await ReactSelector('ListItem p').nth(1).getReact();
+        const listItem3LiTagReact = await ReactSelector('ListItem p').nth(2).getReact();
+
+        await t
+            .expect(listItem1LiTagReact.key).eql('l1-item1-p')
+            .expect(listItem2LiTagReact.key).eql('l1-item2-p')
+            .expect(listItem3LiTagReact.key).eql('l1-item3-p');
     });
 
     test('Should throw exception if version of React js is not supported', async t => {
@@ -404,8 +424,8 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(component2.exists).ok()
             .expect(appTitle).eql('AppTitle')
             .expect(text).eql(expectedText)
-            .expect(component1React).eql({ state: {}, props: {} })
-            .expect(component2React).eql({ state: {}, props: {} });
+            .expect(component1React).eql({ state: {}, props: {}, key: null })
+            .expect(component2React).eql({ state: {}, props: {}, key: null });
     });
 }
 /*eslint-enable no-loop-func*/
