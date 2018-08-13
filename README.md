@@ -135,7 +135,7 @@ const element = ReactSelector('componentName').withProps({
     simpleProp: 'value',
     objProp: {
         field1: 'value',
-	field2: 'value'
+        field2: 'value'
     }
 }, { exactObjectMatch: true })
 ```
@@ -312,7 +312,7 @@ test('Check list item', async t => {
     await t
         .expect(el.getReact(({ props }) => props.priority)).eql('High')
         .expect(el.getReact(({ state }) => state.isActive)).eql(false)
-	.expect(el.getReact(({ key }) => key)).eql('componentID');
+        .expect(el.getReact(({ key }) => key)).eql('componentID');
 });
 ```
 
