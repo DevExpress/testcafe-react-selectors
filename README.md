@@ -88,6 +88,95 @@ const element = ReactSelector('componentName').withProps({
 });
 ```
 
+##### Properties whose values are objects
+
+React selectors allow you to filter components by properties whose values are objects.
+
+When the `withProps` function filters properties, it determines whether the objects (property values) are strictly or partially equal.
+
+The following example illustrates strict and partial equality.
+
+```js
+object1 = {
+    field1: 1
+}
+object2 = {
+    field1: 1
+}
+object3 = {
+    field1: 1
+    field2: 2
+}
+object4 = {
+    field1: 3
+    field2: 2
+}
+```
+
+* `object1` strictly equals `object2`
+* `object2` partially equals `object3`
+* `object2` does not equal `object4`
+* `object3` does not equal `object4`
+
+Prior to version 3.0.0, `withProps` checked if objects are strictly equal when comparing them. Since 3.0.0, `withProps` checks for partial equality. To test objects for strict equality, specify the `exactObjectMatch` option.
+
+The following example returns the `componentName` component because the `objProp` property values are strictly equal and `exactObjectMatch` is set to true.
+
+```js
+// props = {
+//   simpleProp: 'value',
+//   objProp: {
+//       field1: 'value',
+//       field2: 'value'
+//   }
+// }
+
+const element = ReactSelector('componentName').withProps({
+    simpleProp: 'value',
+    objProp: {
+        field1: 'value',
+	field2: 'value'
+    }
+}, { exactObjectMatch: true })
+```
+
+Note that the partial equality check works for objects of any depth.
+
+```js
+// props = {
+//     simpleProp: 'value',
+//     objProp: {
+//         field1: 'value',
+//         field2: 'value',
+//         nested1: {
+//             someField: 'someValue',
+//             nested2: {
+//                 someField: 'someValue',
+//                 nested3: {
+//                     field: 'value',
+//                     someField: 'someValue'
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
+const element = ReactSelector('componentName').withProps({
+    simpleProp: 'value',
+    objProp: {
+        field1: 'value',
+        nested1: {
+            nested2: {
+                nested3: {
+                    field: 'value'
+                }
+            }
+        }
+    }
+}, { exactObjectMatch: false })
+```
+
 #### Searching for nested components
 
 You can search for a desired subcomponent or DOM element among the component's children using the `.findReact(element)` method. The method takes the subcomponent name or tag name as a parameter.
@@ -164,11 +253,11 @@ test('Add new task', async t => {
 
 ### Obtaining component's props and state
 
-As an alternative to [testcafe snapshot properties](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/dom-node-state.html), you can obtain `state` or `props` of a ReactJS component.
+As an alternative to [testcafe snapshot properties](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/dom-node-state.html), you can obtain `state`, `props` or `key` of a ReactJS component.
 
-To obtain component properties and state, use the React selector's `.getReact()` method.
+To obtain component's properties, state and key, use the React selector's `.getReact()` method.
 
-The `.getReact()` method returns a [client function](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client.html). This function resolves to an object that contains component's properties (excluding properties of its `children`) and state.
+The `.getReact()` method returns a [client function](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client.html). This function resolves to an object that contains component's properties (excluding properties of its `children`), state and key.
 
 ```js
 const reactComponent      = ReactSelector('MyComponent');
@@ -178,7 +267,8 @@ const reactComponentState = await reactComponent.getReact();
 //
 // {
 //     props:    <component_props>,
-//     state:    <component_state>
+//     state:    <component_state>,
+//     key:      <component_key>
 // }
 ```
 
@@ -198,13 +288,14 @@ test('Check list item', async t => {
 
     await t.expect(component.props.priority).eql('High');
     await t.expect(component.state.isActive).eql(false);
+    await t.expect(component.key).eql('componentID');
 });
 ```
 
-As an alternative, the `.getReact()` method can take a function that returns the required property or state. This function acts as a filter. Its argument is an object returned by `.getReact()`, i.e. `{ props: ..., state: ...}`.
+As an alternative, the `.getReact()` method can take a function that returns the required property, state or key. This function acts as a filter. Its argument is an object returned by `.getReact()`, i.e. `{ props: ..., state: ..., key: ...}`.
 
 ```js
-ReactSelector('Component').getReact(({ props, state }) => {...})
+ReactSelector('Component').getReact(({ props, state, key }) => {...})
 ```
 
 **Example**
@@ -220,7 +311,8 @@ test('Check list item', async t => {
 
     await t
         .expect(el.getReact(({ props }) => props.priority)).eql('High')
-        .expect(el.getReact(({ state }) => state.isActive)).eql(false);
+        .expect(el.getReact(({ state }) => state.isActive)).eql(false)
+	.expect(el.getReact(({ key }) => key)).eql('componentID');
 });
 ```
 
