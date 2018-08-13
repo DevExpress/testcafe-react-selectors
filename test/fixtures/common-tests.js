@@ -363,7 +363,7 @@ for (const version of SUPPORTED_VERSIONS) {
                 await el.withProps(props).with({ timeout: 10 })();
             }
             catch (e) {
-                await t.expect(e.errMsg).contains(`Error: "props" option is expected to be a non-null object, but it was ${typeof props}.`);
+                await t.expect(e.errMsg).contains(`Error: The "props" option value is expected to be a non-null object, but it is ${typeof props}.`);
             }
         }
 
@@ -372,7 +372,7 @@ for (const version of SUPPORTED_VERSIONS) {
                 await el.withProps(props, 'value').with({ timeout: 10 })();
             }
             catch (e) {
-                await t.expect(e.errMsg).contains(`Error: property name string or a "props" non-null object expected, but it was ${typeof props}.`);
+                await t.expect(e.errMsg).contains(`Error: The first argument is expected to be a property name string or a "props" non-null object, but it is ${typeof props}.`);
             }
         }
 
@@ -381,7 +381,7 @@ for (const version of SUPPORTED_VERSIONS) {
                 await el.withProps('prop', 'value', options).with({ timeout: 10 })();
             }
             catch (e) {
-                await t.expect(e.errMsg).contains(`Error: options is expected to be a object, but it was ${typeof options}.`);
+                await t.expect(e.errMsg).contains(`Error: The "options" value is expected to be an object, but it is ${typeof options}.`);
             }
         }
 
@@ -390,7 +390,7 @@ for (const version of SUPPORTED_VERSIONS) {
                 await el.withProps({ prop: 'value' }, options).with({ timeout: 10 })();
             }
             catch (e) {
-                await t.expect(e.errMsg).contains(`Error: options is expected to be a object, but it was ${typeof options}.`);
+                await t.expect(e.errMsg).contains(`Error: The "options" value is expected to be an object, but it is ${typeof options}.`);
             }
         }
     });

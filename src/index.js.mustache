@@ -134,12 +134,12 @@ export const ReactSelector = Selector(selector => {
             options = args[2];
 
         if(args.length < 2 && !firstArgsIsObject)
-             throw new Error(`"props" option is expected to be a non-null object, but it was ${typeof args[0]}.`);
+             throw new Error(`The "props" option value is expected to be a non-null object, but it is ${typeof args[0]}.`);
         else if(typeof args[0] !== 'string' && !firstArgsIsObject)
-             throw new Error(`property name string or a "props" non-null object expected, but it was ${typeof args[0]}.`);
+            throw new Error(`The first argument is expected to be a property name string or a "props" non-null object, but it is ${typeof args[0]}.`);
 
         if(options && typeof options !== 'object' && !Array.isArray(args[0]))
-            throw new Error(`options is expected to be a object, but it was ${typeof options}.`);
+            throw new Error(`The "options" value is expected to be an object, but it is ${typeof options}.`);
 
         if (args.length > 1) {
             if(firstArgsIsObject)
