@@ -208,10 +208,6 @@ const SetItemLabel = ({ text }) => <span> {text} </span>;
 const SetItem      = ({ text }) => text ? <SetItemLabel text={text}/> : null;
 
 class UnfilteredSet extends React.Component {
-    constructor () {
-        super();
-    }
-
     render () {
         return (<div>
             <SetItem prop1={true} text="SetItem1"/>
@@ -219,6 +215,38 @@ class UnfilteredSet extends React.Component {
             <SetItem prop1={true} prop2={{ enabled: true }} text="SetItem2"/>
             <SetItem prop1={'test'} prop2={0}/>
             <SetItem text="SetItem3"/>
+        </div>);
+    }
+}
+
+class UnfilteredSet_PartialMatching extends React.Component {
+    render () {
+        const prop1_1 = {
+            obj: {
+                field1: 1,
+                field2: 2,
+                field3: {
+                    subField1: 1,
+                    subField2: 2
+                }
+            }
+        };
+
+        const prop1_2 = {
+            obj: {
+                field1: 1,
+                field2: 0,
+                field3: {
+                    subField1: 1,
+                    subField2: 0
+                }
+            }
+        };
+
+        return (<div>
+            <SetItem prop1={prop1_1}/>
+            <SetItem prop1={prop1_1}/>
+            <SetItem prop1={prop1_2}/>
         </div>);
     }
 }
@@ -261,6 +289,7 @@ class App extends React.Component {
 
                 <SmartComponent/>
                 <UnfilteredSet/>
+                <UnfilteredSet_PartialMatching/>
             </div>
         );
     }

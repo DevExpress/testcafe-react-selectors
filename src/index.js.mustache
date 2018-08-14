@@ -71,6 +71,10 @@ export const ReactSelector = Selector(selector => {
             return nodes.indexOf(component.node) > -1;
         });
 
+        function isObject(value) {
+            return typeof value === 'object' && value !== null && !Array.isArray(value);
+        }
+
         function isEql (value1, value2) {
             if (typeof value1 !== 'object' || value1 === null || typeof value2 !== 'object' || value2 === null)
                 return value1 === value2;
@@ -86,16 +90,33 @@ export const ReactSelector = Selector(selector => {
             return true;
         }
 
-        function componentHasProps ({ props }, filterProps) {
-            if (Object.keys(props).length === 0 && Object.keys(filterProps).length > 0)
-                return false;
+        function isInclude (value1, value2) {
+            if (typeof value1 !== 'object' || value1 === null || typeof value2 !== 'object' || value2 === null)
+                return value1 === value2;
 
-            for (const prop of Object.keys(filterProps)) {
-                if (!props.hasOwnProperty(prop) || !isEql(props[prop], filterProps[prop]))
-                    return false;
+            for (const prop in value2) {
+                if (!value1.hasOwnProperty(prop)) return false;
+                if (!isInclude(value1[prop], value2[prop])) return false;
             }
 
             return true;
+        }
+
+        function matchProps(value1, value2, exactObjectMatch) {
+            if(exactObjectMatch) return isEql(value1, value2);
+
+            return isInclude(value1, value2);
+        }
+
+        function componentHasProps ({ props }, filterProps, exactObjectMatch) {
+             for (const prop of Object.keys(filterProps)) {
+                 if (!props.hasOwnProperty(prop)) return false;
+
+                 if (!matchProps(props[prop], filterProps[prop], exactObjectMatch))
+                     return false;
+             }
+
+             return true;
         }
 
         const reactVersion = window['%testCafeReactVersion%'];
@@ -103,31 +124,46 @@ export const ReactSelector = Selector(selector => {
         const react16Utils = {{{react16Utils}}}
 
         let filterProps = {};
+        let options = null;
+        const firstArgsIsObject = isObject(args[0]);
 
-        const isPropsValid = args[0] !== null && typeof args[0] === 'object' && !Array.isArray(args[0]);
+        if (args.length === 2 && firstArgsIsObject)
+            options = args[1];
 
-        if(args.length === 1 && !isPropsValid)
-            throw new Error(`"props" option is expected to be a non-null object, but it was ${typeof args[0]}.`);
+        else if (args.length > 2)
+            options = args[2];
 
-        if(args.length > 1 && typeof args[0] !== 'string')
-            throw new Error(`property name is expected to be a string, but it was ${typeof args[0]}.`);
+        if(args.length < 2 && !firstArgsIsObject)
+             throw new Error(`The "props" option value is expected to be a non-null object, but it is ${typeof args[0]}.`);
+        else if(typeof args[0] !== 'string' && !firstArgsIsObject)
+            throw new Error(`The first argument is expected to be a property name string or a "props" non-null object, but it is ${typeof args[0]}.`);
 
-        if (args.length > 1) filterProps[args[0]] = args[1];
+        if(options && typeof options !== 'object' && !Array.isArray(args[0]))
+            throw new Error(`The "options" value is expected to be an object, but it is ${typeof options}.`);
+
+        if (args.length > 1) {
+            if(firstArgsIsObject)
+                filterProps = args[0];
+            else
+                filterProps[args[0]] = args[1];
+        }
+
         else if (args[0]) filterProps = args[0];
 
         let getComponentForDOMNode = reactVersion === 15 ? react15Utils.getComponentForDOMNode :
-                             react16Utils.getComponentForDOMNode;
+                              react16Utils.getComponentForDOMNode;
 
         const filteredNodes  = [];
+        const exactObjectMatch = options && options.exactObjectMatch || false;
 
         const foundInstances = nodes.filter(node => {
-            const componentInstance = getComponentForDOMNode(node);
+             const componentInstance = getComponentForDOMNode(node);
 
-            if(componentInstance && componentHasProps(componentInstance, filterProps)) {
-                filteredNodes.push(node);
+             if(componentInstance && componentHasProps(componentInstance, filterProps, exactObjectMatch)) {
+                 filteredNodes.push(node);
 
-                return true;
-            }
+                 return true;
+             }
         });
 
         return foundInstances;
