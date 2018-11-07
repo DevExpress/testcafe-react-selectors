@@ -1,5 +1,5 @@
 environment:
-  NODEJS_VERSION: "stable"
+  NODEJS_VERSION: "8"
 
 install:
 - ps: >-
