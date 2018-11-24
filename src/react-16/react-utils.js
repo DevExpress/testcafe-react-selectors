@@ -1,4 +1,4 @@
-/*global window*/
+/*global window Node*/
 (function () {
     const ELEMENT_NODE = 1;
     const COMMENT_NODE = 8;
@@ -79,8 +79,7 @@
             do {
                 nestedComponent = parentComponent;
                 parentComponent = nestedComponent.return;
-
-            } while (parentComponent && !parentComponent.stateNode);
+            } while (parentComponent && parentComponent.type && !(parentComponent.stateNode instanceof Node));
 
             return nestedComponent;
         }
