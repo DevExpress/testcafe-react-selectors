@@ -1,14 +1,45 @@
 import { Selector } from 'testcafe';
 
+interface Dictionary {
+    [name: string]: any;
+}
+
+type Props = Dictionary;
+type State = object | Dictionary;
+type Key = string;
+
+export type ReactComponent<
+    P extends Props,
+    S extends State = {},
+    K extends Key = Key
+    > = {
+        props: P;
+        state?: S,
+        key?: K;
+    };
+
+type DefaultReactComponent = ReactComponent<Props>;
+
 declare global {
+    type ReactComponent<
+        P extends Props,
+        S extends State = {},
+        K extends Key = Key
+        > = {
+            props: P;
+            state?: S,
+            key?: K;
+        };
+
     interface Selector {
-        getReact(filter?: Function): any;
+        getReact<C extends DefaultReactComponent>(filter?: (reactInternal: C) => any): Promise<any>;
+        getReact<C extends DefaultReactComponent>(): Promise<C>;
 
-        withProps(propName: string, propValue?: any, options?: object): any;
+        withProps<P extends Props>(propName: keyof P, propValue?: Partial<P[keyof P]>, options?: { exactObjectMatch: boolean }): any;
 
-        withProps(props: object, options?: object): any;
+        withProps<P extends Props>(props: Partial<P>, options?: { exactObjectMatch: boolean }): any;
 
-        findReact(selector: string): any;
+        findReact(selector: string): Selector;
     }
 }
 
