@@ -206,13 +206,19 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(listItem.exists).ok()
             .expect(listId).eql('l3')
             .expect(pureComponent1.exists).ok()
-            .expect(pureComponent2.exists).ok();
+            .expect(pureComponent2.exists).ok()
+            .expect(portal.findReact('List').exists).ok();
 
         if (version === 16) {
             await t
                 .expect(ReactSelector('PortalReact16').exists).ok()
                 .expect(ReactSelector('PortalReact16 List').exists).ok()
-                .expect(ReactSelector('PortalReact16 ListItem').count).eql(3);
+                .expect(ReactSelector('PortalReact16 ListItem').count).eql(3)
+                .expect(ReactSelector('PortalReact16').findReact('List').exists).ok()
+                .expect(ReactSelector('PortalReact16').findReact('ListItem').exists).ok()
+                .expect(ReactSelector('PortalReact16').findReact('List ListItem').exists).ok()
+                .expect(ReactSelector('PortalReact16').findReact('List').findReact('ListItem').exists).ok()
+                .expect(ReactSelector('PortalReact16').findReact('PortalReact16').exists).notOk();
         }
     });
 
