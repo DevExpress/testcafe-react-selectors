@@ -32,7 +32,7 @@ declare global {
         };
 
     interface Selector {
-        getReact<C extends DefaultReactComponent>(filter?: (reactInternal: C) => any): Promise<any>;
+        getReact<C extends DefaultReactComponent, T = any>(filter?: (reactInternal: C) => T): Promise<T>;
         getReact<C extends DefaultReactComponent>(): Promise<C>;
 
         withProps<P extends Props>(propName: keyof P, propValue?: Partial<P[keyof P]>, options?: { exactObjectMatch: boolean }): any;
