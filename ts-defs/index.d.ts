@@ -2,7 +2,7 @@ import { Selector } from 'testcafe';
 
 export type ReactComponent<
     P extends { [name: string]: any },
-    S extends {} | { [name: string]: any } = {},
+    S extends object | { [name: string]: any } = {},
     K = string
     > = {
         props: P;

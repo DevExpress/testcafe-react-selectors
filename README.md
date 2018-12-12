@@ -343,6 +343,30 @@ test('ReactComponent', async t => {
 });
 ```
 
+### Composite Props and State for react in typescript
+
+in this case, You can create own `Props` and `State` types, for example:
+
+``` ts
+// optionReactComponent.ts
+import { ReactComponent } from 'testcafe-react-selectors';
+
+interface Props {
+    id: string;
+    text: string;
+}
+interface Option {
+    id: number;
+    title: string;
+    description: string;
+}
+interface State {
+    optionsCount: number;
+    options: Option[];
+}
+export type OptionReactComponent = ReactComponent<Props, State>;
+```
+
 ### Limitations
 
 * `testcafe-react-selectors` support ReactJS starting with version 15. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
