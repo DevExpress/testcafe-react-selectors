@@ -10,16 +10,16 @@ export type ReactComponent<
         key?: K;
     };
 
-export type DefaultReactComponent = ReactComponent<Props>;
+export type DefaultReactComponent = ReactComponent<{ [name: string]: any }>;
 
 declare global {
     interface Selector {
         getReact<C extends DefaultReactComponent, T = any>(filter?: (reactInternal: C) => T): Promise<T>;
         getReact<C extends DefaultReactComponent>(): Promise<C>;
 
-        withProps<P extends Props>(propName: keyof P, propValue?: Partial<P[keyof P]>, options?: { exactObjectMatch: boolean }): any;
+        withProps<P extends { [name: string]: any }>(propName: keyof P, propValue?: Partial<P[keyof P]>, options?: { exactObjectMatch: boolean }): any;
 
-        withProps<P extends Props>(props: Partial<P>, options?: { exactObjectMatch: boolean }): any;
+        withProps<P extends { [name: string]: any }>(props: Partial<P>, options?: { exactObjectMatch: boolean }): any;
 
         findReact(selector: string): Selector;
     }
