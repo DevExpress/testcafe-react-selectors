@@ -318,6 +318,31 @@ test('Check list item', async t => {
 
 The `.getReact()` method can be called for the `ReactSelector` or the snapshot this selector returns.
 
+### Typescript additional typings
+
+For typescript we're crate new type `ReactComponent`.
+
+Easy to scale `ReactComponent` since it generic and require props only. Have integration with other `testcafe-react-selectors` methods, such as `withProps`, `getReact`(for autocomplete, use this methods with generic parameter if need)
+
+**Example**
+``` ts
+import { ReactSelector, ReactComponent } from 'testcafe-react-selectors';
+
+fixture`typescript support`
+    .page('http://react-page-exaple.com')
+
+test('ReactComponent', async t => {
+    const todoList = ReactSelector('TodoList');
+    type TodoListComponent = ReactComponent<{ id: string }>; // special react item for this application
+
+    // autocomplete
+    const todoListId = todoList.getReact<TodoListComponent>(({ props }) => props.id);
+
+    await t
+        .expect(todoListId).eql('ul-item')
+});
+```
+
 ### Limitations
 
 * `testcafe-react-selectors` support ReactJS starting with version 15. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
