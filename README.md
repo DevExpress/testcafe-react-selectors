@@ -318,6 +318,72 @@ test('Check list item', async t => {
 
 The `.getReact()` method can be called for the `ReactSelector` or the snapshot this selector returns.
 
+### TypeScript Generic Selector
+
+Use the generic `ReactComponent` type to create scalable selectors in TypeScript.
+
+Pass the `props` object as the type argument to `ReactComponent` to introduce a type for a specific component.
+
+```ts
+type TodoItem = ReactComponent<{ id: string }>;
+```
+
+You can then pass the created `TodoItem` type to the `withProps` and `getReact` generic methods.
+
+```ts
+const component  = ReactSelector('TodoItem');
+type TodoItem    = ReactComponent<{ id: string }>;
+
+const item1  = component.withProps<TodoItem>('id', 'tdi-1');
+const itemId = component.getReact<TodoItem>(({ props }) => props.id);
+```
+
+**Example**
+
+``` ts
+import { ReactSelector, ReactComponent } from 'testcafe-react-selectors';
+
+fixture`typescript support`
+    .page('http://react-page-example.com')
+
+test('ReactComponent', async t => {
+    const todoList         = ReactSelector('TodoList');
+    type TodoListComponent = ReactComponent<{ id: string }>;
+
+    const todoListId = todoList.getReact<TodoListComponent>(({ props }) => props.id);
+
+    await t.expect(todoListId).eql('ul-item');
+});
+```
+
+#### Composite Types in Props and State
+
+If a component's props and state include other composite types, you can create your own type definitions for them. Then pass these definitions to `ReactComponent` as type arguments.
+
+The following example shows custom `Props` and `State` type definitions. The `State` type uses another composite type - `Option`.
+
+``` ts
+import { ReactComponent } from 'testcafe-react-selectors';
+
+interface Props {
+    id: string;
+    text: string;
+}
+
+interface Option {
+    id: number;
+    title: string;
+    description: string;
+}
+
+interface State {
+    optionsCount: number;
+    options: Option[];
+}
+
+export type OptionReactComponent = ReactComponent<Props, State>;
+```
+
 ### Limitations
 
 * `testcafe-react-selectors` support ReactJS starting with version 15. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.

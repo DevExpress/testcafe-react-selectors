@@ -1,43 +1,25 @@
 import { Selector } from 'testcafe';
 
-interface Dictionary {
-    [name: string]: any;
-}
-
-type Props = Dictionary;
-type State = object | Dictionary;
-type Key = string;
-
 export type ReactComponent<
-    P extends Props,
-    S extends State = {},
-    K extends Key = Key
+    P extends { [name: string]: any },
+    S extends object | { [name: string]: any } = {},
+    K = string
     > = {
         props: P;
         state?: S,
         key?: K;
     };
 
-type DefaultReactComponent = ReactComponent<Props>;
+export type DefaultReactComponent = ReactComponent<{ [name: string]: any }>;
 
 declare global {
-    type ReactComponent<
-        P extends Props,
-        S extends State = {},
-        K extends Key = Key
-        > = {
-            props: P;
-            state?: S,
-            key?: K;
-        };
-
     interface Selector {
-        getReact<C extends DefaultReactComponent>(filter?: (reactInternal: C) => any): Promise<any>;
+        getReact<C extends DefaultReactComponent, T = any>(filter?: (reactInternal: C) => T): Promise<T>;
         getReact<C extends DefaultReactComponent>(): Promise<C>;
 
-        withProps<P extends Props>(propName: keyof P, propValue?: Partial<P[keyof P]>, options?: { exactObjectMatch: boolean }): any;
+        withProps<P extends { [name: string]: any }>(propName: keyof P, propValue?: Partial<P[keyof P]>, options?: { exactObjectMatch: boolean }): any;
 
-        withProps<P extends Props>(props: Partial<P>, options?: { exactObjectMatch: boolean }): any;
+        withProps<P extends { [name: string]: any }>(props: Partial<P>, options?: { exactObjectMatch: boolean }): any;
 
         findReact(selector: string): Selector;
     }
