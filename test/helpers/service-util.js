@@ -1,14 +1,28 @@
-/*global window*/
+/*global window document*/
 import { ClientFunction, t } from 'testcafe';
 import { waitForReact } from '../../';
 
 export async function loadApp (version) {
-    await t.expect(ClientFunction(() => !!window.loadApp)).ok({ timeout: 3e4 });
+    const loadScript = ClientFunction(src => {
+        if (!src) src = window.appSrc;
 
-    await ClientFunction(() => {
-        window.loadApp(version);
-    }, { dependencies: { version } })();
+        const head   = document.getElementsByTagName('head')[0];
+        const script = document.createElement('script');
 
-    await t.expect(ClientFunction(() => !!window.React)).ok({ timeout: 3e4 });
+        script.type  = 'text/javascript';
+        script.async = false;
+        script.src   = src;
+
+        head.appendChild(script);
+    });
+
+    await loadScript('./vendor/react-' + version + '/react.js');
+    await t.expect(ClientFunction(() => !!window.React)()).ok();
+
+    await loadScript('./vendor/react-' + version + '/react-dom.js');
+    await t.expect(ClientFunction(() => !!window.ReactDOM)()).ok();
+
+    await loadScript();
+
     await waitForReact(3e4);
 }
