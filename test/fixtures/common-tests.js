@@ -144,17 +144,6 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
-    test('Should throw exception if there is no React on the tested page', async t => {
-        await t.navigateTo('./noReact');
-
-        try {
-            await ReactSelector('body');
-        }
-        catch (e) {
-            await t.expect(e.errMsg).contains('This module supports React version 15.x and newer');
-        }
-    });
-
     test('Should get component from wrapper component - Regression GH-11', async t => {
         await t
             .expect(ReactSelector('TextLabel').textContent).eql('Component inside of wrapper component')
@@ -516,6 +505,17 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(text).eql(expectedText)
             .expect(component1React).eql({ state: {}, props: {}, key: null })
             .expect(component2React).eql({ state: {}, props: {}, key: null });
+    });
+
+    test('Should throw exception if there is no React on the tested page', async t => {
+        await t.navigateTo('./noReact');
+
+        try {
+            await ReactSelector('body');
+        }
+        catch (e) {
+            await t.expect(e.errMsg).contains('This module supports React version 15.x and newer');
+        }
     });
 }
 /*eslint-enable no-loop-func*/
