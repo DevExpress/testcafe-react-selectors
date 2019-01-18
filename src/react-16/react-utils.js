@@ -110,5 +110,9 @@
         return window['%testCafeReactFoundComponents%'].map(desc => desc.component);
     }
 
-    return { getReact, getComponentForDOMNode, scanDOMNodeForReactComponent, getFoundComponentInstances };
+    function getComponentKey (instance) {
+        return instance.key;
+    }
+
+    return { getReact, getComponentForDOMNode, scanDOMNodeForReactComponent, getFoundComponentInstances, getComponentKey };
 })();

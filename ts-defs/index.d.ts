@@ -21,6 +21,8 @@ declare global {
 
         withProps<P extends { [name: string]: any }>(props: Partial<P>, options?: { exactObjectMatch: boolean }): any;
 
+        withKey(key: string): any;
+
         findReact(selector: string): Selector;
     }
 }

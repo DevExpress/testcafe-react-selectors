@@ -390,6 +390,28 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
+    test('Should filter components by key', async t => {
+        const expectedItemCount = version === 15 ? 3 : 4;
+        const listItemsByKey    = ReactSelector('ListItem').withKey('ListItem1');
+        const emptySet1         = ReactSelector('ListItem').withKey(void 0);
+        const emptySet2         = ReactSelector('ListItem').withKey(null);
+
+        await t
+            .expect(listItemsByKey.count).eql(expectedItemCount)
+            .expect(emptySet1.count).eql(0)
+            .expect(emptySet2.count).eql(0)
+            .expect(ReactSelector('Portal').withKey('portal').count).eql(1)
+
+            .expect(listItemsByKey.withProps({ selected: false }).count).eql(expectedItemCount)
+            .click(listItemsByKey)
+
+            .expect(listItemsByKey.withProps({ selected: false }).count).eql(expectedItemCount - 1)
+            .expect(listItemsByKey.withProps({ selected: true }).count).eql(1);
+
+        if (version === 16)
+            await t.expect(ReactSelector('PortalReact16').withKey('portalReact16').count).eql(1);
+    });
+
     test('Should find subcomponents (findReact methods)', async t => {
         const smartComponent = ReactSelector('App').findReact('SmartComponent');
         const textLabel      = ReactSelector('App').findReact('WrapperComponent TextLabel');
