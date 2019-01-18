@@ -277,7 +277,7 @@ class App extends React.Component {
                 <EmptyComponent/>
                 <PureComponent/>
 
-                <Portal/>
+                <Portal key="portal"/>
                 <PortalWithPureComponent/>
 
                 <Stateless1 text="test"/>
@@ -285,7 +285,7 @@ class App extends React.Component {
                 <Stateless3 text="test"/>
                 <Stateless4/>
 
-                <PortalReact16/>
+                <PortalReact16 key="portalReact16"/>
 
                 <SmartComponent/>
                 <UnfilteredSet/>

@@ -169,6 +169,39 @@ export const ReactSelector = Selector(selector => {
         return foundInstances;
     },
 
+    withKey: (nodes, key) => {
+        if(key === void 0 || key === null) return [];
+
+        const keyString = key.toString();
+
+        window['%testCafeReactFoundComponents%'] = window['%testCafeReactFoundComponents%'].filter(component => {
+            return nodes.indexOf(component.node) > -1;
+        });
+
+        const reactVersion = window['%testCafeReactVersion%'];
+        const react15Utils = {{{react15Utils}}}
+        const react16Utils = {{{react16Utils}}}
+        const reactUtils   = reactVersion === 15 ? react15Utils : react16Utils;
+
+        let getComponentForDOMNode = reactUtils.getComponentForDOMNode;
+        let getComponentKey        = reactUtils.getComponentKey;
+
+        const filteredNodes  = [];
+
+        const foundInstances = nodes.filter(node => {
+            const componentInstance = getComponentForDOMNode(node);
+            const componentKey      = getComponentKey(componentInstance);
+
+            if(componentInstance && componentKey === keyString) {
+                filteredNodes.push(node);
+
+                return true;
+            }
+        });
+
+        return foundInstances;
+    },
+
     findReact: (nodes, selector) => {
         const reactVersion     = window['%testCafeReactVersion%'];
         const react15Utils     = {{{react15Utils}}}

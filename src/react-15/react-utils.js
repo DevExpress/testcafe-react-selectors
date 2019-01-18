@@ -132,6 +132,6 @@
         return renderedChildren[currentElementId];
     }
 
-    return { getReact, getComponentForDOMNode, scanDOMNodeForReactComponent, getFoundComponentInstances };
+    return { getReact, getComponentForDOMNode, scanDOMNodeForReactComponent, getFoundComponentInstances, getComponentKey };
 })();
 
