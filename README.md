@@ -67,7 +67,8 @@ const itemsCount       = ReactSelector('TodoApp div span');
 Warning: if you specify a DOM element's tag name, React selectors search for the element among the component's children without looking into nested components. For instance, for the JSX above the `ReactSelector('TodoApp div')` selector will be equal to `Selector('.todo-app > div')`.
 
 #### Selecting components by the component key
-To obtain a component by the key use `withKey` method. 
+
+To obtain a component by its key, use the `withKey` method. 
 
 ```js
 import { ReactSelector } from 'testcafe-react-selectors';
