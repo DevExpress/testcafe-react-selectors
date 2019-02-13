@@ -91,7 +91,7 @@ gulp.task('test', ['build', 'build-test-app', 'build-nextjs-app'], function () {
                     .src(files)
                     .browsers(['chrome', 'firefox', 'ie'])
                     .reporter('list')
-                    .run();
+                    .run({ quarantineMode: true });
             })
             .then(process.exit);
     });
