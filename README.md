@@ -34,8 +34,8 @@ Suppose you have the following JSX.
 <TodoApp className="todo-app">
     <TodoInput />
     <TodoList>
-        <TodoItem priority="High">Item 1</TodoItem>
-        <TodoItem priority="Low">Item 2</TodoItem>
+        <TodoItem priority="High" key="HighPriority">Item 1</TodoItem>
+        <TodoItem priority="Low" key="LowPriority">Item 2</TodoItem>
     </TodoList>
 
     <div className="items-count">Items count: <span>{this.state.itemCount}</span></div>
@@ -65,6 +65,16 @@ const itemsCount       = ReactSelector('TodoApp div span');
 ```
 
 Warning: if you specify a DOM element's tag name, React selectors search for the element among the component's children without looking into nested components. For instance, for the JSX above the `ReactSelector('TodoApp div')` selector will be equal to `Selector('.todo-app > div')`.
+
+#### Selecting components by the component key
+
+To obtain a component by its key, use the `withKey` method. 
+
+```js
+import { ReactSelector } from 'testcafe-react-selectors';
+
+const item = ReactSelector('TodoItem').withKey('HighPriority');
+```
 
 #### Selecting components by property values
 
