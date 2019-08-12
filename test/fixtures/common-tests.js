@@ -1,4 +1,5 @@
 /*global fixture test document*/
+import fs from 'fs';
 import { ReactSelector, waitForReact } from '../../';
 import { loadApp } from '../helpers/service-util';
 import { ClientFunction } from 'testcafe';
@@ -7,8 +8,8 @@ const SUPPORTED_VERSIONS = [15, 16];
 
 /*eslint-disable no-loop-func*/
 for (const version of SUPPORTED_VERSIONS) {
-    fixture `ReactJS TestCafe plugin (React ${version})`
-        .page `http://localhost:1355`
+    fixture`ReactJS TestCafe plugin (React ${version})`
+        .page`http://localhost:1355`
         .beforeEach(async () => {
             await loadApp(version);
         });
@@ -482,8 +483,14 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(text).eql('Disabled');
     });
 
-    fixture `ReactJS TestCafe plugin (the app loads during test) (React ${version})`
-        .page `http://localhost:1355`;
+    test('waitForReact should work from a node callback', async t => {
+        fs.exists('../../packpage.json', async () => {
+            await waitForReact(1e4, t);
+        });
+    });
+
+    fixture`ReactJS TestCafe plugin (the app loads during test) (React ${version})`
+        .page`http://localhost:1355`;
 
     test('Should search inside of stateless root GH-33', async t => {
         const expectedText = 'PureComponent';
