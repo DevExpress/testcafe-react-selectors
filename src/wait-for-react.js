@@ -1,7 +1,7 @@
 /*global ClientFunction document NodeFilter*/
 
 /*eslint-disable no-unused-vars*/
-function waitForReact (timeout) {
+function waitForReact (timeout, testController) {
     /*eslint-enable no-unused-vars*/
     const DEFAULT_TIMEOUT = 1e4;
     const checkTimeout    = typeof timeout === 'number' ? timeout : DEFAULT_TIMEOUT;
@@ -57,5 +57,5 @@ function waitForReact (timeout) {
                 reject('waitForReact: The waiting timeout is exceeded');
             }, checkTimeout);
         });
-    }, { dependencies: { checkTimeout } })();
+    }, { dependencies: { checkTimeout }, boundTestRun: testController })();
 }

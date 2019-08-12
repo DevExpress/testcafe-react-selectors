@@ -24,6 +24,10 @@ fixture `App tests`
 
 Default timeout for `waitForReact` is `10000` ms. You can specify a custom timeout value - `waitForReact(5000)`.
 
+If you need to call a selector from a Node.js callback, assign the current test controller to the boundTestRun option which is the second argument in the `waitForReact` function - `waitForReact(5000, testController)`. 
+
+If you are getting an error similar to the following: `ClientFunction cannot implicitly resolve the test run in context of which it should be executed.`, then it is likely you will need to pass the testController in this way. See the TestCafe documentation for further details about this issue.
+
 ### Creating selectors for ReactJS components
 
 `ReactSelector` allows you to select page elements by the name of the component class or the nested component element.
