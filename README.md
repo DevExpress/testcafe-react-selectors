@@ -22,11 +22,25 @@ fixture `App tests`
     });
 ```
 
-Default timeout for `waitForReact` is `10000` ms. You can specify a custom timeout value - `waitForReact(5000)`.
+The default timeout for `waitForReact` is `10000` ms. You can specify a custom timeout value:
 
-If you need to call a selector from a Node.js callback, assign the current test controller to the boundTestRun option which is the second argument in the `waitForReact` function - `waitForReact(5000, testController)`. 
+```js
+await waitForReact(5000);
+```
 
-If you are getting an error similar to the following: `ClientFunction cannot implicitly resolve the test run in context of which it should be executed.`, then it is likely you will need to pass the testController in this way. See the TestCafe documentation for further details about this issue.
+If you need to call a selector from a Node.js callback, pass the current test controller as the second argument in the `waitForReact` function:
+
+```js
+import { waitForReact } from 'testcafe-react-selectors';
+
+fixture `App tests`
+    .page('http://react-app-url')
+    .beforeEach(async t => {
+        await waitForReact(5000, t);
+    });
+``` 
+
+The test controller will be assigned to the [boundTestRun](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client/#optionsboundtestrun) function's option. Otherwise, TestCafe would throw the following error: `ClientFunction cannot implicitly resolve the test run in context of which it should be executed`. See the [TestCafe documentation](https://devexpress.github.io/testcafe/documentation/test-api/obtaining-data-from-the-client/#calling-client-functions-from-nodejs-callbacks) for further details.
 
 ### Creating selectors for ReactJS components
 
