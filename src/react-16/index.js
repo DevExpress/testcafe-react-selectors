@@ -21,8 +21,8 @@ function react16Selector (selector, parents = rootEls) {
         //react memo
         // it will find the displayName on the elementType if you set it
         if (component.elementType && component.elementType.displayName) return component.elementType.displayName;
-
-
+        
+        
         if (!component.type && !component.memoizedState)
             return null;
 
@@ -66,7 +66,7 @@ function react16Selector (selector, parents = rootEls) {
         //Portal component
         if (!component.child) {
             const portalRoot = component.stateNode && component.stateNode.container &&
-                component.stateNode.container._reactRootContainer;
+                               component.stateNode.container._reactRootContainer;
 
             const rootContainer = portalRoot && (portalRoot._internalRoot || portalRoot);
 
@@ -106,7 +106,7 @@ function react16Selector (selector, parents = rootEls) {
                 throw new Error(`Selector option is expected to be a string, but it was ${typeof compositeSelector}.`);
 
             var selectorIndex = 0;
-            var selectorElms = parseSelectorElements(compositeSelector);
+            var selectorElms  = parseSelectorElements(compositeSelector);
 
             if (selectorElms.length)
                 defineSelectorProperty(selectorElms[selectorElms.length - 1]);
@@ -149,10 +149,7 @@ function react16Selector (selector, parents = rootEls) {
                     if (foundComponents.indexOf(domNode) === -1)
                         foundComponents.push(domNode || createAnnotationForEmptyComponent(reactComponent));
 
-                    window['%testCafeReactFoundComponents%'].push({
-                        node: domNode,
-                        component: reactComponent
-                    });
+                    window['%testCafeReactFoundComponents%'].push({ node: domNode, component: reactComponent });
                 }
 
                 selectorIndex++;
