@@ -251,6 +251,11 @@ class UnfilteredSet_PartialMatching extends React.Component {
     }
 }
 
+const ToMemoize = ({ text }) => <div>{text}</div>;
+const Memoized = React.memo ? React.memo(ToMemoize) : ToMemoize;
+
+Memoized.displayName = 'Memoized';
+
 class App extends React.Component {
     constructor () {
         super();
@@ -290,6 +295,7 @@ class App extends React.Component {
                 <SmartComponent/>
                 <UnfilteredSet/>
                 <UnfilteredSet_PartialMatching/>
+                <Memoized text="Memo" />
             </div>
         );
     }
