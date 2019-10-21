@@ -489,6 +489,17 @@ for (const version of SUPPORTED_VERSIONS) {
         });
     });
 
+    test('Should get memoized component', async t => {
+        if (version === 16) {
+            const Memoized = ReactSelector('Memoized');
+            const text = Memoized.getReact(({ props }) => props.text);
+
+            await t
+                .expect(ReactSelector('Memoized').exists).ok()
+                .expect(text).eql('Memo');
+        }
+    });
+
     fixture`ReactJS TestCafe plugin (the app loads during test) (React ${version})`
         .page`http://localhost:1355`;
 
