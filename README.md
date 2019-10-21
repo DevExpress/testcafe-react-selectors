@@ -120,7 +120,7 @@ class TodoList extends React.Component {
   // ...
 }
 
-TodoList.displayName = 'todo-list-display-name';
+TodoList.displayName = 'TodoList';
 ```
 
 In this instance, you can use `todo-list-display-name` to identify `TodoList`.
