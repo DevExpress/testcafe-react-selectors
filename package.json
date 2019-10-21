@@ -32,7 +32,7 @@
     "publish-please": "^2.4.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
-    "testcafe": "^0.19.1"
+    "testcafe": "^1.0.0"
   },
   "scripts": {
     "test": "gulp test",
@@ -46,7 +46,7 @@
     "plugin"
   ],
   "peerDependencies": {
-    "testcafe": ">0.19.1"
+    "testcafe": ">1.0.0"
   },
   "types": "./ts-defs/index.d.ts"
 }
