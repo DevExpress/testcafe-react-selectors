@@ -8,6 +8,21 @@ This plugin provides selector extensions that make it easier to test ReactJS com
 
 ## Usage
 
+* [Wait for application to be ready to run tests](#wait-for-application-to-be-ready-to-run-tests)
+* [Creating selectors for ReactJS components](#creating-selectors-for-reactjs-components)
+  * [Selecting elements by the component name](#selecting-elements-by-the-component-name)
+  * [Selecting nested components](#selecting-nested-components)
+  * [Selecting components by the component key](#selecting-components-by-the-component-key)
+  * [Selecting components by display name](#selecting-components-by-display-name)
+  * [Selecting components by property values](#selecting-components-by-property-values)
+    * [Properties whose values are objects](#properties-whose-values-are-objects)
+  * [Searching for nested components](#searching-for-nested-components)
+  * [Combining with regular TestCafe selectors](#combining-with-regular-testcafe-selectors)
+* [Obtaining component's props and state](#obtaining-components-props-and-state)
+* [TypeScript Generic Selector](#typescript-generic-selector)
+  * [Composite Types in Props and State](#composite-types-in-props-and-state)
+* [Limitations](#limitations)
+
 ### Wait for application to be ready to run tests
 
 To wait until the React's component tree is loaded, add the `waitForReact` method to fixture's `beforeEach` hook.
@@ -92,6 +107,28 @@ To obtain a component by its key, use the `withKey` method.
 import { ReactSelector } from 'testcafe-react-selectors';
 
 const item = ReactSelector('TodoItem').withKey('HighPriority');
+```
+
+#### Selecting components by display name
+
+You can select elements by the component's [displayName](https://reactjs.org/docs/react-component.html#displayname).
+
+For instance, consider the `TodoList` component whose `displayName` class property is specified as follows:
+
+```js
+class TodoList extends React.Component {
+  // ...
+}
+
+TodoList.displayName = 'TodoList';
+```
+
+In this instance, you can use `todo-list-display-name` to identify `TodoList`.
+
+```js
+import { ReactSelector } from 'testcafe-react-selectors';
+
+const list = ReactSelector('todo-list-display-name');
 ```
 
 #### Selecting components by property values
