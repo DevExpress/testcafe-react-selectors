@@ -63,6 +63,8 @@
 
             return getComponentInstance(el[prop]);
         }
+
+        return null;
     }
 
     function getComponentKey (component) {
@@ -132,6 +134,12 @@
         return renderedChildren[currentElementId];
     }
 
-    return { getReact, getComponentForDOMNode, scanDOMNodeForReactComponent, getFoundComponentInstances, getComponentKey };
+    return {
+        getReact,
+        getComponentForDOMNode,
+        scanDOMNodeForReactComponent,
+        getFoundComponentInstances,
+        getComponentKey
+    };
 })();
 

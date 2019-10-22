@@ -14,6 +14,8 @@ function getRootElsReact15 () {
 
             return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
         }
+
+        return null;
     }
 
     const rootEls      = [].slice.call(document.querySelectorAll('[data-reactroot]'));

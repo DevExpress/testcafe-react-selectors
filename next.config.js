@@ -1,11 +1,13 @@
 module.exports = {
     webpack (cfg) {
-        cfg.plugins = cfg.plugins.filter((plugin) => {
-            return plugin.constructor.name !== 'UglifyJsPlugin';
-        });
+        cfg.mode         = 'development';
+        cfg.optimization = {
+            minimize: false
+        };
 
         return cfg;
     },
 
-    staticMarkup: true
+    staticMarkup: true,
+    dev:          true
 };

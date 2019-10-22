@@ -84,7 +84,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(tagReact).eql({ state: {}, props: {}, key: 'l1-item1-p' });
     });
 
-    test(`Should get component props`, async t => {
+    test('Should get component props', async t => {
         const appReact       = await ReactSelector('App').getReact();
         const listItem1React = await ReactSelector('ListItem').getReact();
         const listItem2React = await ReactSelector('ListItem').nth(1).getReact();
