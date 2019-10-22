@@ -3,7 +3,7 @@
   "presets": [
     ["env", {
       "targets": {
-        "node": "4"
+        "node": "8"
       },
       "exclude": ["transform-es2015-typeof-symbol"]
     }]

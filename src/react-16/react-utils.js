@@ -83,6 +83,8 @@
 
             return nestedComponent;
         }
+
+        return null;
     }
 
     function getRenderedComponentVersion (component, rootInstances) {

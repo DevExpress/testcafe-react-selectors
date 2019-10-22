@@ -31,6 +31,8 @@ function react15elector (selector, parents = rootEls) {
 
             return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
         }
+
+        return null;
     }
 
     if (!window['%testCafeReactSelectorUtils%'])

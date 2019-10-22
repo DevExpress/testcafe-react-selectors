@@ -17,7 +17,7 @@ test('Should get DOM node by react selector', async t => {
     type ListItemComponent = ReactComponent<{ id: string }>;
 
     const listItem1Id = (await listItem1.getReact()).props.id;
-    const listItem2Id = listItem2.getReact < ListItemComponent > (({ props }) => props.id);
+    const listItem2Id = listItem2.getReact<ListItemComponent>(( { props } ) => props.id);
 
     await t
         .expect(listItem1.id).eql('l1-item1')
