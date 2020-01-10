@@ -3,6 +3,7 @@
 /*eslint-disable no-unused-vars*/
 function getRootElsReact16 (el) {
     el = el || document.body;
+    
     let rootEls = [];
 
     if (el._reactRootContainer) {
