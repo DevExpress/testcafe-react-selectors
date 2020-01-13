@@ -251,6 +251,10 @@ class UnfilteredSet_PartialMatching extends React.Component {
     }
 }
 
+const NestedApp = function NestedApp () {
+    return <Stateless1 text="Inside nested app"/>;
+};
+
 const ToMemoize = ({ text }) => <div>{text}</div>;
 const Memoized = React.memo ? React.memo(ToMemoize) : ToMemoize;
 
@@ -296,10 +300,12 @@ class App extends React.Component {
                 <UnfilteredSet/>
                 <UnfilteredSet_PartialMatching/>
                 <Memoized text="Memo" />
+                <div id="nestedapp-container"></div>
             </div>
         );
     }
 }
 
 ReactDOM.render(React.createElement(App, { label: 'AppLabel' }), document.getElementById('app-container'));
+ReactDOM.render(React.createElement(NestedApp, { label: 'NestedAppLabel' }), document.getElementById('nestedapp-container'));
 

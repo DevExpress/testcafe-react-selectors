@@ -3,15 +3,16 @@
 /*eslint-disable no-unused-vars*/
 function getRootElsReact16 (el) {
     el = el || document.body;
+    
+    let rootEls = [];
 
     if (el._reactRootContainer) {
         const rootContainer = el._reactRootContainer._internalRoot || el._reactRootContainer;
 
-        return rootContainer.current.child;
+        rootEls.push(rootContainer.current.child);
     }
 
     const children = el.children;
-    let rootEls    = [];
 
     for (let index = 0; index < children.length; ++index) {
         const child = children[index];

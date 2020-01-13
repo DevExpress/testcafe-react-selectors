@@ -500,6 +500,11 @@ for (const version of SUPPORTED_VERSIONS) {
         }
     });
 
+    test('Should find react components inside nested react app', async t => {
+        await t
+            .expect(ReactSelector('NestedApp Stateless1').withText('Inside nested app').exists).ok();
+    });
+
     fixture`ReactJS TestCafe plugin (the app loads during test) (React ${version})`
         .page`http://localhost:1355`;
 
