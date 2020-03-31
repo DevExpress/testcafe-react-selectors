@@ -3,7 +3,7 @@
 /*eslint-disable no-unused-vars*/
 function getRootElsReact16 (el) {
     el = el || document.body;
-    
+
     let rootEls = [];
 
     if (el._reactRootContainer) {
@@ -14,7 +14,7 @@ function getRootElsReact16 (el) {
 
     const children = el.children;
 
-    if (!!children) {
+    if (children) {
         for (let index = 0; index < children.length; ++index) {
             const child = children[index];
 
