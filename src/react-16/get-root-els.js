@@ -14,10 +14,12 @@ function getRootElsReact16 (el) {
 
     const children = el.children;
 
-    for (let index = 0; index < children.length; ++index) {
-        const child = children[index];
+    if (!!children) {
+        for (let index = 0; index < children.length; ++index) {
+            const child = children[index];
 
-        rootEls = rootEls.concat(getRootElsReact16(child));
+            rootEls = rootEls.concat(getRootElsReact16(child));
+        }
     }
 
     return rootEls;
