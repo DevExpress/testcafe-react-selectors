@@ -1,7 +1,7 @@
 clone_depth: 1
 
 environment:
-  NODEJS_VERSION: "8"
+  NODEJS_VERSION: "12"
 
 install:
 - ps: >-

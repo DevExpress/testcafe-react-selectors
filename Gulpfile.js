@@ -9,10 +9,18 @@ const mustache        = require('gulp-mustache');
 const pathJoin        = require('path').join;
 const rename          = require('gulp-rename');
 const startTestServer = require('./test/server');
+const { promisify }   = require('util');
 const nextBuild       = require('next/dist/build').default;
-const gulpStep        = require('gulp-step');
 
-gulpStep.install();
+const listFiles   = promisify(glob);
+const deleteFiles = promisify(del);
+
+gulp.task('clean', () => {
+    return deleteFiles([
+        'lib',
+        'test/data/lib'
+    ]);
+});
 
 gulp.task('lint', () => {
     return gulp
@@ -27,21 +35,14 @@ gulp.task('lint', () => {
         .pipe(eslint.failAfterError());
 });
 
-gulp.step('clean', cb => {
-    del([
-        'lib',
-        'test/data/lib'
-    ], cb);
-});
-
-gulp.step('build-test-app', () => {
+gulp.task('build-test-app', () => {
     return gulp
         .src('test/data/src/**/*.{jsx,js}')
         .pipe(babel())
         .pipe(gulp.dest('test/data/lib'));
 });
 
-gulp.step('build-selectors-script', () => {
+gulp.task('build-selectors-script', () => {
     function loadModule (modulePath) {
         return fs.readFileSync(modulePath).toString();
     }
@@ -63,43 +64,41 @@ gulp.step('build-selectors-script', () => {
         .pipe(gulp.dest('lib/tmp'));
 });
 
-gulp.step('transpile', gulp.series('build-selectors-script', () => {
+gulp.task('transpile', () => {
     return gulp
         .src('lib/tmp/**/*.js')
         .pipe(babel({ extends: pathJoin(__dirname, './src/.babelrc') }))
         .pipe(gulp.dest('lib'));
-}));
-
-gulp.step('clean-build-tmp-resources', cb => {
-    del(['lib/tmp'], cb);
 });
 
-gulp.step('build-nextjs-app', gulp.series('build-test-app', () => {
+gulp.task('clean-build-tmp-resources', () => {
+    return deleteFiles(['lib/tmp']);
+});
+
+gulp.task('build-nextjs-app', () => {
     const appPath = pathJoin(__dirname, './test/data/lib/server-render');
 
     return nextBuild(appPath, require('./next.config.js'));
-}));
+});
 
-gulp.task('build', gulp.series('clean', 'lint', 'transpile', 'clean-build-tmp-resources'));
+gulp.task('build', gulp.series('clean', 'lint', 'build-selectors-script', 'transpile', 'clean-build-tmp-resources'));
 
-gulp.step('run-tests', cb => {
-    glob('test/fixtures/**/*.{js,ts}', (err, files) => {
-        if (err) throw err;
+gulp.task('run-tests', async cb => {
+    const files = await listFiles('test/fixtures/**/*.{js,ts}');
 
-        startTestServer()
-            .then(() => createTestCafe('localhost', 1337, 1338))
-            .then(testCafe => {
-                return testCafe.createRunner()
-                    .src(files)
-                    .browsers(['chrome', 'firefox', 'ie'])
-                    .reporter('list')
-                    .run({ quarantineMode: true });
-            })
-            .then(() => {
-                cb();
-                process.exit();
-            });
-    });
+    await startTestServer();
+
+    const testCafe = await createTestCafe('localhost', 1337, 1338);
+    
+    await testCafe.createRunner()
+        .src(files)
+        .browsers(['chrome', 'firefox', 'ie'])
+        .reporter('list')
+        .run({ quarantineMode: true })
+        .then(failed => {
+            cb();
+            process.exit(failed);
+        });
 });
 
 gulp.task('test', gulp.series('build', 'build-test-app', 'build-nextjs-app', 'run-tests'));
