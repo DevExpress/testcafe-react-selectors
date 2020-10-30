@@ -49,14 +49,14 @@ gulp.task('build-selectors-script', () => {
 
     return gulp.src('./src/index.js.mustache')
         .pipe(mustache({
-            getRootElsReact15: loadModule('./src/react-15/get-root-els.js'),
-            getRootElsReact16: loadModule('./src/react-16/get-root-els.js'),
+            getRootElsReact15:     loadModule('./src/react-15/get-root-els.js'),
+            getRootElsReact16or17: loadModule('./src/react-16-17/get-root-els.js'),
 
-            selectorReact15: loadModule('./src/react-15/index.js'),
-            selectorReact16: loadModule('./src/react-16/index.js'),
+            selectorReact15:     loadModule('./src/react-15/index.js'),
+            selectorReact16or17: loadModule('./src/react-16-17/index.js'),
 
-            react15Utils: loadModule('./src/react-15/react-utils.js'),
-            react16Utils: loadModule('./src/react-16/react-utils.js'),
+            react15Utils:     loadModule('./src/react-15/react-utils.js'),
+            react16or17Utils: loadModule('./src/react-16-17/react-utils.js'),
 
             waitForReact: loadModule('./src/wait-for-react.js')
         }))

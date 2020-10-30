@@ -4,7 +4,7 @@ import { ReactSelector, waitForReact } from '../../';
 import { loadApp } from '../helpers/service-util';
 import { ClientFunction } from 'testcafe';
 
-const SUPPORTED_VERSIONS = [15, 16];
+const SUPPORTED_VERSIONS = [15, 16, 17];
 
 /*eslint-disable no-loop-func*/
 for (const version of SUPPORTED_VERSIONS) {
@@ -32,7 +32,7 @@ for (const version of SUPPORTED_VERSIONS) {
         const listItem2 = ReactSelector('ListItem').nth(1);
 
         await t
-            .expect(list.count).eql(version === 16 ? 4 : 3)
+            .expect(list.count).eql(version > 15 ? 4 : 3)
             .expect(app.id).eql('app')
             .expect(listItem1.id).eql('l1-item1')
             .expect(listItem2.id).eql('l1-item2');
@@ -43,8 +43,8 @@ for (const version of SUPPORTED_VERSIONS) {
         const listItem2 = ReactSelector('List ListItem').nth(1);
 
         await t
-            .expect(await listItem1.id).eql('l1-item1')
-            .expect(await listItem2.id).eql('l1-item2');
+            .expect(listItem1.id).eql('l1-item1')
+            .expect(listItem2.id).eql('l1-item2');
     });
 
     test('Should get DOM node for stateless component', async t => {
@@ -152,7 +152,7 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test('Should not get dom nodes from nested components', async t => {
-        const expectedListItemCount = version === 16 ? 12 : 9;
+        const expectedListItemCount = version > 15 ? 12 : 9;
 
         await t
             .expect(ReactSelector('ListItem p').count).eql(expectedListItemCount)
@@ -199,7 +199,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(pureComponent2.exists).ok()
             .expect(portal.findReact('List').exists).ok();
 
-        if (version === 16) {
+        if (version > 15) {
             await t
                 .expect(ReactSelector('PortalReact16').exists).ok()
                 .expect(ReactSelector('PortalReact16 List').exists).ok()
@@ -409,7 +409,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(listItemsByKey.withProps({ selected: false }).count).eql(expectedItemCount - 1)
             .expect(listItemsByKey.withProps({ selected: true }).count).eql(1);
 
-        if (version === 16)
+        if (version > 15)
             await t.expect(ReactSelector('PortalReact16').withKey('portalReact16').count).eql(1);
     });
 
@@ -421,7 +421,7 @@ for (const version of SUPPORTED_VERSIONS) {
 
         const paragraphs1     = listItems.findReact('li p');
         const paragraphs2     = listItems.findReact('p');
-        const expectedElCount = version === 16 ? 12 : 9;
+        const expectedElCount = version > 15 ? 12 : 9;
 
         await t
             .expect(smartComponent.exists).ok()
@@ -490,7 +490,7 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test('Should get memoized component', async t => {
-        if (version === 16) {
+        if (version > 15) {
             const Memoized = ReactSelector('Memoized');
             const text = Memoized.getReact(({ props }) => props.text);
 
