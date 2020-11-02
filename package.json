@@ -30,8 +30,8 @@
     "gulp-rename": "^1.2.2",
     "next": "9.3.2",
     "publish-please": "^5.5.2",
-    "react": "17.0.0",
-    "react-dom": "17.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "testcafe": "^1.9.4"
   },
   "scripts": {
