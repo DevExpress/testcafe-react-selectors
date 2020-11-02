@@ -1,7 +1,7 @@
 /*global window document Node rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 
 /*eslint-disable no-unused-vars*/
-function react16Selector (selector, parents = rootEls) {
+function react16or17Selector (selector, parents = rootEls) {
     window['%testCafeReactFoundComponents%'] = [];
 
     /*eslint-enable no-unused-vars*/

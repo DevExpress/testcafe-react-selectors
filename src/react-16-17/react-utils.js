@@ -3,6 +3,11 @@
     const ELEMENT_NODE = 1;
     const COMMENT_NODE = 8;
 
+    //https://github.com/facebook/react/commit/2ba43edc2675380a0f2222f351475bf9d750c6a9
+    //__reactInternalInstance - react 16
+    //__reactFiber - react 17
+    const REACT_INTERNAL_INSTANCE_PROP_RE = /^__reactInternalInstance|^__reactFiber/;
+
     function copyReactObject (obj) {
         var copiedObj = {};
 
@@ -63,11 +68,11 @@
     function scanDOMNodeForReactInstance (el) {
         if (!el || !(el.nodeType === ELEMENT_NODE || el.nodeType === COMMENT_NODE)) return null;
 
-        if (el.nodeType === COMMENT_NODE)
+        if (el.nodeType === COMMENT_NODE) 
             return el.__$$reactInstance.return.child;
 
         for (var prop of Object.keys(el)) {
-            if (!/^__reactInternalInstance/.test(prop)) continue;
+            if (!REACT_INTERNAL_INSTANCE_PROP_RE.test(prop)) continue;
 
             let nestedComponent = el[prop];
 
@@ -102,7 +107,7 @@
     }
 
     function scanDOMNodeForReactComponent (domNode) {
-        const rootInstances = window['$testCafeReact16Roots'].map(rootEl => rootEl.return || rootEl);
+        const rootInstances = window['$testCafeReact16or17Roots'].map(rootEl => rootEl.return || rootEl);
         const reactInstance = scanDOMNodeForReactInstance(domNode);
 
         return getRenderedComponentVersion(reactInstance, rootInstances);

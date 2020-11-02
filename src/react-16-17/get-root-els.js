@@ -1,7 +1,7 @@
 /*global document*/
 
 /*eslint-disable no-unused-vars*/
-function getRootElsReact16 (el) {
+function getRootElsReact16or17 (el) {
     el = el || document.body;
     
     let rootEls = [];
@@ -17,7 +17,7 @@ function getRootElsReact16 (el) {
     for (let index = 0; index < children.length; ++index) {
         const child = children[index];
 
-        rootEls = rootEls.concat(getRootElsReact16(child));
+        rootEls = rootEls.concat(getRootElsReact16or17(child));
     }
 
     return rootEls;
