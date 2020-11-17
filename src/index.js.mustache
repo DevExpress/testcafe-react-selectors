@@ -211,7 +211,6 @@ export const ReactSelector = Selector(selector => {
         let scanDOMNodeForReactComponent = reactVersion === '15' ? react15Utils.scanDOMNodeForReactComponent :
                            react16or17Utils.scanDOMNodeForReactComponent;
 
-if(!nodes)debugger;
         componentInstances = nodes.map(scanDOMNodeForReactComponent);
 
         const reactSelector = window['$testCafeReactSelector'];
