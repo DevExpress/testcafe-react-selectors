@@ -4,6 +4,8 @@
 function react16or17Selector (selector, parents = rootEls) {
     window['%testCafeReactFoundComponents%'] = [];
 
+    const { getRenderedComponentVersion }  = window['%testCafeReactSelectorUtils%']['16|17'];
+
     /*eslint-enable no-unused-vars*/
     function createAnnotationForEmptyComponent (component) {
         const comment = document.createComment('testcafe-react-selectors: the requested component didn\'t render any DOM elements');
@@ -40,7 +42,7 @@ function react16or17Selector (selector, parents = rootEls) {
     }
 
     function getContainer (component) {
-        let node = component;
+        let node = getRenderedComponentVersion(component, rootEls);
 
         while (!(node.stateNode instanceof Node)) {
             if (node.child) node = node.child;

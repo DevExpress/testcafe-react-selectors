@@ -121,5 +121,5 @@
         return instance.key;
     }
 
-    return { getReact, getComponentForDOMNode, scanDOMNodeForReactComponent, getFoundComponentInstances, getComponentKey };
+    return { getReact, getComponentForDOMNode, scanDOMNodeForReactComponent, getFoundComponentInstances, getComponentKey, getRenderedComponentVersion };
 })();

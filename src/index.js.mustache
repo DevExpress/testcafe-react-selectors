@@ -5,7 +5,7 @@ export const ReactSelector = Selector(selector => {
     const getRootElsReact15     = {{{getRootElsReact15}}}
     const getRootElsReact16or17 = {{{getRootElsReact16or17}}}
     const selectorReact15       = {{{selectorReact15}}}
-    const selectorReact16or17   = {{{selectorReact16or17}}}
+    const selectorReact16or17   = {{{selectorReact16or17}}}    
 
     let visitedRootEls = [];
     let rootEls        = null;
@@ -23,6 +23,16 @@ export const ReactSelector = Selector(selector => {
             writable:     false,
             value:        value
         });
+    }
+
+    const react15Utils     = {{{react15Utils}}}
+    const react16or17Utils = {{{react16or17Utils}}}
+
+    if(!window['%testCafeReactSelectorUtils%']) {
+        window['%testCafeReactSelectorUtils%'] = {
+            '15'   : react15Utils,
+            '16|17': react16or17Utils
+        };
     }
 
     rootEls = getRootElsReact15();
@@ -54,16 +64,12 @@ export const ReactSelector = Selector(selector => {
     throw new Error("React component tree is not loaded yet or the current React version is not supported. This module supports React version 15.x and newer. To wait until the React's component tree is loaded, add the `waitForReact` method to fixture's `beforeEach` hook.");
 }).addCustomMethods({
     getReact: (node, fn) => {
-        const reactVersion     = window['%testCafeReactVersion%'];
-        const react15Utils     = {{{react15Utils}}}
-        const react16or17Utils = {{{react16or17Utils}}}
+        const reactVersion = window['%testCafeReactVersion%'];
+        const reactUtils   = window['%testCafeReactSelectorUtils%'][reactVersion];
 
         delete window['%testCafeReactVersion%'];
-
-        if(reactVersion === '15')
-            return react15Utils.getReact(node, fn);
-        if(reactVersion === '16|17')
-            return react16or17Utils.getReact(node, fn);
+        
+        return reactUtils.getReact(node, fn);
     }
 }).addCustomMethods({
     withProps: (nodes, ...args) => {
@@ -117,14 +123,12 @@ export const ReactSelector = Selector(selector => {
              }
 
              return true;
-        }
+        }        
 
-        const reactVersion     = window['%testCafeReactVersion%'];
-        const react15Utils     = {{{react15Utils}}}
-        const react16or17Utils = {{{react16or17Utils}}}
+        const reactVersion = window['%testCafeReactVersion%'];    
+        let filterProps    = {};
+        let options        = null;
 
-        let filterProps = {};
-        let options = null;
         const firstArgsIsObject = isObject(args[0]);
 
         if (args.length === 2 && firstArgsIsObject)
@@ -150,8 +154,7 @@ export const ReactSelector = Selector(selector => {
 
         else if (args[0]) filterProps = args[0];
 
-        let getComponentForDOMNode = reactVersion === '15' ? react15Utils.getComponentForDOMNode :
-                              react16or17Utils.getComponentForDOMNode;
+        let getComponentForDOMNode = window['%testCafeReactSelectorUtils%'][reactVersion].getComponentForDOMNode;
 
         const filteredNodes  = [];
         const exactObjectMatch = options && options.exactObjectMatch || false;
@@ -179,9 +182,7 @@ export const ReactSelector = Selector(selector => {
         });
 
         const reactVersion     = window['%testCafeReactVersion%'];
-        const react15Utils     = {{{react15Utils}}}
-        const react16or17Utils = {{{react16or17Utils}}}
-        const reactUtils       = reactVersion === '15' ? react15Utils : react16or17Utils;
+        const reactUtils       = window['%testCafeReactSelectorUtils%'][reactVersion];
 
         let getComponentForDOMNode = reactUtils.getComponentForDOMNode;
         let getComponentKey        = reactUtils.getComponentKey;
@@ -203,13 +204,11 @@ export const ReactSelector = Selector(selector => {
     },
 
     findReact: (nodes, selector) => {
-        const reactVersion     = window['%testCafeReactVersion%'];
-        const react15Utils     = {{{react15Utils}}}
-        const react16or17Utils = {{{react16or17Utils}}}
+        const reactVersion = window['%testCafeReactVersion%'];
+        const reactUtils   = window['%testCafeReactSelectorUtils%'][reactVersion];        
 
         let componentInstances           = null;
-        let scanDOMNodeForReactComponent = reactVersion === '15' ? react15Utils.scanDOMNodeForReactComponent :
-                           react16or17Utils.scanDOMNodeForReactComponent;
+        let scanDOMNodeForReactComponent = reactUtils.scanDOMNodeForReactComponent;
 
         componentInstances = nodes.map(scanDOMNodeForReactComponent);
 
