@@ -7,36 +7,7 @@ function react15elector (selector, parents = rootEls) {
 
     window['%testCafeReactFoundComponents%'] = [];
 
-    /*eslint-enable no-unused-vars*/
-    function getName (component) {
-        const currentElement = component._currentElement;
-
-        let name = component.getName ? component.getName() : component._tag;
-
-        //NOTE: getName() returns null in IE, also it try to get function name for a stateless component
-        if (name === null && currentElement && typeof currentElement === 'object') {
-            const matches = currentElement.type.toString().match(/^function\s*([^\s(]+)/);
-
-            if (matches) name = matches[1];
-        }
-
-        return name;
-    }
-
-    function getRootComponent (el) {
-        if (!el || el.nodeType !== ELEMENT_NODE) return null;
-
-        for (var prop of Object.keys(el)) {
-            if (!/^__reactInternalInstance/.test(prop)) continue;
-
-            return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
-        }
-
-        return null;
-    }
-
-    if (!window['%testCafeReactSelectorUtils%'])
-        window['%testCafeReactSelectorUtils%'] = { getName, getRootComponent };
+    const { getName, getRootComponent }  = window['%testCafeReactSelectorUtils%']['15'];
 
     function getRenderedChildren (component) {
         const hostNode        = component.getHostNode();

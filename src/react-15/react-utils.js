@@ -2,7 +2,34 @@
 (function () {
     const ELEMENT_NODE = 1;
     const COMMENT_NODE = 8;
-    const utils        = window['%testCafeReactSelectorUtils%'];
+
+    /*eslint-enable no-unused-vars*/
+    function getName (component) {
+        const currentElement = component._currentElement;
+
+        let name = component.getName ? component.getName() : component._tag;
+
+        //NOTE: getName() returns null in IE, also it try to get function name for a stateless component
+        if (name === null && currentElement && typeof currentElement === 'object') {
+            const matches = currentElement.type.toString().match(/^function\s*([^\s(]+)/);
+
+            if (matches) name = matches[1];
+        }
+
+        return name;
+    }
+
+    function getRootComponent (el) {
+        if (!el || el.nodeType !== ELEMENT_NODE) return null;
+
+        for (var prop of Object.keys(el)) {
+            if (!/^__reactInternalInstance/.test(prop)) continue;
+
+            return el[prop]._hostContainerInfo._topLevelWrapper._renderedComponent;
+        }
+
+        return null;
+    }
 
     function copyReactObject (obj) {
         var copiedObj = {};
@@ -27,7 +54,7 @@
             let componentInstance = null;
 
             while (renderedComponent) {
-                if (componentName === utils.getName(renderedComponent))
+                if (componentName === getName(renderedComponent))
                     componentInstance = renderedComponent._instance || renderedComponent._currentElement;
 
                 if (renderedComponent._domID === component._domID)
@@ -48,10 +75,10 @@
         const componentName = window['%testCafeReactSelector%'];
 
         if (isRootNode) {
-            const rootComponent = utils.getRootComponent(el);
+            const rootComponent = getRootComponent(el);
 
             //NOTE: check if it's not a portal component
-            if (utils.getName(rootComponent) === componentName)
+            if (getName(rootComponent) === componentName)
                 return rootComponent._instance;
 
             return getComponentInstance(rootComponent);
@@ -139,7 +166,9 @@
         getComponentForDOMNode,
         scanDOMNodeForReactComponent,
         getFoundComponentInstances,
-        getComponentKey
+        getComponentKey,
+        getName,
+        getRootComponent
     };
 })();
 
