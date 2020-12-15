@@ -1,7 +1,7 @@
 /*global window rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 
 /*eslint-disable no-unused-vars*/
-function react15elector (selector, parents = rootEls) {
+function react15elector (selector, _, parents = rootEls) {
     const ELEMENT_NODE = 1;
     const COMMENT_NODE = 8;
 
