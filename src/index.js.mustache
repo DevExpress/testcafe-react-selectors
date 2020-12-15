@@ -53,7 +53,7 @@ export const ReactSelector = Selector(selector => {
         window['$testCafeReactSelector']    = selectorReact16or17;
         window['$testCafeReact16or17Roots'] = rootEls;
 
-        foundDOMNodes = selectorReact16or17(selector);
+        foundDOMNodes = selectorReact16or17(selector, false);
     }
 
     visitedRootEls = [];
@@ -214,7 +214,7 @@ export const ReactSelector = Selector(selector => {
 
         const reactSelector = window['$testCafeReactSelector'];
 
-        return reactSelector(selector, componentInstances);
+        return reactSelector(selector, true, componentInstances);
     }
 }, { returnDOMNodes: true });
 

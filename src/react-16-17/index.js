@@ -1,7 +1,7 @@
 /*global window document Node rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 
 /*eslint-disable no-unused-vars*/
-function react16or17Selector (selector, parents = rootEls) {
+function react16or17Selector (selector, renderedRootIsUnknown, parents = rootEls) {
     window['%testCafeReactFoundComponents%'] = [];
 
     const { getRenderedComponentVersion }  = window['%testCafeReactSelectorUtils%']['16|17'];
@@ -42,7 +42,7 @@ function react16or17Selector (selector, parents = rootEls) {
     }
 
     function getContainer (component) {
-        let node = getRenderedComponentVersion(component, rootEls);
+        let node = renderedRootIsUnknown ? getRenderedComponentVersion(component, rootEls) : component;
 
         while (!(node.stateNode instanceof Node)) {
             if (node.child) node = node.child;
