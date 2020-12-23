@@ -42,7 +42,7 @@ function react16or17Selector (selector, renderedRootIsUnknown, parents = rootEls
     }
 
     function getContainer (component) {
-        let node = renderedRootIsUnknown ? getRenderedComponentVersion(component, rootEls) : component;
+        let node = renderedRootIsUnknown ? getRenderedComponentVersion(component) : component;
 
         while (!(node.stateNode instanceof Node)) {
             if (node.child) node = node.child;

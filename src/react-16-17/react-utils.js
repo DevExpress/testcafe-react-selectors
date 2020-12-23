@@ -92,7 +92,9 @@
         return null;
     }
 
-    function getRenderedComponentVersion (component, rootInstances) {
+    function getRenderedComponentVersion (component) {        
+        const rootContainers = window['$testCafeReact16or17RootContainers'];
+        
         if (!component.alternate) return component;
 
         let component1 = component;
@@ -100,8 +102,8 @@
 
         while (component1.return) component1 = component1.return;
         while (component2.return) component2 = component2.return;
-
-        if (rootInstances.indexOf(component1) > -1) return component;
+        
+        if (rootContainers.indexOf(component1) > -1) return component;
 
         return component.alternate;
     }
@@ -110,7 +112,7 @@
         const rootInstances = window['$testCafeReact16or17Roots'].map(rootEl => rootEl.return || rootEl);
         const reactInstance = scanDOMNodeForReactInstance(domNode);
 
-        return getRenderedComponentVersion(reactInstance, rootInstances);
+        return getRenderedComponentVersion(reactInstance);
     }
 
     function getFoundComponentInstances () {

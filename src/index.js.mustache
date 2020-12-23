@@ -49,9 +49,13 @@ export const ReactSelector = Selector(selector => {
     rootEls = getRootElsReact16or17();
 
     if(rootEls.length) {
-        window['%testCafeReactVersion%']    = '16|17';
-        window['$testCafeReactSelector']    = selectorReact16or17;
-        window['$testCafeReact16or17Roots'] = rootEls;
+        const rootContainers = rootEls.map(root => root.return);
+
+        window['%testCafeReactVersion%']             = '16|17';
+        window['$testCafeReactSelector']             = selectorReact16or17;
+        window['$testCafeReact16or17Roots']          = rootEls;
+        window['$testCafeReact16or17RootContainers'] = rootContainers;
+
 
         foundDOMNodes = selectorReact16or17(selector, false);
     }
