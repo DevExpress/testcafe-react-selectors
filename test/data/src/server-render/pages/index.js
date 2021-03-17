@@ -6,7 +6,7 @@ class Label extends React.Component {
 
         this.state = {
             text: 'Label Text...'
-        }
+        };
     }
 
     render () {
@@ -17,3 +17,7 @@ class Label extends React.Component {
 const App = () => <div><Label/></div>;
 
 export default App;
+
+export async function getServerSideProps () {
+    return { props: { } };
+}
