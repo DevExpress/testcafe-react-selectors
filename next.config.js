@@ -1,6 +1,5 @@
 module.exports = {
     webpack (cfg) {
-        cfg.mode         = 'development';
         cfg.optimization = {
             minimize: false
         };
@@ -9,5 +8,9 @@ module.exports = {
     },
 
     staticMarkup: true,
-    dev:          true
+    dev:          true,
+
+    eslint: {
+        ignoreDuringBuilds: true
+    }
 };

@@ -2,7 +2,6 @@
   "compact": false,
 
   "presets": [
-    "es2015-loose",
-    "react"
+    "@babel/preset-react"
   ]
 }
