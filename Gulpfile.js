@@ -76,7 +76,7 @@ gulp.task('clean-build-tmp-resources', () => {
 });
 
 gulp.task('build-nextjs-app', () => {
-    const appPath = pathJoin(__dirname, './test/data/lib/server-render');
+    const appPath = pathJoin(__dirname, './test/data/server-render');
 
     return nextBuild(appPath, require('./next.config.js'));
 });

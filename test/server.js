@@ -10,7 +10,7 @@ module.exports = function () {
 
     function serverRenderHandler (req, res) {
         if (!nextjsApp) {
-            nextjsApp = next({ dir: path.join(__dirname, './data/lib/server-render') });
+            nextjsApp = next({ dir: path.join(__dirname, './data/server-render') });
             handle    = nextjsApp.getRequestHandler();
         }
 
