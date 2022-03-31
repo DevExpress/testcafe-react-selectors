@@ -1,14 +1,10 @@
 {
   "compact": false,
   "presets": [
-    ["env", {
+    ["@babel/preset-env", {
       "targets": {
-        "node": "8"
-      },
-      "exclude": ["transform-es2015-typeof-symbol"]
+        "browsers": ["last 2 versions","IE>=11"]
+      }
     }]
-  ],
-  "plugins": [
-    "transform-for-of-as-array"
   ]
 }

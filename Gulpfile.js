@@ -1,7 +1,7 @@
 const babel           = require('gulp-babel');
 const createTestCafe  = require('testcafe');
 const del             = require('del');
-const eslint          = require('gulp-eslint');
+const eslint          = require('gulp-eslint-new');
 const fs              = require('fs');
 const glob            = require('glob');
 const gulp            = require('gulp');
@@ -26,8 +26,8 @@ gulp.task('lint', () => {
     return gulp
         .src([
             'src/**/*.js',
-            'test/**/*.{js,ts}',
-            '!test/data/**/*.js',
+            'test/**/*.js',
+            '!test/data/**',
             'Gulpfile.js'
         ])
         .pipe(eslint())
@@ -76,7 +76,7 @@ gulp.task('clean-build-tmp-resources', () => {
 });
 
 gulp.task('build-nextjs-app', () => {
-    const appPath = pathJoin(__dirname, './test/data/lib/server-render');
+    const appPath = pathJoin(__dirname, './test/data/server-render');
 
     return nextBuild(appPath, require('./next.config.js'));
 });
@@ -89,7 +89,7 @@ gulp.task('run-tests', async cb => {
     await startTestServer();
 
     const testCafe = await createTestCafe('localhost', 1337, 1338);
-    
+
     await testCafe.createRunner()
         .src(files)
         .browsers(['chrome', 'firefox', 'ie'])
