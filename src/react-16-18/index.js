@@ -1,10 +1,10 @@
 /*global window document Node rootEls defineSelectorProperty visitedRootEls checkRootNodeVisited*/
 
 /*eslint-disable no-unused-vars*/
-function react16or17Selector (selector, renderedRootIsUnknown, parents = rootEls) {
+function react16to18Selector (selector, renderedRootIsUnknown, parents = rootEls) {
     window['%testCafeReactFoundComponents%'] = [];
 
-    const { getRenderedComponentVersion }  = window['%testCafeReactSelectorUtils%']['16|17'];
+    const { getRenderedComponentVersion }  = window['%testCafeReactSelectorUtils%']['16|17|18'];
 
     /*eslint-enable no-unused-vars*/
     function createAnnotationForEmptyComponent (component) {
@@ -23,16 +23,21 @@ function react16or17Selector (selector, renderedRootIsUnknown, parents = rootEls
         //react memo
         // it will find the displayName on the elementType if you set it
         if (component.elementType && component.elementType.displayName) return component.elementType.displayName;
-        
-        
+
+
         if (!component.type && !component.memoizedState)
             return null;
 
         const currentElement = component.type ? component : component.memoizedState.element;
 
+        //NOTE: React.StrictMode
+        //      if (currentElement && typeof currentElement.type === 'symbol') return 'React_Service_Component';
+
         //NOTE: tag
-        if (typeof component.type === 'string') return component.type;
-        if (component.type.displayName || component.type.name) return component.type.displayName || component.type.name;
+        if (component.type) {
+            if (typeof component.type === 'string') return component.type;
+            if (component.type.displayName || component.type.name) return component.type.displayName || component.type.name;
+        }
 
         const matches = currentElement.type.toString().match(/^function\s*([^\s(]+)/);
 

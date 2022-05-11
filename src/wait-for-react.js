@@ -10,11 +10,17 @@ function waitForReact (timeout, testController) {
         const CHECK_INTERVAL = 200;
         let stopChecking     = false;
 
-        function findReact16or17Root () {
+        function findReact16to18Root () {
             const treeWalker = document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, null, false);
 
-            while (treeWalker.nextNode())
+            while (treeWalker.nextNode()) {
+                //NOTE: fast check for 16 and 17 react
                 if (treeWalker.currentNode.hasOwnProperty('_reactRootContainer')) return true;
+
+                //NOTE: react 18
+                for (const prop of Object.keys(treeWalker.currentNode))
+                    if (/^__reactContainer/.test(prop)) return true;
+            }
 
             return false;
         }
@@ -28,9 +34,9 @@ function waitForReact (timeout, testController) {
 
         function findReactApp () {
             const isReact15OrStaticRender = findReact15OrStaticRenderedRoot();
-            const isReact16or17WithHandlers   = !!Object.keys(document).filter(prop => /^_reactListenersID|^_reactEvents/.test(prop)).length;
+            const isReact16to18WithHandlers   = !!Object.keys(document).filter(prop => /^_reactListenersID|^_reactEvents/.test(prop)).length;
 
-            return isReact15OrStaticRender || isReact16or17WithHandlers || findReact16or17Root();
+            return isReact15OrStaticRender || isReact16to18WithHandlers || findReact16to18Root();
         }
 
         return new Promise((resolve, reject) => {

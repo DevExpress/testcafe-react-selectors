@@ -21,9 +21,7 @@ module.exports = function () {
         express()
             .use(express.static(path.join(__dirname, './data')))
             .disable('view cache')
-            .get('/', (req, res) => res.render('index.html'))
             .get('/serverRender', serverRenderHandler)
-            .get('/noReact', (req, res) => res.sendFile(path.join(__dirname, 'data/page-without-react.html')))
             .get('*', (req, res) => handle(req, res))
             .listen(TEST_RESOURCES_PORT, resolve);
     });

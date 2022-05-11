@@ -93,7 +93,7 @@
     }
 
     function getRenderedComponentVersion (component) {        
-        const rootContainers = window['$testCafeReact16or17RootContainers'];
+        const rootContainers = window['$testCafeReact16to18RootContainers'];
         
         if (!component.alternate) return component;
 
@@ -109,7 +109,7 @@
     }
 
     function scanDOMNodeForReactComponent (domNode) {
-        const rootInstances = window['$testCafeReact16or17Roots'].map(rootEl => rootEl.return || rootEl);
+        const rootInstances = window['$testCafeReact16to18Roots'].map(rootEl => rootEl.return || rootEl);
         const reactInstance = scanDOMNodeForReactInstance(domNode);
 
         return getRenderedComponentVersion(reactInstance);

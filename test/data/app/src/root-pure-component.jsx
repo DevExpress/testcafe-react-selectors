@@ -1,4 +1,6 @@
-/*global React ReactDOM*/
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+
 class PureComponent extends React.PureComponent {
     constructor () {
         super();
@@ -27,5 +29,6 @@ class App extends React.PureComponent {
     }
 }
 
-
-ReactDOM.render(<App text="AppTitle"/>, document.getElementById('app-container'));
+ReactDOM.createRoot(document.getElementById('app-container')).render(
+    <App text="AppTitle"/>
+);
