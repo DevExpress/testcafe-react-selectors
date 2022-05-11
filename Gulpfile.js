@@ -106,7 +106,7 @@ gulp.task('run-tests', async cb => {
         .src(files)
         .browsers(['chrome', 'firefox', 'ie'])
         .reporter('list')
-        .run({ quarantineMode: false, debugOnFail: true })
+        .run({ quarantineMode: true, debugOnFail: false })
         .then(failed => {
             devServer.close();
 
