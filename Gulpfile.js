@@ -104,7 +104,7 @@ gulp.task('run-tests', async cb => {
 
     await testCafe.createRunner()
         .src(files)
-        .browsers(['chrome'/*, 'firefox', 'ie'*/])
+        .browsers(['chrome', 'firefox', 'ie'])
         .reporter('list')
         .run({ quarantineMode: false, debugOnFail: true })
         .then(failed => {
