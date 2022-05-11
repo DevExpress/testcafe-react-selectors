@@ -1,4 +1,3 @@
-const babel            = require('gulp-babel');
 const createTestCafe   = require('testcafe');
 const del              = require('del');
 const eslint           = require('gulp-eslint-new');
@@ -12,6 +11,7 @@ const startTestServer  = require('./test/server');
 const { promisify }    = require('util');
 const nextBuild        = require('next/dist/build').default;
 const { createServer } = require('vite');
+const legacy           = require('@vitejs/plugin-legacy');
 
 const listFiles   = promisify(glob);
 const deleteFiles = promisify(del);
@@ -60,13 +60,6 @@ gulp.task('build-selectors-script', () => {
         .pipe(gulp.dest('lib'));
 });
 
-gulp.task('transpile', () => {
-    return gulp
-        .src('lib/tmp/**/*.js')
-        .pipe(babel({ extends: pathJoin(__dirname, './src/.babelrc') }))
-        .pipe(gulp.dest('lib'));
-});
-
 gulp.task('clean-build-tmp-resources', () => {
     return deleteFiles(['lib/tmp']);
 });
@@ -77,7 +70,7 @@ gulp.task('build-nextjs-app', () => {
     return nextBuild(appPath, require('./next.config.js'));
 });
 
-gulp.task('build', gulp.series('clean', 'lint', 'build-selectors-script', /* 'transpile',*/ 'clean-build-tmp-resources'));
+gulp.task('build', gulp.series('clean', 'lint', 'build-selectors-script', 'clean-build-tmp-resources'));
 
 gulp.task('start-dev-server', async () => {
     const src = 'test/data/app';
@@ -88,6 +81,14 @@ gulp.task('start-dev-server', async () => {
 
         server: {
             port: 3000
+        },
+
+        rollupOutputOptions: {
+            plugins: [
+                legacy({ 
+                    targets: ['last 2 versions', 'IE>=11']
+                })
+            ]
         }
     });
 
