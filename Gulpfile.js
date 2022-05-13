@@ -11,7 +11,6 @@ const startTestServer  = require('./test/server');
 const { promisify }    = require('util');
 const nextBuild        = require('next/dist/build').default;
 const { createServer } = require('vite');
-const legacy           = require('@vitejs/plugin-legacy');
 
 const listFiles   = promisify(glob);
 const deleteFiles = promisify(del);
