@@ -30,9 +30,6 @@ function react16to18Selector (selector, renderedRootIsUnknown, parents = rootEls
 
         const currentElement = component.type ? component : component.memoizedState.element;
 
-        //NOTE: React.StrictMode
-        //      if (currentElement && typeof currentElement.type === 'symbol') return 'React_Service_Component';
-
         //NOTE: tag
         if (component.type) {
             if (typeof component.type === 'string') return component.type;
