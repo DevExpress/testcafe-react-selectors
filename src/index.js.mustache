@@ -3,9 +3,9 @@ import { Selector, ClientFunction } from 'testcafe';
 
 export const ReactSelector = Selector(selector => {
     const getRootElsReact15     = {{{getRootElsReact15}}}
-    const getRootElsReact16or17 = {{{getRootElsReact16or17}}}
+    const getRootElsReact16to18 = {{{getRootElsReact16to18}}}
     const selectorReact15       = {{{selectorReact15}}}
-    const selectorReact16or17   = {{{selectorReact16or17}}}    
+    const selectorReact16to18   = {{{selectorReact16to18}}}
 
     let visitedRootEls = [];
     let rootEls        = null;
@@ -26,12 +26,12 @@ export const ReactSelector = Selector(selector => {
     }
 
     const react15Utils     = {{{react15Utils}}}
-    const react16or17Utils = {{{react16or17Utils}}}
+    const react16to18Utils = {{{react16to18Utils}}}
 
     if(!window['%testCafeReactSelectorUtils%']) {
         window['%testCafeReactSelectorUtils%'] = {
             '15'   : react15Utils,
-            '16|17': react16or17Utils
+            '16|17|18': react16to18Utils
         };
     }
 
@@ -46,18 +46,19 @@ export const ReactSelector = Selector(selector => {
         foundDOMNodes = selectorReact15(selector);
     }
 
-    rootEls = getRootElsReact16or17();
+    rootEls = getRootElsReact16to18();
 
     if(rootEls.length) {
-        const rootContainers = rootEls.map(root => root.return);
+        //NOTE: root.return for 16 and 17 version
+        const rootContainers = rootEls.map(root => root.return || root);
 
-        window['%testCafeReactVersion%']             = '16|17';
-        window['$testCafeReactSelector']             = selectorReact16or17;
-        window['$testCafeReact16or17Roots']          = rootEls;
-        window['$testCafeReact16or17RootContainers'] = rootContainers;
+        window['%testCafeReactVersion%']             = '16|17|18';
+        window['$testCafeReactSelector']             = selectorReact16to18;
+        window['$testCafeReact16to18Roots']          = rootEls;
+        window['$testCafeReact16to18RootContainers'] = rootContainers;
 
 
-        foundDOMNodes = selectorReact16or17(selector, false);
+        foundDOMNodes = selectorReact16to18(selector, false);
     }
 
     visitedRootEls = [];
@@ -65,14 +66,14 @@ export const ReactSelector = Selector(selector => {
     if(foundDOMNodes)
         return foundDOMNodes;
 
-    throw new Error("React component tree is not loaded yet or the current React version is not supported. This module supports React version 15.x and newer. To wait until the React's component tree is loaded, add the `waitForReact` method to fixture's `beforeEach` hook.");
+    throw new Error("React component tree is not loaded yet or the current React version is not supported. This module supports React version 16.x and newer. To wait until the React's component tree is loaded, add the `waitForReact` method to fixture's `beforeEach` hook.");
 }).addCustomMethods({
     getReact: (node, fn) => {
         const reactVersion = window['%testCafeReactVersion%'];
         const reactUtils   = window['%testCafeReactSelectorUtils%'][reactVersion];
 
         delete window['%testCafeReactVersion%'];
-        
+
         return reactUtils.getReact(node, fn);
     }
 }).addCustomMethods({
@@ -127,9 +128,9 @@ export const ReactSelector = Selector(selector => {
              }
 
              return true;
-        }        
+        }
 
-        const reactVersion = window['%testCafeReactVersion%'];    
+        const reactVersion = window['%testCafeReactVersion%'];
         let filterProps    = {};
         let options        = null;
 
@@ -209,7 +210,7 @@ export const ReactSelector = Selector(selector => {
 
     findReact: (nodes, selector) => {
         const reactVersion = window['%testCafeReactVersion%'];
-        const reactUtils   = window['%testCafeReactSelectorUtils%'][reactVersion];        
+        const reactUtils   = window['%testCafeReactSelectorUtils%'][reactVersion];
 
         let componentInstances           = null;
         let scanDOMNodeForReactComponent = reactUtils.scanDOMNodeForReactComponent;

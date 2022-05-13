@@ -1,18 +1,23 @@
 /*global fixture test document*/
 import fs from 'fs';
 import { ReactSelector, waitForReact } from '../../';
-import { loadApp } from '../helpers/service-util';
 import { ClientFunction } from 'testcafe';
 
-const SUPPORTED_VERSIONS = [15, 16, 17];
+const SUPPORTED_VERSIONS = [16, 17, 18];
+
+//NOTE: React 18 does not support unstable_renderSubtreeIntoContainer anymore.
+const listMap = {
+    '16': 4,
+    '17': 4,
+    '18': 2
+};
+
+const itemsInList = 3;
 
 /*eslint-disable no-loop-func*/
 for (const version of SUPPORTED_VERSIONS) {
-    fixture`ReactJS TestCafe plugin (React ${version})`
-        .page`http://localhost:1355`
-        .beforeEach(async () => {
-            await loadApp(version);
-        });
+    fixture `ReactJS TestCafe plugin (React ${version})`
+        .page`http://localhost:3000/index-react-${version}.html`;
 
     test('Should throw exception for non-valid selectors', async t => {
         for (const selector of [null, false, void 0, {}, 42]) {
@@ -32,7 +37,7 @@ for (const version of SUPPORTED_VERSIONS) {
         const listItem2 = ReactSelector('ListItem').nth(1);
 
         await t
-            .expect(list.count).eql(version > 15 ? 4 : 3)
+            .expect(list.count).eql(listMap[version])
             .expect(app.id).eql('app')
             .expect(listItem1.id).eql('l1-item1')
             .expect(listItem2.id).eql('l1-item2');
@@ -124,10 +129,11 @@ for (const version of SUPPORTED_VERSIONS) {
         await ClientFunction(() => {
             let reactRoot         = null;
             let internalReactProp = null;
+            let internalReactPropReact18 = null;
 
-            if (version === 15) {
-                reactRoot         = document.querySelector('[data-reactroot]');
-                internalReactProp = Object.keys(reactRoot).filter(prop => /^__reactInternalInstance/.test(prop))[0];
+            if (version === 18) {
+                reactRoot                = document.querySelector('#app');
+                internalReactPropReact18 = Object.keys(reactRoot).filter(prop => /^__reactContainer/.test(prop))[0];
             }
             else {
                 reactRoot         = document.querySelector('#app-container');
@@ -135,13 +141,14 @@ for (const version of SUPPORTED_VERSIONS) {
             }
 
             delete reactRoot[internalReactProp];
+            delete reactRoot[internalReactPropReact18];
         }, { dependencies: { version } })();
 
         try {
             await ReactSelector('App');
         }
         catch (e) {
-            await t.expect(e.errMsg).contains('This module supports React version 15.x and newer');
+            await t.expect(e.errMsg).contains('This module supports React version 16.x and newer');
         }
     });
 
@@ -152,7 +159,7 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test('Should not get dom nodes from nested components', async t => {
-        const expectedListItemCount = version > 15 ? 12 : 9;
+        const expectedListItemCount = listMap[version] * itemsInList;
 
         await t
             .expect(ReactSelector('ListItem p').count).eql(expectedListItemCount)
@@ -181,6 +188,9 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test('Should search inside of portal component', async t => {
+        //NOTE: react 18: react-dom/client does not provide ReactDOM.createPortal
+        if (version === 18) return;
+
         const portal         = ReactSelector('Portal');
         const portalWidth    = await portal.getReact(({ state }) => state.width);
         const list           = ReactSelector('Portal List');
@@ -199,17 +209,15 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(pureComponent2.exists).ok()
             .expect(portal.findReact('List').exists).ok();
 
-        if (version > 15) {
-            await t
-                .expect(ReactSelector('PortalReact16').exists).ok()
-                .expect(ReactSelector('PortalReact16 List').exists).ok()
-                .expect(ReactSelector('PortalReact16 ListItem').count).eql(3)
-                .expect(ReactSelector('PortalReact16').findReact('List').exists).ok()
-                .expect(ReactSelector('PortalReact16').findReact('ListItem').exists).ok()
-                .expect(ReactSelector('PortalReact16').findReact('List ListItem').exists).ok()
-                .expect(ReactSelector('PortalReact16').findReact('List').findReact('ListItem').exists).ok()
-                .expect(ReactSelector('PortalReact16').findReact('PortalReact16').exists).notOk();
-        }
+        await t
+            .expect(ReactSelector('PortalReact16').exists).ok()
+            .expect(ReactSelector('PortalReact16 List').exists).ok()
+            .expect(ReactSelector('PortalReact16 ListItem').count).eql(3)
+            .expect(ReactSelector('PortalReact16').findReact('List').exists).ok()
+            .expect(ReactSelector('PortalReact16').findReact('ListItem').exists).ok()
+            .expect(ReactSelector('PortalReact16').findReact('List ListItem').exists).ok()
+            .expect(ReactSelector('PortalReact16').findReact('List').findReact('ListItem').exists).ok()
+            .expect(ReactSelector('PortalReact16').findReact('PortalReact16').exists).notOk();
     });
 
     test('Should get new values of props and state after they were changed GH-71', async t => {
@@ -238,7 +246,6 @@ for (const version of SUPPORTED_VERSIONS) {
         await t
             .expect(text).eql('Disabled')
             .expect(textPropDisabled).eql('Disabled')
-
             .click(componentCont)
 
             .expect(text).eql('Enabled')
@@ -392,7 +399,7 @@ for (const version of SUPPORTED_VERSIONS) {
     });
 
     test('Should filter components by key', async t => {
-        const expectedItemCount = version === 15 ? 3 : 4;
+        const expectedItemCount = listMap[version];
         const listItemsByKey    = ReactSelector('ListItem').withKey('ListItem1');
         const emptySet1         = ReactSelector('ListItem').withKey(void 0);
         const emptySet2         = ReactSelector('ListItem').withKey(null);
@@ -400,16 +407,21 @@ for (const version of SUPPORTED_VERSIONS) {
         await t
             .expect(listItemsByKey.count).eql(expectedItemCount)
             .expect(emptySet1.count).eql(0)
-            .expect(emptySet2.count).eql(0)
-            .expect(ReactSelector('Portal').withKey('portal').count).eql(1)
+            .expect(emptySet2.count).eql(0);
 
+        if (version < 18) {
+            await t
+                .expect(ReactSelector('Portal').withKey('portal').count).eql(1);
+        }
+
+        await t
             .expect(listItemsByKey.withProps({ selected: false }).count).eql(expectedItemCount)
             .click(listItemsByKey)
 
             .expect(listItemsByKey.withProps({ selected: false }).count).eql(expectedItemCount - 1)
             .expect(listItemsByKey.withProps({ selected: true }).count).eql(1);
 
-        if (version > 15)
+        if (version < 18)
             await t.expect(ReactSelector('PortalReact16').withKey('portalReact16').count).eql(1);
     });
 
@@ -421,7 +433,7 @@ for (const version of SUPPORTED_VERSIONS) {
 
         const paragraphs1     = listItems.findReact('li p');
         const paragraphs2     = listItems.findReact('p');
-        const expectedElCount = version > 15 ? 12 : 9;
+        const expectedElCount = listMap[version] * itemsInList;
 
         await t
             .expect(smartComponent.exists).ok()
@@ -489,30 +501,18 @@ for (const version of SUPPORTED_VERSIONS) {
         });
     });
 
-    test('Should get memoized component', async t => {
-        if (version > 15) {
-            const Memoized = ReactSelector('Memoized');
-            const text = Memoized.getReact(({ props }) => props.text);
-
-            await t
-                .expect(ReactSelector('Memoized').exists).ok()
-                .expect(text).eql('Memo');
-        }
-    });
-
     test('Should find react components inside nested react app', async t => {
         await t
             .expect(ReactSelector('NestedApp Stateless1').withText('Inside nested app').exists).ok();
     });
 
     fixture`ReactJS TestCafe plugin (the app loads during test) (React ${version})`
-        .page`http://localhost:1355`;
+        .page`http://localhost:3000`;
 
     test('Should search inside of stateless root GH-33', async t => {
         const expectedText = 'PureComponent';
 
-        await t.navigateTo('/stateless-root.html');
-        await loadApp(version);
+        await t.navigateTo('./stateless-root.html');
         await waitForReact();
 
         let App        = ReactSelector('App');
@@ -530,8 +530,7 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(text1).eql(expectedText)
             .expect(text2).eql(expectedText);
 
-        await t.navigateTo('/root-pure-component.html');
-        await loadApp(version);
+        await t.navigateTo('./root-pure-component.html');
         await waitForReact();
 
         App                   = ReactSelector('App');
@@ -559,7 +558,7 @@ for (const version of SUPPORTED_VERSIONS) {
             await ReactSelector('body');
         }
         catch (e) {
-            await t.expect(e.errMsg).contains('This module supports React version 15.x and newer');
+            await t.expect(e.errMsg).contains('This module supports React version 16.x and newer');
         }
     });
 }
