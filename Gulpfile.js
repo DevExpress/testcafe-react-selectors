@@ -81,13 +81,7 @@ gulp.task('start-dev-server', async () => {
 
         server: {
             port: 3000
-        },
-
-        plugins: [
-            legacy({ 
-                targets: ['last 2 versions', 'IE>=11']
-            })
-        ]
+        }
     });
 
     await devServer.listen();
@@ -103,7 +97,7 @@ gulp.task('run-tests', async cb => {
 
     await testCafe.createRunner()
         .src(files)
-        .browsers(['chrome', 'firefox', 'ie'])
+        .browsers(['chrome', 'firefox', 'edge'])
         .reporter('list')
         .run({ quarantineMode: true, debugOnFail: false })
         .then(failed => {
