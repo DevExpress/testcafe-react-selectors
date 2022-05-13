@@ -1,7 +1,7 @@
 /*global document window*/
-import { Selector, ClientFunction } from 'testcafe';
+const { Selector, ClientFunction }  = require('testcafe');
 
-export const ReactSelector = Selector(selector => {
+exports.ReactSelector = Selector(selector => {
     const getRootElsReact15     = {{{getRootElsReact15}}}
     const getRootElsReact16to18 = {{{getRootElsReact16to18}}}
     const selectorReact15       = {{{selectorReact15}}}
@@ -223,4 +223,4 @@ export const ReactSelector = Selector(selector => {
     }
 }, { returnDOMNodes: true });
 
-export const waitForReact = {{{waitForReact}}};
+exports.waitForReact = {{{waitForReact}}};
