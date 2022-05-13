@@ -83,13 +83,11 @@ gulp.task('start-dev-server', async () => {
             port: 3000
         },
 
-        rollupOutputOptions: {
-            plugins: [
-                legacy({ 
-                    targets: ['last 2 versions', 'IE>=11']
-                })
-            ]
-        }
+        plugins: [
+            legacy({ 
+                targets: ['last 2 versions', 'IE>=11']
+            })
+        ]
     });
 
     await devServer.listen();
