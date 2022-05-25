@@ -43,13 +43,24 @@ function react16to18Selector (selector, renderedRootIsUnknown, parents = rootEls
         return null;
     }
 
+    function findNodeWithStateNodeInChildrenOrSiblings (searchNode) {
+        const nodesToCheck = [];
+
+        nodesToCheck.push(searchNode);
+        while (nodesToCheck.length > 0) {
+            const node = nodesToCheck.shift();
+
+            if (node.stateNode instanceof Node) return node;
+            if (node.child) nodesToCheck.push(node.child);
+            if (node.sibling && node !== searchNode) nodesToCheck.push(node.sibling);
+        }
+        return searchNode;
+    }
+
     function getContainer (component) {
         let node = renderedRootIsUnknown ? getRenderedComponentVersion(component) : component;
 
-        while (!(node.stateNode instanceof Node)) {
-            if (node.child) node = node.child;
-            else break;
-        }
+        node = findNodeWithStateNodeInChildrenOrSiblings(node);
 
         if (!(node.stateNode instanceof Node))
             return null;
