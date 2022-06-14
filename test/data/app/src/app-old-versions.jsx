@@ -183,6 +183,10 @@ export default function AppFactory(React, ReactDOM) {
         return null;
     };
 
+    const SiblingWithStateNode = function (props) {
+        return <><></><div>{props.text}</div></>;
+    };
+
     class SmartComponent extends React.Component {
         constructor () {
             super();
@@ -294,6 +298,7 @@ export default function AppFactory(React, ReactDOM) {
                     <Stateless_2/>
                     <Stateless3 text="test"/>
                     <Stateless_4/>
+                    <SiblingWithStateNode text="SiblingWithStateNodeText"/>
 
                     <PortalReact16 key="portalReact16"/>
 

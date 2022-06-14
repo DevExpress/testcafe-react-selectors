@@ -61,6 +61,11 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(ReactSelector('Stateless4').exists).ok();
     });
 
+    test('Should get DOM node for component where first child does not have a stateNode', async t => {
+        await t
+            .expect(ReactSelector('SiblingWithStateNode').textContent).eql('SiblingWithStateNodeText');
+    });
+
     test('Should get DOM node for pure component', async t => {
         await t.expect(ReactSelector('PureComponent').exists).ok();
     });

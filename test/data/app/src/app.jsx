@@ -110,6 +110,10 @@ const Stateless_4 = function Stateless4 () {
   return null;
 };
 
+const SiblingWithStateNode = function (props) {
+    return <><></><div>{props.text}</div></>;
+};
+
 class SmartComponent extends React.Component {
   constructor () {
       super();
@@ -218,6 +222,7 @@ export class App extends React.Component {
               <Stateless_2/>
               <Stateless3 text="test"/>
               <Stateless_4/>
+              <SiblingWithStateNode text="SiblingWithStateNodeText"/>
 
               <SmartComponent/>
               <UnfilteredSet/>
