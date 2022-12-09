@@ -1,3 +1,4 @@
+# EDITS SHOULD BE SUBMITTED TO DevExpress/testcafe-build-system/config/labels.yml
 # Configuration for Label Actions - https://github.com/dessant/label-actions
 
 ? 'TYPE: question'
@@ -105,4 +106,3 @@
   unlabel:
     - 'STATE: PR Review Pending'
     - 'STATE: Need response'
-    

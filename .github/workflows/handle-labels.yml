@@ -10,4 +10,4 @@ jobs:
   reaction:
     runs-on: ubuntu-latest
     steps:
-      - uses: dessant/label-actions@v2
+      - uses: DevExpress/testcafe-build-system/actions/handle-labels@main
