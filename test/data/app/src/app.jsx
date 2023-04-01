@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { Suspense } from 'react';
+
+const AsyncComponent = React.lazy(() => import('./AsyncComponent'));
 
 /*global React ReactDOM*/
 
@@ -229,6 +231,9 @@ export class App extends React.Component {
               <UnfilteredSet_PartialMatching/>
               <Memoized text="Memo" />
               <div id="nestedapp-container"></div>
+              <Suspense fallback={<>loading</>}>
+                  <AsyncComponent />
+              </Suspense>
           </div>
       );
   }
