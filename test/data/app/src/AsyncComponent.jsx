@@ -20,11 +20,8 @@ const fakeLoader = () => {
                 setTimeout(() => {
                     resolve(true)
                 }, 1500);
-            }).then((value) => {
-                console.log('resolved');
-                return value;
             })
-        )
+        );
     }
 
     return cacheValue;
