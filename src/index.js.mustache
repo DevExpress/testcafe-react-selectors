@@ -120,6 +120,8 @@ exports.ReactSelector = Selector(selector => {
         }
 
         function componentHasProps ({ props }, filterProps, exactObjectMatch) {
+             if (!props) return false;
+
              for (const prop of Object.keys(filterProps)) {
                  if (!props.hasOwnProperty(prop)) return false;
 
