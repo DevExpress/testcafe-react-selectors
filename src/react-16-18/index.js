@@ -36,7 +36,7 @@ function react16to18Selector (selector, renderedRootIsUnknown, parents = rootEls
             if (component.type.displayName || component.type.name) return component.type.displayName || component.type.name;
         }
 
-        const matches = currentElement.type.toString().match(/^function\s*([^\s(]+)/);
+        const matches = currentElement?.type.toString().match(/^function\s*([^\s(]+)/);
 
         if (matches) return matches[1];
 

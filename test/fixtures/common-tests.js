@@ -511,6 +511,11 @@ for (const version of SUPPORTED_VERSIONS) {
             .expect(ReactSelector('NestedApp Stateless1').withText('Inside nested app').exists).ok();
     });
 
+    test('Should find children of a React.Suspense', async t => {
+        if (version !== 18) return;
+        await t.expect(ReactSelector('AsyncChild').exists).ok();
+    });
+
     fixture`ReactJS TestCafe plugin (the app loads during test) (React ${version})`
         .page`http://localhost:3000`;
 
