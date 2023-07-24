@@ -51,5 +51,4 @@ node_modules/*
 lib/*
 test/data/lib/*
 test/data/server-render/.next
-package-lock.json
 yarn.lock
