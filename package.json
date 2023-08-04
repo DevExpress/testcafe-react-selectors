@@ -35,7 +35,7 @@
     "vite": "^2.9.6"
   },
   "scripts": {
-    "test": "set NEXT_TELEMETRY_DISABLED=1 && gulp test",
+    "test": "gulp test",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },
