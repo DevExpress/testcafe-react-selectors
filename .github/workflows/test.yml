@@ -1,0 +1,31 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request_target:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      DISPLAY: ':99.0'
+      
+    steps:
+      - run: |
+          sudo apt install fluxbox
+          Xvfb :99.0 -screen 0 1920x1080x24 &
+          sleep 3
+          fluxbox >/dev/null 2>&1 &
+
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'latest'
+
+      - run: npm install --force
+
+      - run: npm run test
