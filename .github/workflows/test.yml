@@ -10,6 +10,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          sudo apt install fluxbox
+          Xvfb :99.0 -screen 0 1920x1080x24 &
+          sleep 3
+          fluxbox >/dev/null 2>&1 &
+
       - uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
