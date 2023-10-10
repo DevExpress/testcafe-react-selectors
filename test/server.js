@@ -1,20 +1,29 @@
-var express = require('express');
-var path    = require('path');
-var next    = require('next');
+const express = require('express');
+const path    = require('path');
+const next    = require('next');
 
 const TEST_RESOURCES_PORT = 1355;
 
 module.exports = function () {
-    var nextjsApp = null;
-    var handle    = null;
+    let nextjsApp = null;
+    let handle    = null;
 
     function serverRenderHandler (req, res) {
+        let appPrepared = Promise.resolve();
+
         if (!nextjsApp) {
             nextjsApp = next({ dir: path.join(__dirname, './data/server-render') });
-            handle    = nextjsApp.getRequestHandler();
+
+            // NOTE: https://nextjs.org/docs/pages/building-your-application/configuring/custom-server
+            appPrepared = nextjsApp.prepare()
+                .then(() => {
+                    handle = nextjsApp.getRequestHandler();
+                });
         }
 
-        nextjsApp.render(req, res, '/');
+        appPrepared.then(() => {
+            nextjsApp.render(req, res, '/');
+        });
     }
 
     return new Promise(resolve => {
