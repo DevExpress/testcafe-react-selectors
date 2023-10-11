@@ -18,6 +18,8 @@ module.exports = function () {
                     .use(express.static(path.join(__dirname, './data')))
                     .disable('view cache')
                     .get('/serverRender', (req, res) => {
+                        console.log('server render: ', req.url);
+
                         nextjsApp.render(req, res, '/');
                     })
                     .get('*', (req, res) => handle(req, res))

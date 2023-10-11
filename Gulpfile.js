@@ -69,7 +69,7 @@ gulp.task('build-nextjs-app', () => {
     return nextBuild(appPath, require('./next.config.js'));
 });
 
-gulp.task('build', gulp.series('clean', 'lint', 'build-selectors-script', 'clean-build-tmp-resources'));
+gulp.task('build', gulp.series('clean', 'build-selectors-script', 'clean-build-tmp-resources'));
 
 gulp.task('start-dev-server', async () => {
     const src = 'test/data/app';
