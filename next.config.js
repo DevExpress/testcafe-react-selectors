@@ -7,9 +7,6 @@ module.exports = {
         return cfg;
     },
 
-    staticMarkup: true,
-    dev:          true,
-
     eslint: {
         ignoreDuringBuilds: true
     }
