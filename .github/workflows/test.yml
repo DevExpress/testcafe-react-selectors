@@ -7,9 +7,18 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
-    environment: CI
+  build:
     runs-on: ubuntu-latest
+    steps: 
+      - uses: DevExpress/testcafe-build-system/actions/prepare@main
+      
+      - uses: DevExpress/testcafe-build-system/actions/build@main
+
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [build]
+    environment: CI
 
     env:
       DISPLAY: ':99.0'
