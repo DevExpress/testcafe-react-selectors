@@ -113,10 +113,13 @@ function react16to18Selector (selector, renderedRootIsUnknown, parents = rootEls
             .map(el => el.trim());
     }
 
+    /* eslint-disable */
     function reactSelect (compositeSelector) {
         const foundComponents = [];
 
         function findDOMNode (rootComponent) {
+            throw new Error(`Selector option is expected to be a string, but it was ${typeof compositeSelector}.`);
+
             if (typeof compositeSelector !== 'string')
                 throw new Error(`Selector option is expected to be a string, but it was ${typeof compositeSelector}.`);
 
