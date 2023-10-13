@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: CI
 
     env:
       DISPLAY: ':99.0'
@@ -20,12 +21,9 @@ jobs:
           sleep 3
           fluxbox >/dev/null 2>&1 &
 
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
+      - uses: DevExpress/testcafe-build-system/actions/prepare@main
         with:
           node-version: 'latest'
 
-      - run: npm install --force
-
+      - run: npm ci --legacy-peer-deps
       - run: npm run test
