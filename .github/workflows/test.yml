@@ -25,5 +25,5 @@ jobs:
         with:
           node-version: 'latest'
 
-      - run: ci --legacy-peer-deps
+      - run: npm ci --legacy-peer-deps
       - run: npm run test
