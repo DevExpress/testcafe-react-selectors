@@ -48,5 +48,8 @@
   "peerDependencies": {
     "testcafe": ">1.0.0"
   },
-  "types": "./ts-defs/index.d.ts"
+  "types": "./ts-defs/index.d.ts",
+  "overrides": {
+    "lodash": "^4.17.21"
+  }
 }
