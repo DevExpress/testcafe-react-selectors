@@ -15,6 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
+    "@testcafe/publish-please": "^5.6.0",
     "chai": "^3.2.0",
     "del": "^1.2.0",
     "express": "^4.16.3",
@@ -24,7 +25,6 @@
     "gulp-mustache": "^3.0.1",
     "gulp-rename": "^1.2.2",
     "next": "^14.1.1",
-    "publish-please": "^5.5.2",
     "react": "npm:react@^18.0.0",
     "react-dom": "npm:react-dom@^18.0.0",
     "react-dom16": "npm:react-dom@^16.0.0",
@@ -48,8 +48,5 @@
   "peerDependencies": {
     "testcafe": ">1.0.0"
   },
-  "types": "./ts-defs/index.d.ts",
-  "overrides": {
-    "lodash": "^4.17.21"
-  }
+  "types": "./ts-defs/index.d.ts"
 }
