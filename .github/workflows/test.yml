@@ -23,7 +23,7 @@ jobs:
 
       - uses: DevExpress/testcafe-build-system/actions/prepare@main
         with:
-          node-version: 'latest'
+          node-version: '22'
 
       - run: npm ci --legacy-peer-deps
       - run: npm run test
